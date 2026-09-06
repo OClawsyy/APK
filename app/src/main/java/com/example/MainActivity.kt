@@ -226,14 +226,23 @@ fun PlanetariumApp() {
                 )
             }
 
-            // 3. Bottom Information Sheet with Elegant Dark Theme
-            PlanetInfoSheet(
-                planet = selectedPlanet,
-                onDismiss = { selectedPlanet = null },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .navigationBarsPadding()
-            )
+            // 3. Bottom Information Sheet with Elegant Dark Theme (when no planet selected)
+            if (selectedPlanet == null) {
+                PlanetInfoSheet(
+                    planet = null,
+                    onDismiss = { selectedPlanet = null },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .navigationBarsPadding()
+                )
+            } else {
+                // Full Screen Immersive Planet Experience with animated celestial features
+                com.example.ui.PlanetFullScreenDetail(
+                    planet = selectedPlanet!!,
+                    onDismiss = { selectedPlanet = null },
+                    onSelectPlanet = { planet -> selectedPlanet = planet }
+                )
+            }
         }
     }
 }

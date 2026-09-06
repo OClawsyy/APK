@@ -11,7 +11,7 @@
       margin: 0;
       overflow: hidden;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #0B0E14;
+      background-color: #070A10;
       color: #E2E2E6;
       user-select: none;
       -webkit-user-select: none;
@@ -20,7 +20,6 @@
       display: block;
       touch-action: none;
     }
-    /* Custom Scrollbar for horizontal chips */
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
@@ -28,38 +27,42 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
+    /* Smooth transitions */
+    .fade-enter {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+    .fade-enter-active {
+      opacity: 1;
+      transform: scale(1);
+      transition: opacity 300ms ease, transform 300ms ease;
+    }
   </style>
 </head>
-<body class="h-screen w-screen relative flex flex-col bg-[#0B0E14]">
+<body class="h-screen w-screen relative flex flex-col bg-[#070A10]">
 
-  <!-- TOP HEADER -->
-  <header class="absolute top-0 left-0 right-0 z-30 p-4 md:p-6 flex flex-col gap-3 pointer-events-none">
+  <!-- TOP HEADER (Overview Mode) -->
+  <header id="mainHeader" class="absolute top-0 left-0 right-0 z-20 p-4 md:p-6 flex flex-col gap-3 pointer-events-none transition-opacity duration-300">
     <div class="flex justify-between items-center w-full">
       <div>
         <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
           Planetarium Mini
-          <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#4F86F7]/20 text-[#A8C7FA] border border-[#4F86F7]/30">Gen Z Edition</span>
         </h1>
-        <p class="text-xs md:text-sm text-[#919194]">Ketuk atau hover planet untuk eksplorasi partikel kosmik</p>
+        <p class="text-xs md:text-sm text-[#919194]">Tata Surya Interaktif &bull; Ketuk planet untuk visual layar penuh</p>
       </div>
 
-      <!-- Controls: Speed, Pause, Auto-Awesome -->
+      <!-- Controls: Speed & Pause -->
       <div class="flex items-center gap-2 pointer-events-auto">
         <!-- Speed Toggle -->
-        <button id="speedBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1C1F26] border border-[#2D3139] text-[#A8C7FA] text-xs font-semibold hover:border-[#4F86F7] transition-colors cursor-pointer">
+        <button id="speedBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#A8C7FA] text-xs font-semibold hover:border-[#4F86F7] transition-colors cursor-pointer">
           <span class="material-symbols-outlined text-[16px]">speed</span>
           <span id="speedLabel">1.0x</span>
         </button>
 
         <!-- Pause / Play Toggle -->
-        <button id="pauseBtn" class="w-9 h-9 rounded-full bg-[#1C1F26] border border-[#2D3139] flex items-center justify-center text-[#A8C7FA] hover:border-[#4F86F7] transition-colors cursor-pointer">
+        <button id="pauseBtn" class="w-9 h-9 rounded-full bg-[#161B26] border border-[#2B3240] flex items-center justify-center text-[#A8C7FA] hover:border-[#4F86F7] transition-colors cursor-pointer">
           <span id="pauseIcon" class="material-symbols-outlined text-[18px]">pause</span>
         </button>
-
-        <!-- Aesthetic Badge -->
-        <div class="w-9 h-9 rounded-full bg-[#1C1F26] border border-[#2D3139] flex items-center justify-center text-[#A8C7FA] hidden sm:flex">
-          <span class="material-symbols-outlined text-[18px]">auto_awesome</span>
-        </div>
       </div>
     </div>
 
@@ -69,312 +72,286 @@
     </div>
   </header>
 
-  <!-- MAIN CANVAS -->
+  <!-- MAIN CANVAS (Solar System Overview) -->
   <main class="flex-1 w-full h-full relative cursor-grab active:cursor-grabbing">
     <canvas id="spaceCanvas" class="w-full h-full"></canvas>
   </main>
 
-  <!-- BOTTOM INFORMATION SHEET -->
-  <section id="infoSheet" class="fixed bottom-0 left-0 right-0 z-40 bg-[#1B1B1F] rounded-t-[32px] p-6 pb-8 border-t border-white/10 shadow-2xl transition-transform duration-300 transform translate-y-full max-w-xl mx-auto md:mb-4 md:rounded-[32px] md:border">
-    <!-- Drag Handle -->
-    <div class="w-12 h-1.5 bg-[#44474E] rounded-full mx-auto mb-4 cursor-pointer" onclick="closeSheet()"></div>
+  <!-- ========================================================================= -->
+  <!-- FULL SCREEN IMMERSIVE PLANET VIEW (SATU LAYAR FULL SESUAI PERMINTAAN USER) -->
+  <!-- ========================================================================= -->
+  <div id="fullPlanetModal" class="fixed inset-0 z-50 bg-[#06080E] hidden flex flex-col overflow-hidden select-none">
+    
+    <!-- Top Floating Navigation Bar -->
+    <div class="absolute top-0 left-0 right-0 z-30 p-4 md:p-6 flex items-center justify-between pointer-events-none">
+      <button onclick="exitFullScreenPlanet()" class="pointer-events-auto flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#161B26]/90 border border-white/10 text-white hover:bg-[#1E2536] hover:border-[#4F86F7]/50 transition-all cursor-pointer shadow-lg backdrop-blur-md">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+        <span class="text-xs font-semibold tracking-wide">Kembali ke Tata Surya</span>
+      </button>
 
-    <div class="flex justify-between items-start mb-3">
-      <div class="flex items-center gap-3">
-        <div id="sheetAvatar" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center relative overflow-visible shadow-lg"></div>
-        <div>
-          <h2 id="sheetName" class="text-xl md:text-2xl font-bold text-white tracking-tight flex items-center gap-2">Bumi 🌍</h2>
-          <p id="sheetTagline" class="text-xs md:text-sm text-[#A8C7FA] font-medium">Zona Layak Huni</p>
-        </div>
-      </div>
+      <!-- Prev / Next Planet Switchers -->
+      <div class="pointer-events-auto flex items-center gap-2">
+        <button onclick="navigatePlanet(-1)" title="Planet Sebelumnya" class="w-9 h-9 rounded-full bg-[#161B26]/90 border border-white/10 text-[#C4C6D0] hover:text-white hover:border-[#4F86F7]/50 flex items-center justify-center transition-all cursor-pointer backdrop-blur-md">
+          <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+        </button>
 
-      <div class="flex items-center gap-2">
-        <span class="px-2.5 py-1 bg-[#4F86F7]/20 text-[#D2E3FC] text-[10px] uppercase font-bold rounded-full border border-[#4F86F7]/30 tracking-wider">Selected</span>
-        <button onclick="closeSheet()" class="w-7 h-7 rounded-full bg-white/5 hover:bg-white/10 text-[#919194] flex items-center justify-center cursor-pointer transition-colors">
-          <span class="material-symbols-outlined text-[16px]">close</span>
+        <span id="fullPillBadge" class="px-3.5 py-1 rounded-full bg-[#4F86F7]/20 border border-[#4F86F7]/40 text-[#D2E3FC] text-[11px] font-bold tracking-wider uppercase backdrop-blur-md">
+          PLANET
+        </span>
+
+        <button onclick="navigatePlanet(1)" title="Planet Berikutnya" class="w-9 h-9 rounded-full bg-[#161B26]/90 border border-white/10 text-[#C4C6D0] hover:text-white hover:border-[#4F86F7]/50 flex items-center justify-center transition-all cursor-pointer backdrop-blur-md">
+          <span class="material-symbols-outlined text-[18px]">chevron_right</span>
         </button>
       </div>
     </div>
 
-    <p id="sheetDesc" class="text-[#C4C6D0] text-xs md:text-sm leading-relaxed mb-4">
-      Deskripsi planet akan muncul di sini.
-    </p>
+    <!-- Full-Screen Interactive Planet Canvas (Centerpiece with animated orbiting bodies) -->
+    <div class="flex-1 w-full h-full relative cursor-pointer" id="fullCanvasContainer" onclick="triggerFullPlanetRipple()">
+      <canvas id="fullPlanetCanvas" class="w-full h-full"></canvas>
 
-    <!-- Stat Grid -->
-    <div class="grid grid-cols-2 gap-3 mb-3">
-      <div class="bg-[#2B2D33] p-3 rounded-2xl border border-[#3E4249]">
-        <p class="text-[10px] text-[#919194] uppercase tracking-widest mb-1">Masa Orbit</p>
-        <p id="sheetPeriod" class="text-sm text-white font-medium">365.25 Hari</p>
-      </div>
-      <div class="bg-[#2B2D33] p-3 rounded-2xl border border-[#3E4249]">
-        <p class="text-[10px] text-[#919194] uppercase tracking-widest mb-1">Kecepatan Animasi</p>
-        <p id="sheetSpeed" class="text-sm text-white font-medium">10s / orbit</p>
+      <div class="absolute top-20 left-1/2 -translate-x-1/2 text-center pointer-events-none">
+        <p class="text-[11px] text-white/40 uppercase tracking-widest">Ketuk layar untuk getaran kosmik</p>
       </div>
     </div>
 
-    <!-- Composition Card -->
-    <div class="bg-[#2B2D33] p-3 rounded-2xl border border-[#3E4249] mb-3">
-      <p class="text-[10px] text-[#919194] uppercase tracking-widest mb-1">Kandungan & Materi</p>
-      <p id="sheetComp" class="text-xs md:text-sm text-white font-medium leading-snug">Nitrogen, Oksigen, Air</p>
-    </div>
+    <!-- Bottom Information Panel (Collapsible / Slide-up) -->
+    <section id="fullInfoCard" class="absolute bottom-0 left-0 right-0 z-30 bg-[#121620]/95 backdrop-blur-xl border-t border-white/10 rounded-t-[32px] p-6 pb-8 shadow-2xl max-w-2xl mx-auto md:mb-4 md:rounded-[32px] md:border transition-all duration-300 max-h-[80vh] flex flex-col">
+      <!-- Toggle / Drag bar -->
+      <div class="w-12 h-1.5 bg-[#3E4249] rounded-full mx-auto mb-3 cursor-pointer hover:bg-[#5A606B] transition-colors" onclick="toggleInfoCollapse()"></div>
 
-    <!-- Earth Special Easter Egg Section -->
-    <div id="earthSpecial" class="hidden bg-[#3D2F1D] border border-[#6B4F27] p-3.5 rounded-2xl cursor-pointer select-none active:scale-[0.99] transition-transform">
-      <div class="flex items-start gap-3">
-        <div class="w-8 h-8 rounded-full bg-[#6B4F27] flex items-center justify-center flex-shrink-0">
-          <span class="material-symbols-outlined text-[#FFD600] text-[18px]">stars</span>
-        </div>
-        <div class="flex-1">
-          <div class="flex justify-between items-center">
-            <p class="text-xs text-[#FFD600] font-bold">Milky Way Insight & Easter Egg</p>
-            <span id="easterEggBadge" class="text-[10px] text-[#FFD600]/80">Klik aku 🚀</span>
+      <div class="flex justify-between items-start mb-3">
+        <div>
+          <div class="flex items-center gap-3">
+            <h2 id="fullName" class="text-2xl md:text-3xl font-bold text-white tracking-tight">Bumi</h2>
+            <span id="fullSubtitle" class="text-xs md:text-sm text-[#8AB4F8] font-medium">Dunia Biosfer Berpenghuni</span>
           </div>
-          <p id="easterEggBody" class="text-xs text-[#E3BB76] leading-snug italic mt-1">
-            "Kita ini di pinggiran galaksi Bima Sakti. Sertifikat sah Koperasi Desa Merah Putih galaksi Bima Sakti!"
-          </p>
-          <p id="easterEggBonus" class="text-[11px] text-[#FFE082] font-semibold mt-1.5 hidden">
-            🎉 Bonus Gen Z: Diskon roket luar angkasa 90% aktif di koperasi!
-          </p>
+          <p id="fullCategory" class="text-[11px] text-[#919194] uppercase tracking-wider mt-0.5">Objek Tata Surya</p>
+        </div>
+
+        <button onclick="toggleInfoCollapse()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-[#919194] flex items-center justify-center cursor-pointer transition-colors">
+          <span id="collapseIcon" class="material-symbols-outlined text-[18px]">expand_more</span>
+        </button>
+      </div>
+
+      <!-- Collapsible Body Section -->
+      <div id="fullInfoBody" class="overflow-y-auto no-scrollbar space-y-3.5 pr-1">
+        <!-- Description -->
+        <p id="fullDesc" class="text-[#C4C6D0] text-xs md:text-sm leading-relaxed">
+          Deskripsi edukatif planet.
+        </p>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-[#1C202B] p-3.5 rounded-2xl border border-[#2D3342]">
+            <p class="text-[10px] text-[#919194] uppercase tracking-widest mb-1 font-semibold">Masa Orbit</p>
+            <p id="fullPeriod" class="text-sm text-white font-semibold">365 Hari</p>
+          </div>
+          <div class="bg-[#1C202B] p-3.5 rounded-2xl border border-[#2D3342]">
+            <p class="text-[10px] text-[#919194] uppercase tracking-widest mb-1 font-semibold">Waktu Revolusi</p>
+            <p id="fullSpeed" class="text-sm text-white font-semibold">14 detik simulasi</p>
+          </div>
+        </div>
+
+        <!-- Composition Card -->
+        <div class="bg-[#1C202B] p-3.5 rounded-2xl border border-[#2D3342]">
+          <p class="text-[10px] text-[#919194] uppercase tracking-widest mb-1 font-semibold">Komposisi & Struktur</p>
+          <p id="fullComp" class="text-xs md:text-sm text-white leading-relaxed">Atmosfer nitrogen dan oksigen, kerak silikat, dan air laut.</p>
+        </div>
+
+        <!-- Earth Special Section: Milky Way & Koperasi Desa Merah Putih -->
+        <div id="fullEarthSpecial" class="hidden bg-[#2D2316] border border-[#5E4424] p-4 rounded-2xl">
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-full bg-[#5E4424] flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span class="material-symbols-outlined text-[#FFD600] text-[18px]">verified</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex justify-between items-center">
+                <p class="text-xs text-[#FFD600] font-bold">Lokasi Galaksi Bima Sakti</p>
+                <span class="text-[10px] text-[#FFD600]/80 border border-[#FFD600]/30 px-2 py-0.5 rounded-full font-medium">Terverifikasi</span>
+              </div>
+              <p class="text-xs text-[#E3BB76] leading-relaxed mt-1">
+                Bumi terletak di Lengan Orion, sekitar 26.000 tahun cahaya dari pusat galaksi Bima Sakti (Milky Way).
+              </p>
+              <div class="mt-2.5 pt-2 border-t border-[#5E4424]/60 flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#FFD600] text-[15px]">apartment</span>
+                <p class="text-[11px] text-[#FFE082] font-medium">
+                  Sertifikat sah: Penduduk Bumi resmi terdaftar di Koperasi Desa Merah Putih galaksi Bima Sakti.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
-  <!-- JAVASCRIPT SIMULATION LOGIC -->
+  <!-- JAVASCRIPT LOGIC -->
   <script>
-    // Celestial Data Definitions
+    // Celestial Planetary Dataset (Cleaned from excessive emojis & casual Gen Z tags)
     const PLANETS = [
       {
         id: "sun",
         name: "Matahari",
-        tagline: "Pusat Tata Surya",
+        tagline: "Bintang Induk Tata Surya",
+        category: "Bintang Tipe-G",
         r: 0,
         size: 38,
         color: "#FFA500",
         secColor: "#FFD600",
         dur: 0,
-        period: "Pusat Gravitasi",
-        comp: "Hidrogen (73%), Helium (25%), Plasma Panas",
-        desc: "Bintang induk kita yang memancarkan energi ke seluruh tata surya. Sangat panas, jangan disentuh!",
+        period: "Pusat Massa",
+        comp: "73% Hidrogen, 25% Helium, dan plasma panas bersuhu 5.500°C di fotosfer.",
+        desc: "Bintang induk di pusat tata surya kita. Menampung 99,8% massa seluruh tata surya dan memancarkan radiasi energi yang menghidupi Bumi.",
         isSun: true
       },
       {
         id: "mercury",
         name: "Merkurius",
-        tagline: "Si Gesit & Panas Dingin",
+        tagline: "Planet Logam Terdekat",
+        category: "Planet Kebumian",
         r: 38,
         size: 9,
         color: "#9E9E9E",
         secColor: "#BCAAA4",
         dur: 4.8,
         period: "88 Hari",
-        comp: "Besi padat (70%), Silikat & Kerak Batuan",
-        desc: "Planet terkecil dan terdekat ke Matahari. Siangnya super panas membakar, malamnya beku ekstrem."
+        comp: "Inti logam besi padat (70%), mantel silikat, kerak batuan.",
+        desc: "Planet terkecil dan paling dekat dengan Matahari. Karena hampir tidak memiliki atmosfer pelindung, fluktuasi suhunya sangat ekstrem antara siang dan malam."
       },
       {
         id: "venus",
         name: "Venus",
-        tagline: "Bintang Fajar Glowing",
+        tagline: "Bintang Kejora Berkabut Asam",
+        category: "Planet Kebumian",
         r: 62,
         size: 14,
         color: "#FFD54F",
         secColor: "#FFE082",
         dur: 7.2,
         period: "224.7 Hari",
-        comp: "Karbondioksida pekat, Awan Asam Sulfat",
-        desc: "Planet paling panas di tata surya karena efek rumah kaca ekstrem. Cantik di luar tapi berbahaya."
+        comp: "Atmosfer 96% karbon dioksida, awan asam sulfat pekat, batuan vulkanik.",
+        desc: "Planet terpanas di tata surya akibat efek rumah kaca tak terkendali. Lapisan awan tebalnya memantulkan cahaya dengan kuat ke antariksa."
       },
       {
         id: "earth",
         name: "Bumi",
-        tagline: "Zona Layak Huni",
+        tagline: "Dunia Biosfer Berpenghuni",
+        category: "Planet Kebumian",
         r: 88,
         size: 15,
         color: "#4F86F7",
         secColor: "#80DEEA",
         dur: 10.0,
         period: "365.25 Hari",
-        comp: "Nitrogen (78%), Oksigen (21%), Air H2O",
-        desc: "Rumah kita bersama! Satu-satunya tempat di galaksi yang punya kopi enak, internet kencang, dan meme receh. Jaga baik-baik ya!",
+        comp: "Atmosfer 78% nitrogen dan 21% oksigen, kerak silikat, 71% permukaan berupa air laut.",
+        desc: "Satu-satunya planet yang terbukti menopang kehidupan. Memiliki hidrosfer air cair yang stabil, atmosfer kaya oksigen, dan medan magnet protektif.",
         isEarth: true
       },
       {
         id: "mars",
         name: "Mars",
-        tagline: "Planet Merah Idaman Musk",
+        tagline: "Dunia Merah Oksida Besi",
+        category: "Planet Kebumian",
         r: 114,
         size: 11,
         color: "#FF5722",
         secColor: "#FF8A65",
         dur: 14.5,
         period: "687 Hari",
-        comp: "Besi Oksida (Karat), Silikon, Es Kering CO2",
-        desc: "Planet merah berdebu dengan gunung api tertinggi Olympus Mons. Banyak rover penjelajah nongkrong di sini."
+        comp: "Debu besi oksida (karat), batuan basal vulkanik, atmosfer tipis karbon dioksida.",
+        desc: "Planet merah yang permukaannya dipenuhi debu besi oksida. Memiliki ngarai Valles Marineris dan gunung berapi terbesar di tata surya, Olympus Mons."
       },
       {
         id: "jupiter",
         name: "Jupiter",
-        tagline: "Raksasa Pelindung Kita",
+        tagline: "Raksasa Gas Pengendali Gravitasi",
+        category: "Raksasa Gas",
         r: 146,
         size: 26,
         color: "#FFA726",
         secColor: "#FFE082",
         dur: 22.0,
         period: "11.86 Tahun",
-        comp: "Gas Hidrogen (90%), Helium, Amonia",
-        desc: "Planet terbesar di tata surya dengan Bintik Merah Raksasa. Gravitasinya jadi perisai pelindung Bumi dari asteroid."
+        comp: "Gas hidrogen (90%), helium (10%), amonia, dan inti batuan terkompresi.",
+        desc: "Planet terbesar di tata surya kita. Badai antisiklon raksasa Great Red Spot telah berputar ratusan tahun. Gravitasinya bertindak sebagai perisai pelindung planet dalam."
       },
       {
         id: "saturn",
         name: "Saturnus",
-        tagline: "Raja Cincin Megah",
+        tagline: "Sistem Cincin Es Megah",
+        category: "Raksasa Gas",
         r: 178,
         size: 22,
         color: "#E3BB76",
         secColor: "#FFF9C4",
         dur: 28.0,
         period: "29.45 Tahun",
-        comp: "Gas Hidrogen, Helium, Cincin Kristal Es & Batuan",
-        desc: "Paling fotogenik berkat cincin esnya yang megah. Kerapatannya sangat rendah, bisa mengapung kalau ada bak mandi raksasa!",
+        comp: "Gas hidrogen, helium, es air, dan cincin partikel es kristal reflektif.",
+        desc: "Terkenal dengan cincin konsentris memukau yang tersusun dari miliaran bongkahan es dan debu angkasa. Kerapatan jenisnya lebih ringan dari air.",
         hasRings: true
       },
       {
         id: "uranus",
         name: "Uranus",
-        tagline: "Si Es Miring Santai",
+        tagline: "Raksasa Es Sumbu Miring",
+        category: "Raksasa Es",
         r: 206,
         size: 17,
         color: "#80DEEA",
         secColor: "#E0F2F1",
         dur: 36.0,
         period: "84 Tahun",
-        comp: "Es Air, Amonia, Gas Metana (Pemberi warna toska)",
-        desc: "Raksasa es dengan sumbu rotasi miring 98 derajat, menggelinding di orbitnya bagai rebahan santai di angkasa."
+        comp: "Fluida es air, metana, amonia, dengan atmosfer kaya hidrogen dan helium.",
+        desc: "Raksasa es unik dengan kemiringan sumbu rotasi 98 derajat, sehingga tampak menggelinding di bidang orbitnya. Memiliki atmosfer terdingin di tata surya."
       },
       {
         id: "neptune",
         name: "Neptunus",
-        tagline: "Penguasa Badai Supersonik",
+        tagline: "Dunia Badai Supersonik Terluar",
+        category: "Raksasa Es",
         r: 232,
         size: 16,
         color: "#29B6F6",
         secColor: "#0288D1",
         dur: 44.0,
         period: "164.8 Tahun",
-        comp: "Es Metana, Air, Amonia, Inti Batuan Padat",
-        desc: "Planet terluar berwarna biru tua samudra. Memiliki angin badai tercepat di tata surya hingga lebih dari 2.100 km/jam."
+        comp: "Mantel es air, amonia, metana tebal, dan badai gas atmosferik cepat.",
+        desc: "Planet terluar berwarna biru pekat akibat metana atmosferik. Dikenal memiliki hembusan angin badai supersonik tercepat di tata surya mencapai lebih dari 2.100 km/jam."
       }
     ];
 
-    // Particle Types tailored to composition
-    function generateParticles(planet) {
-      const count = planet.isSun ? 26 : (planet.hasRings ? 26 : 20);
-      const particles = [];
-      for (let i = 0; i < count; i++) {
-        let color = planet.secColor;
-        let size = Math.random() * 2 + 1;
-        let type = "dust";
-
-        if (planet.id === "sun") {
-          color = Math.random() > 0.5 ? "#FFD600" : "#FF5722";
-          size = Math.random() * 3 + 1.5;
-          type = "plasma";
-        } else if (planet.id === "mercury" || planet.id === "mars") {
-          color = planet.id === "mars" ? "#FF7043" : "#B0BEC5";
-          size = Math.random() * 1.6 + 0.8;
-          type = "rock";
-        } else if (planet.id === "venus") {
-          color = "#FFF59D";
-          size = Math.random() * 3 + 1.5;
-          type = "sulfur";
-        } else if (planet.id === "earth") {
-          color = Math.random() > 0.5 ? "#E0F7FA" : "#80DEEA";
-          size = Math.random() * 2.2 + 1;
-          type = "water";
-        } else if (planet.id === "jupiter") {
-          color = Math.random() > 0.5 ? "#FFE0B2" : "#FFCC80";
-          size = Math.random() * 4 + 2;
-          type = "gas";
-        } else if (planet.id === "saturn") {
-          color = Math.random() > 0.4 ? "#FFFFFF" : "#FFF9C4";
-          size = Math.random() * 2.2 + 1;
-          type = "ice";
-        } else if (planet.id === "neptune") {
-          color = "#81D4FA";
-          size = Math.random() * 2.5 + 1.2;
-          type = "wind";
-        }
-
-        particles.push({
-          angle: Math.random() * Math.PI * 2,
-          distRatio: Math.random() * 0.9 + 1.2,
-          speed: (Math.random() * 0.8 + 0.4) * (Math.random() > 0.5 ? 1 : -1),
-          size,
-          color,
-          type,
-          alpha: Math.random() * 0.4 + 0.4
-        });
-      }
-      return particles;
-    }
-
-    const planetParticlesMap = {};
-    PLANETS.forEach(p => planetParticlesMap[p.id] = generateParticles(p));
-
-    // Starfield Generation with Parallax (3 Layers)
-    const STAR_COUNT = 130;
+    // Starfield for main canvas
     const stars = [];
-    for (let i = 0; i < STAR_COUNT; i++) {
-      let depth = 0.2;
-      let size = Math.random() * 1 + 0.8;
-      let alpha = Math.random() * 0.3 + 0.2;
-      let color = "#FFFFFF";
-
-      if (i > 80) {
-        depth = 1.25; // Foreground
-        size = Math.random() * 2.2 + 2;
-        alpha = Math.random() * 0.4 + 0.6;
-        color = Math.random() > 0.5 ? "#FFFFFF" : "#FFF9E6";
-      } else if (i > 40) {
-        depth = 0.6; // Midground
-        size = Math.random() * 1.5 + 1.2;
-        alpha = Math.random() * 0.3 + 0.4;
-        color = ["#D6E4FF", "#FFF0D4", "#FFFFFF"][Math.floor(Math.random() * 3)];
-      }
-
+    for (let i = 0; i < 130; i++) {
       stars.push({
-        xRatio: Math.random(),
-        yRatio: Math.random(),
-        size,
-        alpha,
-        twinkleSpeed: Math.random() * 2 + 1,
-        depth,
-        color
+        x: Math.random(),
+        y: Math.random(),
+        size: Math.random() * 1.8 + 0.8,
+        alpha: Math.random() * 0.5 + 0.3,
+        twinkle: Math.random() * 2 + 1,
+        depth: (i > 80 ? 1.2 : (i > 40 ? 0.6 : 0.2))
       });
     }
 
     // State Variables
     let selectedPlanet = null;
     let hoveredPlanet = null;
-    let particleAlphas = {};
-    PLANETS.forEach(p => particleAlphas[p.id] = 0);
-
     let speedMultiplier = 1.0;
     let isPaused = false;
     let elapsedTime = 0;
     let lastTime = performance.now();
 
-    // Pulse & Shake state
-    let tapPulsePlanet = null;
-    let tapStartTime = 0;
-
-    // Pan & Zoom
     let scale = 1.0;
     let panOffset = { x: 0, y: 0 };
     let isDragging = false;
     let dragStart = { x: 0, y: 0 };
 
-    // Canvas Setup
+    // Full screen planet state
+    let fullPlanet = null;
+    let fullPlanetRipple = 0;
+    let isInfoCollapsed = false;
+
+    // Main Space Canvas
     const canvas = document.getElementById("spaceCanvas");
     const ctx = canvas.getContext("2d");
     let currentPositions = {};
@@ -384,11 +361,22 @@
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
       ctx.scale(dpr, dpr);
+
+      // Also resize full planet canvas if visible
+      if (fullCanvas) {
+        fullCanvas.width = window.innerWidth * dpr;
+        fullCanvas.height = window.innerHeight * dpr;
+        fullCtx.scale(dpr, dpr);
+      }
     }
     window.addEventListener("resize", resizeCanvas);
+
+    // Full Planet Canvas
+    const fullCanvas = document.getElementById("fullPlanetCanvas");
+    const fullCtx = fullCanvas.getContext("2d");
     resizeCanvas();
 
-    // Render Loop
+    // Master Animation Loop
     function animate(currentTime) {
       const dt = Math.min((currentTime - lastTime) / 1000, 0.1);
       lastTime = currentTime;
@@ -397,25 +385,20 @@
         elapsedTime += dt * speedMultiplier;
       }
 
-      // Smooth hover/active transition for particles
-      PLANETS.forEach(p => {
-        const isActive = (hoveredPlanet && hoveredPlanet.id === p.id) || (selectedPlanet && selectedPlanet.id === p.id);
-        const target = isActive ? 1.0 : 0.0;
-        const current = particleAlphas[p.id] || 0;
-        if (Math.abs(target - current) > 0.01) {
-          particleAlphas[p.id] += (target - current) * dt * 8;
-        } else {
-          particleAlphas[p.id] = target;
-        }
-      });
+      if (fullPlanet) {
+        // Draw Full-Screen Planet Mode
+        drawFullPlanetView(dt);
+      } else {
+        // Draw Solar System Overview Mode
+        drawSolarSystemOverview();
+      }
 
-      draw();
       requestAnimationFrame(animate);
     }
     requestAnimationFrame(animate);
 
-    // Main Draw Function
-    function draw() {
+    // 1. Render Solar System Overview
+    function drawSolarSystemOverview() {
       const w = window.innerWidth;
       const h = window.innerHeight;
       const centerX = w / 2 + panOffset.x;
@@ -423,249 +406,468 @@
 
       ctx.clearRect(0, 0, w, h);
 
-      // 1. Deep Space Radial Background Gradient
-      const bgGrad = ctx.createRadialGradient(centerX, centerY, 50, centerX, centerY, Math.max(w, h) * 0.85);
-      bgGrad.addColorStop(0, "#141824");
-      bgGrad.addColorStop(0.5, "#0B0E14");
-      bgGrad.addColorStop(1, "#05070C");
+      // Cosmic background
+      const bgGrad = ctx.createRadialGradient(centerX, centerY, 40, centerX, centerY, Math.max(w, h) * 0.9);
+      bgGrad.addColorStop(0, "#101624");
+      bgGrad.addColorStop(0.5, "#070A10");
+      bgGrad.addColorStop(1, "#040508");
       ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, w, h);
 
-      // 2. Parallax Stars with 3D Depth
-      stars.forEach(star => {
-        const px = ((star.xRatio * w + panOffset.x * star.depth) % w + w) % w;
-        const py = ((star.yRatio * h + panOffset.y * star.depth) % h + h) % h;
-        const twinkle = (Math.sin(elapsedTime * star.twinkleSpeed + star.xRatio * 10) + 1) / 2;
-        const alpha = star.alpha * (0.5 + 0.5 * twinkle);
-
+      // Stars
+      stars.forEach(s => {
+        const px = ((s.x * w + panOffset.x * s.depth) % w + w) % w;
+        const py = ((s.y * h + panOffset.y * s.depth) % h + h) % h;
+        const twinkle = (Math.sin(elapsedTime * s.twinkle + s.x * 10) + 1) / 2;
         ctx.beginPath();
-        ctx.arc(px, py, star.size * Math.min(Math.max(scale, 0.8), 1.3), 0, Math.PI * 2);
-        ctx.fillStyle = star.color;
-        ctx.globalAlpha = alpha;
+        ctx.arc(px, py, s.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha * (0.6 + 0.4 * twinkle)})`;
         ctx.fill();
-        ctx.globalAlpha = 1.0;
       });
 
-      // 3. Orbits & Scale Calculation
       const maxSolarR = 240;
-      const baseScale = (Math.min(w, h) / 2 * 0.86) / maxSolarR;
-      const effRadiusScale = baseScale * scale;
-
+      const minDimension = Math.min(w, h);
+      const effRadiusScale = ((minDimension * 0.44) / maxSolarR) * scale;
       const newPositions = {};
 
-      // Draw Orbit Paths
-      PLANETS.forEach(p => {
-        if (p.r === 0) return;
-        const orbitRadius = p.r * effRadiusScale;
-        const isSel = selectedPlanet && selectedPlanet.id === p.id;
-        const isHov = hoveredPlanet && hoveredPlanet.id === p.id;
-
+      // Draw Orbit Lines
+      PLANETS.slice(1).forEach(planet => {
+        const orbitR = planet.r * effRadiusScale;
         ctx.beginPath();
-        ctx.arc(centerX, centerY, orbitRadius, 0, Math.PI * 2);
-        ctx.strokeStyle = isSel ? "rgba(79, 134, 247, 0.45)" : (isHov ? "rgba(79, 134, 247, 0.28)" : "rgba(255, 255, 255, 0.08)");
-        ctx.lineWidth = isSel || isHov ? 1.8 : 1.0;
-        if (!isSel && !isHov) {
-          ctx.setLineDash([5, 7]);
-        } else {
-          ctx.setLineDash([]);
-        }
+        ctx.arc(centerX, centerY, orbitR, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.07)";
+        ctx.lineWidth = 1;
         ctx.stroke();
-        ctx.setLineDash([]);
       });
 
-      // 4. Sun Rendering
+      // Sun
       const sun = PLANETS[0];
-      const sunPulse = 1.0 + 0.06 * Math.sin(elapsedTime * 2.8);
+      const sunRadius = sun.size * 0.5 * Math.min(Math.max(scale, 0.8), 1.3);
+      newPositions[sun.id] = { pos: { x: centerX, y: centerY }, radius: Math.max(sunRadius * 2, 40) };
 
-      let sunScaleMulti = 1.0;
-      let sunShakeX = 0;
-      if (tapPulsePlanet === sun.id) {
-        const t = (elapsedTime - tapStartTime) / 0.38;
-        if (t >= 0 && t <= 1) {
-          sunScaleMulti = 1.0 + 0.22 * Math.sin(t * Math.PI);
-          sunShakeX = Math.sin(t * 5 * Math.PI * 2) * (1 - t) * 3;
-        } else {
-          tapPulsePlanet = null;
-        }
-      }
-
-      const sunRadius = sun.size * 0.5 * scale * sunScaleMulti;
-      const sunCenter = { x: centerX + sunShakeX, y: centerY };
-      newPositions[sun.id] = { pos: sunCenter, radius: Math.max(sunRadius * 2, 38) };
-
-      // Outer Glow
-      const sunGlowGrad = ctx.createRadialGradient(sunCenter.x, sunCenter.y, sunRadius * 0.5, sunCenter.x, sunCenter.y, sunRadius * 3.6 * sunPulse);
-      sunGlowGrad.addColorStop(0, "rgba(255, 165, 0, 0.55)");
-      sunGlowGrad.addColorStop(0.5, "rgba(255, 138, 0, 0.2)");
-      sunGlowGrad.addColorStop(1, "transparent");
-      ctx.fillStyle = sunGlowGrad;
+      // Sun glow
+      const sunGlow = ctx.createRadialGradient(centerX, centerY, sunRadius * 0.5, centerX, centerY, sunRadius * 2.8);
+      sunGlow.addColorStop(0, "rgba(255, 180, 0, 0.45)");
+      sunGlow.addColorStop(1, "transparent");
+      ctx.fillStyle = sunGlow;
       ctx.beginPath();
-      ctx.arc(sunCenter.x, sunCenter.y, sunRadius * 3.6 * sunPulse, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY, sunRadius * 2.8, 0, Math.PI * 2);
       ctx.fill();
 
-      // Sun Core
-      const sunCoreGrad = ctx.createRadialGradient(sunCenter.x - sunRadius * 0.2, sunCenter.y - sunRadius * 0.2, sunRadius * 0.1, sunCenter.x, sunCenter.y, sunRadius);
-      sunCoreGrad.addColorStop(0, "#FFFDF0");
-      sunCoreGrad.addColorStop(0.4, "#FFD600");
-      sunCoreGrad.addColorStop(1, "#FF8A00");
-      ctx.fillStyle = sunCoreGrad;
+      // Sun core
+      const sunCore = ctx.createRadialGradient(centerX - sunRadius * 0.25, centerY - sunRadius * 0.25, sunRadius * 0.1, centerX, centerY, sunRadius);
+      sunCore.addColorStop(0, "#FFF9D6");
+      sunCore.addColorStop(0.4, "#FFC107");
+      sunCore.addColorStop(1, "#FF5722");
+      ctx.fillStyle = sunCore;
       ctx.beginPath();
-      ctx.arc(sunCenter.x, sunCenter.y, sunRadius, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY, sunRadius, 0, Math.PI * 2);
       ctx.fill();
 
-      // Sun Particles
-      if (particleAlphas[sun.id] > 0.01) {
-        drawParticles(planetParticlesMap[sun.id], sunCenter, sunRadius, particleAlphas[sun.id]);
-      }
-
-      // 5. Planets Rendering
+      // Planets
       PLANETS.slice(1).forEach(planet => {
         const orbitR = planet.r * effRadiusScale;
         const angle = planet.dur > 0 ? ((elapsedTime / planet.dur) * Math.PI * 2) : 0;
-
-        let scaleMulti = 1.0;
-        let shakeX = 0;
-        if (tapPulsePlanet === planet.id) {
-          const t = (elapsedTime - tapStartTime) / 0.38;
-          if (t >= 0 && t <= 1) {
-            scaleMulti = 1.0 + 0.28 * Math.sin(t * Math.PI);
-            shakeX = Math.sin(t * 5 * Math.PI * 2) * (1 - t) * 3.5;
-          } else {
-            tapPulsePlanet = null;
-          }
-        }
-
-        const px = centerX + orbitR * Math.cos(angle) + shakeX;
+        const px = centerX + orbitR * Math.cos(angle);
         const py = centerY + orbitR * Math.sin(angle);
-        const pRadius = planet.size * 0.5 * Math.min(Math.max(scale, 0.8), 1.4) * scaleMulti;
-        const pos = { x: px, y: py };
+        const pRadius = planet.size * 0.5 * Math.min(Math.max(scale, 0.8), 1.3);
 
-        newPositions[planet.id] = { pos, radius: Math.max(pRadius * 2.6, 36) };
+        newPositions[planet.id] = { pos: { x: px, y: py }, radius: Math.max(pRadius * 2.4, 34) };
 
-        const isSel = selectedPlanet && selectedPlanet.id === planet.id;
         const isHov = hoveredPlanet && hoveredPlanet.id === planet.id;
-
-        // Selection Beacon Ring
-        if (isSel) {
-          const beaconPulse = 1.0 + 0.4 * Math.sin(elapsedTime * 4.5);
-          ctx.beginPath();
-          ctx.arc(px, py, pRadius * beaconPulse + 10, 0, Math.PI * 2);
-          ctx.strokeStyle = "rgba(79, 134, 247, 0.3)";
-          ctx.lineWidth = 3;
-          ctx.stroke();
-
-          ctx.beginPath();
-          ctx.arc(px, py, pRadius * beaconPulse + 5, 0, Math.PI * 2);
-          ctx.strokeStyle = "rgba(79, 134, 247, 0.8)";
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
-        } else if (isHov) {
+        if (isHov) {
           ctx.beginPath();
           ctx.arc(px, py, pRadius + 6, 0, Math.PI * 2);
-          ctx.strokeStyle = "rgba(79, 134, 247, 0.45)";
-          ctx.lineWidth = 1.8;
+          ctx.strokeStyle = "rgba(79, 134, 247, 0.6)";
+          ctx.lineWidth = 1.5;
           ctx.stroke();
         }
 
-        // Floating Dust/Gas Particles on hover or selected
-        if (particleAlphas[planet.id] > 0.01) {
-          drawParticles(planetParticlesMap[planet.id], pos, pRadius, particleAlphas[planet.id]);
-        }
-
-        // Saturn Rings (Back)
+        // Saturn Rings
         if (planet.hasRings) {
-          drawSaturnRings(pos, pRadius, planet.color, false);
+          ctx.save();
+          ctx.translate(px, py);
+          ctx.rotate((22 * Math.PI) / 180);
+          ctx.beginPath();
+          ctx.ellipse(0, 0, pRadius * 2.3, pRadius * 0.65, 0, 0, Math.PI * 2);
+          ctx.strokeStyle = "rgba(227, 187, 118, 0.75)";
+          ctx.lineWidth = pRadius * 0.4;
+          ctx.stroke();
+          ctx.restore();
         }
 
-        // 3D Spherical Light Gradient facing Sun
-        const lightDx = sunCenter.x - px;
-        const lightDy = sunCenter.y - py;
-        const lightLen = Math.sqrt(lightDx * lightDx + lightDy * lightDy) || 1;
-        const hx = px + (lightDx / lightLen) * (pRadius * 0.35);
-        const hy = py + (lightDy / lightLen) * (pRadius * 0.35);
-
-        const sphereGrad = ctx.createRadialGradient(hx, hy, pRadius * 0.1, px, py, pRadius * 1.3);
+        // 3D Sphere lighting
+        const sphereGrad = ctx.createRadialGradient(px - pRadius * 0.3, py - pRadius * 0.3, pRadius * 0.1, px, py, pRadius * 1.2);
         sphereGrad.addColorStop(0, planet.secColor);
         sphereGrad.addColorStop(0.6, planet.color);
-        sphereGrad.addColorStop(1, "#07090F");
+        sphereGrad.addColorStop(1, "#080B12");
 
         ctx.beginPath();
         ctx.arc(px, py, pRadius, 0, Math.PI * 2);
         ctx.fillStyle = sphereGrad;
         ctx.fill();
-
-        // Saturn Rings (Front)
-        if (planet.hasRings) {
-          drawSaturnRings(pos, pRadius, planet.color, true);
-        }
       });
 
       currentPositions = newPositions;
     }
 
-    // Draw Particles Routine
-    function drawParticles(particles, center, planetRadius, alphaFactor) {
-      particles.forEach(p => {
-        const curAngle = p.angle + elapsedTime * p.speed;
-        const wobble = Math.sin(elapsedTime * 2 + p.angle) * 2.5;
-        const dist = planetRadius * p.distRatio + wobble;
+    // 2. Render Full-Screen Immersive Planet View with all animated objects
+    function drawFullPlanetView(dt) {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const centerX = w / 2;
+      // Position planet nicely above the bottom card
+      const centerY = isInfoCollapsed ? h * 0.5 : h * 0.36;
 
-        const px = center.x + dist * Math.cos(curAngle);
-        const py = center.y + dist * Math.sin(curAngle);
-        const finalAlpha = p.alpha * alphaFactor;
+      fullCtx.clearRect(0, 0, w, h);
 
-        if (p.type === "wind") {
-          // Wind Streak line
-          const len = p.size * 3.5;
-          const dx = -Math.sin(curAngle) * len;
-          const dy = Math.cos(curAngle) * len;
-          ctx.beginPath();
-          ctx.moveTo(px, py);
-          ctx.lineTo(px + dx, py + dy);
-          ctx.strokeStyle = p.color;
-          ctx.globalAlpha = finalAlpha;
-          ctx.lineWidth = p.size * 0.8;
-          ctx.lineCap = "round";
-          ctx.stroke();
-          ctx.globalAlpha = 1.0;
-        } else {
-          ctx.beginPath();
-          ctx.arc(px, py, p.size, 0, Math.PI * 2);
-          ctx.fillStyle = p.color;
-          ctx.globalAlpha = finalAlpha;
-          ctx.fill();
-          ctx.globalAlpha = 1.0;
-        }
+      // Deep space backdrop with dynamic colored aura
+      const baseGrad = fullCtx.createRadialGradient(centerX, centerY, 50, centerX, centerY, Math.max(w, h) * 0.85);
+      baseGrad.addColorStop(0, "#101626");
+      baseGrad.addColorStop(0.6, "#06080E");
+      baseGrad.addColorStop(1, "#020305");
+      fullCtx.fillStyle = baseGrad;
+      fullCtx.fillRect(0, 0, w, h);
+
+      // Background stars
+      stars.forEach(s => {
+        const px = s.x * w;
+        const py = s.y * h;
+        fullCtx.beginPath();
+        fullCtx.arc(px, py, s.size * 0.9, 0, Math.PI * 2);
+        fullCtx.fillStyle = `rgba(255, 255, 255, ${s.alpha * 0.5})`;
+        fullCtx.fill();
       });
-    }
 
-    // Draw Saturn Rings
-    function drawSaturnRings(center, radius, color, isFront) {
-      ctx.save();
-      ctx.translate(center.x, center.y);
-      ctx.rotate((22 * Math.PI) / 180);
+      const p = fullPlanet;
+      // Large impressive centerpiece planet radius
+      const planetRadius = Math.min(w, h) * 0.23;
 
-      const rx = radius * 2.5;
-      const ry = radius * 0.75;
-
-      ctx.beginPath();
-      if (!isFront) {
-        // Back half of ring
-        ctx.ellipse(0, 0, rx, ry, 0, Math.PI, Math.PI * 2);
-        ctx.strokeStyle = "rgba(227, 187, 118, 0.45)";
-        ctx.lineWidth = radius * 0.45;
-        ctx.stroke();
-      } else {
-        // Front half of ring
-        ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI);
-        ctx.strokeStyle = "rgba(227, 187, 118, 0.85)";
-        ctx.lineWidth = radius * 0.45;
-        ctx.stroke();
+      // Tap ripple animation
+      if (fullPlanetRipple > 0) {
+        fullPlanetRipple -= dt * 1.5;
+        const rFrac = 1.0 - Math.max(fullPlanetRipple, 0);
+        fullCtx.beginPath();
+        fullCtx.arc(centerX, centerY, planetRadius * (1.0 + rFrac * 1.2), 0, Math.PI * 2);
+        fullCtx.strokeStyle = `${p.secColor}`;
+        fullCtx.globalAlpha = Math.max(fullPlanetRipple, 0) * 0.6;
+        fullCtx.lineWidth = 2.5;
+        fullCtx.stroke();
+        fullCtx.globalAlpha = 1.0;
       }
-      ctx.restore();
+
+      // Continuous breathing atmospheric aura
+      const breath = 1.0 + 0.08 * Math.sin(elapsedTime * 2.0);
+      const auraGrad = fullCtx.createRadialGradient(centerX, centerY, planetRadius * 0.8, centerX, centerY, planetRadius * 2.4 * breath);
+      auraGrad.addColorStop(0, `${p.color}44`);
+      auraGrad.addColorStop(0.5, `${p.secColor}15`);
+      auraGrad.addColorStop(1, "transparent");
+      fullCtx.fillStyle = auraGrad;
+      fullCtx.beginPath();
+      fullCtx.arc(centerX, centerY, planetRadius * 2.4 * breath, 0, Math.PI * 2);
+      fullCtx.fill();
+
+      // ============================================
+      // DRAW CELESTIAL PHENOMENA SPECIFIC TO PLANET
+      // ============================================
+
+      // A. Back-layer orbiting objects (Behind Planet)
+      drawPlanetOrbiters(p, centerX, centerY, planetRadius, true);
+
+      // B. Planet Sphere Body
+      const sphereGrad = fullCtx.createRadialGradient(
+        centerX - planetRadius * 0.35,
+        centerY - planetRadius * 0.35,
+        planetRadius * 0.1,
+        centerX,
+        centerY,
+        planetRadius * 1.25
+      );
+      sphereGrad.addColorStop(0, p.secColor);
+      sphereGrad.addColorStop(0.5, p.color);
+      sphereGrad.addColorStop(1, "#05070D");
+
+      fullCtx.beginPath();
+      fullCtx.arc(centerX, centerY, planetRadius, 0, Math.PI * 2);
+      fullCtx.fillStyle = sphereGrad;
+      fullCtx.fill();
+
+      // C. Authentic atmospheric & surface animations
+      if (p.id === "sun") {
+        // Corona Prominences & Solar Flares
+        for (let i = 0; i < 10; i++) {
+          const flareAngle = (i * (Math.PI * 2 / 10)) + elapsedTime * 0.3;
+          const flareLen = planetRadius * (1.2 + 0.2 * Math.sin(elapsedTime * 3.5 + i));
+          const fx = centerX + Math.cos(flareAngle) * flareLen;
+          const fy = centerY + Math.sin(flareAngle) * flareLen;
+
+          fullCtx.beginPath();
+          fullCtx.moveTo(centerX, centerY);
+          fullCtx.lineTo(fx, fy);
+          fullCtx.strokeStyle = i % 2 === 0 ? "rgba(255, 214, 0, 0.4)" : "rgba(255, 87, 34, 0.35)";
+          fullCtx.lineWidth = 14;
+          fullCtx.lineCap = "round";
+          fullCtx.stroke();
+        }
+      } else if (p.id === "earth") {
+        // Swirling white clouds & continental masses
+        fullCtx.save();
+        fullCtx.beginPath();
+        fullCtx.arc(centerX, centerY, planetRadius, 0, Math.PI * 2);
+        fullCtx.clip();
+
+        // Greenish continental patch
+        fullCtx.fillStyle = "rgba(46, 125, 50, 0.55)";
+        fullCtx.beginPath();
+        fullCtx.arc(centerX - planetRadius * 0.2, centerY - planetRadius * 0.1, planetRadius * 0.45, 0, Math.PI * 2);
+        fullCtx.fill();
+
+        // Swirling translucent cloud belts
+        for (let i = 0; i < 3; i++) {
+          const cloudY = centerY + (i - 1) * planetRadius * 0.4;
+          const cloudShift = Math.sin(elapsedTime * 0.5 + i) * planetRadius * 0.3;
+          fullCtx.fillStyle = "rgba(255, 255, 255, 0.35)";
+          fullCtx.beginPath();
+          fullCtx.ellipse(centerX + cloudShift, cloudY, planetRadius * 0.75, 12, 0, 0, Math.PI * 2);
+          fullCtx.fill();
+        }
+        fullCtx.restore();
+      } else if (p.id === "jupiter") {
+        // Swirling gas bands & Great Red Spot
+        fullCtx.save();
+        fullCtx.beginPath();
+        fullCtx.arc(centerX, centerY, planetRadius, 0, Math.PI * 2);
+        fullCtx.clip();
+
+        const bands = ["rgba(141, 110, 99, 0.5)", "rgba(215, 204, 200, 0.35)", "rgba(93, 64, 55, 0.55)", "rgba(188, 170, 164, 0.35)"];
+        bands.forEach((bColor, idx) => {
+          const by = centerY + (idx - 1.5) * planetRadius * 0.45;
+          fullCtx.fillStyle = bColor;
+          fullCtx.fillRect(centerX - planetRadius, by, planetRadius * 2, 14);
+        });
+
+        // Great Red Spot
+        const spotX = centerX + Math.cos(elapsedTime * 0.4) * (planetRadius * 0.45);
+        const spotY = centerY + planetRadius * 0.32;
+        fullCtx.fillStyle = "#B71C1C";
+        fullCtx.beginPath();
+        fullCtx.ellipse(spotX, spotY, planetRadius * 0.22, planetRadius * 0.12, 0, 0, Math.PI * 2);
+        fullCtx.fill();
+        fullCtx.restore();
+      } else if (p.id === "mars") {
+        // Polar white ice cap
+        fullCtx.save();
+        fullCtx.beginPath();
+        fullCtx.arc(centerX, centerY, planetRadius, 0, Math.PI * 2);
+        fullCtx.clip();
+        fullCtx.fillStyle = "rgba(236, 239, 241, 0.85)";
+        fullCtx.beginPath();
+        fullCtx.ellipse(centerX, centerY - planetRadius * 0.85, planetRadius * 0.45, planetRadius * 0.2, 0, 0, Math.PI * 2);
+        fullCtx.fill();
+        fullCtx.restore();
+      }
+
+      // D. Saturn rings (Front & Center)
+      if (p.hasRings) {
+        fullCtx.save();
+        fullCtx.translate(centerX, centerY);
+        fullCtx.rotate((20 * Math.PI) / 180);
+
+        // Concentric Rings
+        fullCtx.beginPath();
+        fullCtx.ellipse(0, 0, planetRadius * 2.2, planetRadius * 0.65, 0, 0, Math.PI * 2);
+        fullCtx.strokeStyle = "rgba(255, 249, 196, 0.75)";
+        fullCtx.lineWidth = planetRadius * 0.45;
+        fullCtx.stroke();
+
+        // Cassini Gap
+        fullCtx.beginPath();
+        fullCtx.ellipse(0, 0, planetRadius * 2.1, planetRadius * 0.62, 0, 0, Math.PI * 2);
+        fullCtx.strokeStyle = "#06080E";
+        fullCtx.lineWidth = 3;
+        fullCtx.stroke();
+        fullCtx.restore();
+      }
+
+      // E. Atmosphere Rim Glow
+      fullCtx.beginPath();
+      fullCtx.arc(centerX, centerY, planetRadius, 0, Math.PI * 2);
+      fullCtx.strokeStyle = `${p.secColor}66`;
+      fullCtx.lineWidth = 2.5;
+      fullCtx.stroke();
+
+      // F. Front-layer orbiting objects (In Front of Planet)
+      drawPlanetOrbiters(p, centerX, centerY, planetRadius, false);
     }
 
-    // Pointer Events: Hover & Click Detection
+    // Helper: Draw Orbiting Moons, Satellites, and Space Objects
+    function drawPlanetOrbiters(planet, cx, cy, radius, isBehind) {
+      if (planet.id === "earth") {
+        // Moon
+        const moonSpeed = elapsedTime * 0.6;
+        const mx = cx + Math.cos(moonSpeed) * (radius * 1.8);
+        const my = cy + Math.sin(moonSpeed) * (radius * 0.45);
+        const moonIsBehind = Math.sin(moonSpeed) < 0;
+
+        if (isBehind === moonIsBehind) {
+          fullCtx.beginPath();
+          fullCtx.arc(mx, my, radius * 0.16, 0, Math.PI * 2);
+          fullCtx.fillStyle = "#D4D8E2";
+          fullCtx.fill();
+          // Moon shadow
+          fullCtx.beginPath();
+          fullCtx.arc(mx + 3, my, radius * 0.13, 0, Math.PI * 2);
+          fullCtx.fillStyle = "rgba(40, 45, 60, 0.7)";
+          fullCtx.fill();
+        }
+
+        // Artificial Satellite (ISS style)
+        const satSpeed = elapsedTime * 1.2;
+        const sx = cx + Math.cos(satSpeed) * (radius * 1.35);
+        const sy = cy - Math.sin(satSpeed) * (radius * 0.6);
+        const satIsBehind = -Math.sin(satSpeed) < 0;
+
+        if (isBehind === satIsBehind) {
+          // Solar wings
+          fullCtx.beginPath();
+          fullCtx.moveTo(sx - 8, sy);
+          fullCtx.lineTo(sx + 8, sy);
+          fullCtx.strokeStyle = "#4F86F7";
+          fullCtx.lineWidth = 3;
+          fullCtx.stroke();
+
+          fullCtx.beginPath();
+          fullCtx.arc(sx, sy, 3, 0, Math.PI * 2);
+          fullCtx.fillStyle = "#FFFFFF";
+          fullCtx.fill();
+        }
+      } else if (planet.id === "mars") {
+        // Moons Phobos & Deimos
+        const pSpeed = elapsedTime * 0.9;
+        const px = cx + Math.cos(pSpeed) * (radius * 1.5);
+        const py = cy + Math.sin(pSpeed) * (radius * 0.4);
+        if (isBehind === (Math.sin(pSpeed) < 0)) {
+          fullCtx.beginPath();
+          fullCtx.arc(px, py, radius * 0.08, 0, Math.PI * 2);
+          fullCtx.fillStyle = "#BEAA9D";
+          fullCtx.fill();
+        }
+
+        const dSpeed = elapsedTime * 0.5 + 1.5;
+        const dx = cx + Math.cos(dSpeed) * (radius * 1.8);
+        const dy = cy + Math.sin(dSpeed) * (radius * 0.5);
+        if (isBehind === (Math.sin(dSpeed) < 0)) {
+          fullCtx.beginPath();
+          fullCtx.arc(dx, dy, radius * 0.06, 0, Math.PI * 2);
+          fullCtx.fillStyle = "#8F8075";
+          fullCtx.fill();
+        }
+      } else if (planet.id === "jupiter") {
+        // Galilean Moons (Io, Europa, Ganymede)
+        const moons = [
+          { dist: 1.45, speed: 1.2, color: "#FFF176", r: 0.08 },
+          { dist: 1.85, speed: 0.8, color: "#E0E0E0", r: 0.07 },
+          { dist: 2.25, speed: 0.5, color: "#BCAAA4", r: 0.09 }
+        ];
+        moons.forEach((m, idx) => {
+          const mSpeed = elapsedTime * m.speed + idx * 2.0;
+          const mx = cx + Math.cos(mSpeed) * (radius * m.dist);
+          const my = cy + Math.sin(mSpeed) * (radius * 0.35 * m.dist);
+          if (isBehind === (Math.sin(mSpeed) < 0)) {
+            fullCtx.beginPath();
+            fullCtx.arc(mx, my, radius * m.r, 0, Math.PI * 2);
+            fullCtx.fillStyle = m.color;
+            fullCtx.fill();
+          }
+        });
+      } else if (planet.id === "saturn") {
+        // Moon Titan
+        const tSpeed = elapsedTime * 0.45;
+        const tx = cx + Math.cos(tSpeed) * (radius * 2.5);
+        const ty = cy + Math.sin(tSpeed) * (radius * 0.75);
+        if (isBehind === (Math.sin(tSpeed) < 0)) {
+          fullCtx.beginPath();
+          fullCtx.arc(tx, ty, radius * 0.12, 0, Math.PI * 2);
+          fullCtx.fillStyle = "#FDD835";
+          fullCtx.fill();
+        }
+      } else if (planet.id === "neptune") {
+        // Moon Triton
+        const trSpeed = -elapsedTime * 0.6;
+        const trX = cx + Math.cos(trSpeed) * (radius * 1.6);
+        const trY = cy + Math.sin(trSpeed) * (radius * 0.5);
+        if (isBehind === (Math.sin(trSpeed) < 0)) {
+          fullCtx.beginPath();
+          fullCtx.arc(trX, trY, radius * 0.09, 0, Math.PI * 2);
+          fullCtx.fillStyle = "#B3E5FC";
+          fullCtx.fill();
+        }
+      }
+    }
+
+    // Interactive Tap on Full Planet
+    function triggerFullPlanetRipple() {
+      fullPlanetRipple = 1.0;
+    }
+
+    // Toggle Collapse for Info Card
+    function toggleInfoCollapse() {
+      isInfoCollapsed = !isInfoCollapsed;
+      const body = document.getElementById("fullInfoBody");
+      const icon = document.getElementById("collapseIcon");
+      if (isInfoCollapsed) {
+        body.classList.add("hidden");
+        icon.innerText = "expand_less";
+      } else {
+        body.classList.remove("hidden");
+        icon.innerText = "expand_more";
+      }
+    }
+
+    // Select Planet & Open Full Screen Modal
+    function selectPlanet(planet) {
+      selectedPlanet = planet;
+      fullPlanet = planet;
+      fullPlanetRipple = 1.0;
+
+      // Update full screen data
+      document.getElementById("fullName").innerText = planet.name;
+      document.getElementById("fullSubtitle").innerText = planet.tagline;
+      document.getElementById("fullCategory").innerText = planet.category || "Objek Tata Surya";
+      document.getElementById("fullDesc").innerText = planet.desc;
+      document.getElementById("fullPeriod").innerText = planet.period;
+      document.getElementById("fullSpeed").innerText = planet.dur > 0 ? `${planet.dur} detik simulasi` : "Pusat massa tata surya";
+      document.getElementById("fullComp").innerText = planet.comp;
+      document.getElementById("fullPillBadge").innerText = planet.isSun ? "BINTANG" : "PLANET";
+
+      // Earth section
+      const earthBox = document.getElementById("fullEarthSpecial");
+      if (planet.isEarth) {
+        earthBox.classList.remove("hidden");
+      } else {
+        earthBox.classList.add("hidden");
+      }
+
+      // Show modal
+      document.getElementById("fullPlanetModal").classList.remove("hidden");
+      updateChips();
+    }
+
+    function exitFullScreenPlanet() {
+      fullPlanet = null;
+      selectedPlanet = null;
+      document.getElementById("fullPlanetModal").classList.add("hidden");
+      updateChips();
+    }
+
+    function navigatePlanet(step) {
+      if (!fullPlanet) return;
+      const curIdx = PLANETS.findIndex(p => p.id === fullPlanet.id);
+      const nextIdx = (curIdx + step + PLANETS.length) % PLANETS.length;
+      selectPlanet(PLANETS[nextIdx]);
+    }
+
+    // Main Canvas Pointer Interaction
     function getPointerPos(e) {
       const rect = canvas.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -706,7 +908,7 @@
       dragStart = { x: e.clientX, y: e.clientY };
     });
 
-    window.addEventListener("mouseup", (e) => {
+    window.addEventListener("mouseup", () => {
       isDragging = false;
     });
 
@@ -718,7 +920,7 @@
       }
     });
 
-    // Touch Support for Mobile
+    // Touch Support
     canvas.addEventListener("touchstart", (e) => {
       if (e.touches.length === 1) {
         isDragging = true;
@@ -747,51 +949,14 @@
       }
     });
 
-    // Zoom via Wheel
+    // Wheel Zoom
     canvas.addEventListener("wheel", (e) => {
       e.preventDefault();
       const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
       scale = Math.min(Math.max(scale * zoomFactor, 0.75), 2.8);
     }, { passive: false });
 
-    // Select Planet Function with Pulse & Shake
-    function selectPlanet(planet) {
-      selectedPlanet = planet;
-      tapPulsePlanet = planet.id;
-      tapStartTime = elapsedTime;
-
-      // Update UI Sheet
-      document.getElementById("sheetName").innerText = planet.name + (planet.isEarth ? " 🌍" : "");
-      document.getElementById("sheetTagline").innerText = planet.tagline;
-      document.getElementById("sheetDesc").innerText = planet.desc;
-      document.getElementById("sheetPeriod").innerText = planet.period;
-      document.getElementById("sheetSpeed").innerText = planet.dur > 0 ? `${planet.dur}s / orbit` : "Pusat tata surya";
-      document.getElementById("sheetComp").innerText = planet.comp;
-
-      // Sheet Avatar
-      const avatar = document.getElementById("sheetAvatar");
-      avatar.style.background = `radial-gradient(circle at 30% 30%, ${planet.secColor}, ${planet.color}, #090D18)`;
-
-      // Earth Easter Egg
-      const earthSpecial = document.getElementById("earthSpecial");
-      if (planet.isEarth) {
-        earthSpecial.classList.remove("hidden");
-      } else {
-        earthSpecial.classList.add("hidden");
-      }
-
-      // Show sheet
-      document.getElementById("infoSheet").classList.remove("translate-y-full");
-      updateChips();
-    }
-
-    function closeSheet() {
-      selectedPlanet = null;
-      document.getElementById("infoSheet").classList.add("translate-y-full");
-      updateChips();
-    }
-
-    // Speed Multiplier Toggle
+    // Speed Controls
     const speedBtn = document.getElementById("speedBtn");
     const speedLabel = document.getElementById("speedLabel");
     speedBtn.addEventListener("click", () => {
@@ -801,7 +966,6 @@
       speedLabel.innerText = `${speedMultiplier}x`;
     });
 
-    // Pause / Play Toggle
     const pauseBtn = document.getElementById("pauseBtn");
     const pauseIcon = document.getElementById("pauseIcon");
     pauseBtn.addEventListener("click", () => {
@@ -809,7 +973,7 @@
       pauseIcon.innerText = isPaused ? "play_arrow" : "pause";
     });
 
-    // Quick Chips Generation
+    // Quick Selector Chips
     const chipsContainer = document.getElementById("quickChips");
     function renderChips() {
       chipsContainer.innerHTML = "";
@@ -819,7 +983,7 @@
         btn.className = `flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap ${
           isSel
             ? "bg-[#4F86F7]/25 text-[#D2E3FC] border border-[#4F86F7] font-semibold"
-            : "bg-[#1C1F26] text-[#C4C6D0] border border-[#2D3139] hover:border-[#4F86F7]/50"
+            : "bg-[#161B26] text-[#C4C6D0] border border-[#2B3240] hover:border-[#4F86F7]/50"
         }`;
         btn.innerHTML = `<span class="w-2.5 h-2.5 rounded-full inline-block" style="background: ${p.color}"></span> ${p.name}`;
         btn.onclick = () => selectPlanet(p);
@@ -830,19 +994,6 @@
       renderChips();
     }
     renderChips();
-
-    // Easter Egg Interactive Counter
-    let easterEggTaps = 0;
-    const earthBox = document.getElementById("earthSpecial");
-    const badge = document.getElementById("easterEggBadge");
-    const bonus = document.getElementById("easterEggBonus");
-    earthBox.addEventListener("click", () => {
-      easterEggTaps++;
-      badge.innerText = `Ketuk: ${easterEggTaps}x 🚀`;
-      if (easterEggTaps >= 3) {
-        bonus.classList.remove("hidden");
-      }
-    });
   </script>
 </body>
 </html>

@@ -230,7 +230,7 @@ private fun PlanetDetailContent(
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = if (planet.isEarth) "Bumi (Earth) 🌍" else planet.name,
+                            text = if (planet.isEarth) "Bumi (Earth)" else planet.name,
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Bold,
                                 color = ElegantTextWhite,
@@ -492,7 +492,7 @@ private fun PlanetDetailContent(
                         if (easterEggTapCount >= 3) {
                             Spacer(modifier = Modifier.height(6.dp))
                             Text(
-                                text = "🎉 Bonus Gen Z: Penduduk Bumi berhak atas diskon sembako galaksi 90%!",
+                                text = "Akses Khusus: Observatorium dan catatan astronomi galaksi terbuka.",
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     color = ElegantInsightGold,
                                     fontWeight = FontWeight.SemiBold,

@@ -4,8 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 /**
  * Data class representing a celestial body in the solar system.
- * Matches the user's data structure (id, name, r, size, color, dur, period, desc, comp)
- * with extensions for rich Gen Z styling, gradients, and custom visual effects.
+ * Includes physical and educational properties, orbital metrics, and composition details.
  */
 data class Planet(
     val id: String,
@@ -16,7 +15,7 @@ data class Planet(
     val secondaryColor: Color = color,
     val dur: Float, // Orbit period in seconds for 1 full revolution (6 to 42)
     val period: String, // Planetary orbital period label (e.g. "365 hari")
-    val desc: String, // Casual, relaxed Gen Z educational description
+    val desc: String, // Casual, clear educational description
     val comp: String, // Composition of the planet (gases, dust, core)
     val tagline: String = "",
     val hasRings: Boolean = false,
@@ -37,9 +36,9 @@ val SunBody = Planet(
     secondaryColor = Color(0xFFFFE9A8),
     dur = 0f,
     period = "Pusat Orbit",
-    desc = "Bintang induk raksasa di pusat tata surya kita. Menampung 99,8% massa tata surya dan memancarkan energi yang menghidupi Bumi!",
-    comp = "73% Hidrogen, 25% Helium, plasma panas bersuhu ~5.500°C di permukaan.",
-    tagline = "Si Bintang Utama ☀️",
+    desc = "Bintang induk di pusat tata surya kita. Menampung 99,8% massa seluruh tata surya dan memancarkan energi gravitasi serta radiasi hangat ke seluruh planet.",
+    comp = "73% Hidrogen, 25% Helium, dan plasma panas bersuhu 5.500°C di fotosfer.",
+    tagline = "Bintang Induk Tata Surya",
     isSun = true
 )
 
@@ -53,9 +52,9 @@ val SolarSystemData = listOf(
         secondaryColor = Color(0xFFC7BDB6),
         dur = 6f,
         period = "88 hari",
-        desc = "Planet terkecil dan paling deket matahari. Nyaris nggak punya atmosfer, jadi suhunya ekstrem banget antara siang dan malam.",
-        comp = "Permukaan batuan dan logam, atmosfer nyaris kosong (jejak natrium, oksigen)",
-        tagline = "Si Kecil Gesit ⚡"
+        desc = "Planet terkecil dan paling dekat dengan Matahari. Karena hampir tidak memiliki atmosfer penahan panas, fluktuasi suhunya sangat ekstrem antara siang dan malam.",
+        comp = "Inti logam besi masif (70%), kerak silikat dan batuan padat.",
+        tagline = "Planet Logam Terdekat"
     ),
     Planet(
         id = "venus",
@@ -66,9 +65,9 @@ val SolarSystemData = listOf(
         secondaryColor = Color(0xFFF7DEB4),
         dur = 10f,
         period = "225 hari",
-        desc = "Planet terpanas di tata surya karena efek rumah kaca super parah. Awannya bikin dia keliatan paling terang di langit malam.",
-        comp = "Atmosfer 96% karbon dioksida, awan tebal asam sulfat",
-        tagline = "Bintang Kejora Panas Membara 🔥"
+        desc = "Planet terpanas di tata surya akibat efek rumah kaca tak terkendali. Lapisan awan tebal memantulkan cahaya matahari, menjadikannya objek paling terang setelah Bulan.",
+        comp = "Atmosfer 96% karbon dioksida, awan asam sulfat pekat, dan batuan vulkanik.",
+        tagline = "Bintang Kejora Berkabut Asam"
     ),
     Planet(
         id = "earth",
@@ -79,13 +78,13 @@ val SolarSystemData = listOf(
         secondaryColor = Color(0xFF48C9B0),
         dur = 14f,
         period = "365 hari",
-        desc = "Satu-satunya planet yang diketahui punya kehidupan. Air cair dan atmosfer seimbang bikin suhunya pas buat chill.",
-        comp = "Atmosfer nitrogen dan oksigen, permukaan air (71%) dan daratan",
-        tagline = "Home Sweet Home 🌍",
+        desc = "Satu-satunya objek luar angkasa yang terbukti menopang kehidupan. Memiliki hidrosfer air cair yang stabil, atmosfer kaya oksigen, dan medan magnet protektif.",
+        comp = "Atmosfer 78% nitrogen dan 21% oksigen, kerak silikat, dan 71% permukaan berupa air laut.",
+        tagline = "Dunia Biosfer Berpenghuni",
         isEarth = true,
-        milkyWayInfo = "Bumi ada di galaksi Bima Sakti (Milky Way), salah satu dari ratusan miliar bintang di dalamnya.",
-        easterEggTag = "Easter egg terverifikasi",
-        easterEggBody = "Sertifikat sah: penduduk Bumi resmi jadi anggota Koperasi Desa Merah Putih galaksi Bima Sakti. 🌌🚜"
+        milkyWayInfo = "Bumi terletak di Lengan Orion, sekitar 26.000 tahun cahaya dari pusat galaksi Bima Sakti (Milky Way).",
+        easterEggTag = "Catatan Wilayah Khusus",
+        easterEggBody = "Sertifikat sah: Penduduk Bumi resmi terdaftar di Koperasi Desa Merah Putih galaksi Bima Sakti."
     ),
     Planet(
         id = "mars",
@@ -96,9 +95,9 @@ val SolarSystemData = listOf(
         secondaryColor = Color(0xFFE67E22),
         dur = 18f,
         period = "687 hari",
-        desc = "Planet merah karena debu besi oksida di permukaannya. Sering diincar buat misi luar angkasa dan koloni masa depan manusia.",
-        comp = "Debu besi oksida (karat), atmosfer tipis karbon dioksida",
-        tagline = "Si Planet Karat Merah 🚀"
+        desc = "Planet merah yang permukaannya dipenuhi debu besi oksida. Memiliki ngarai Valles Marineris dan gunung berapi terbesar di tata surya, Olympus Mons.",
+        comp = "Debu besi oksida (karat), batuan basal vulkanik, atmosfer tipis karbon dioksida.",
+        tagline = "Dunia Merah Oksida Besi"
     ),
     Planet(
         id = "jupiter",
@@ -109,9 +108,9 @@ val SolarSystemData = listOf(
         secondaryColor = Color(0xFFEAD5B8),
         dur = 24f,
         period = "12 tahun",
-        desc = "Planet terbesar, badannya raksasa gas. Bintik Merah Besarnya itu badai raksasa yang udah ada ratusan tahun dan belum kelar-kelar.",
-        comp = "Hidrogen dan helium dominan, awan amonia",
-        tagline = "The Big Boss Raksasa Gas 🌀"
+        desc = "Planet terbesar di tata surya kita. Badai antisiklon raksasa Great Red Spot telah berputar ratusan tahun. Gravitasinya melindungi planet bagian dalam dari tabrakan komet.",
+        comp = "Gas hidrogen (90%), helium (10%), amonia, dan inti batuan terkompresi.",
+        tagline = "Raksasa Gas Pengendali Gravitasi"
     ),
     Planet(
         id = "saturn",
@@ -122,9 +121,9 @@ val SolarSystemData = listOf(
         secondaryColor = Color(0xFFF9E79F),
         dur = 30f,
         period = "29 tahun",
-        desc = "Terkenal karena cincin es dan debunya yang megah, kelihatan jelas pakai teleskop kecil dari halaman rumah.",
-        comp = "Hidrogen dan helium, cincin dari bongkahan es dan debu batuan",
-        tagline = "Lord of the Rings 🪐",
+        desc = "Terkenal dengan cincin konsentris memukau yang tersusun dari miliaran bongkahan es dan debu angkasa. Kerapatan jenisnya lebih ringan dari air.",
+        comp = "Hidrogen, helium, es air, dan cincin partikel es kristal reflektif.",
+        tagline = "Sistem Cincin Es Megah",
         hasRings = true,
         ringColor = Color(0xCCEBD79E)
     ),
@@ -137,9 +136,9 @@ val SolarSystemData = listOf(
         secondaryColor = Color(0xFFD1F2EB),
         dur = 36f,
         period = "84 tahun",
-        desc = "Planet es raksasa yang porosnya miring ekstrem (98°), jadi rotasinya kayak 'menggelinding' di orbitnya.",
-        comp = "Hidrogen, helium, dan metana (metana bikin warna biru kehijauan)",
-        tagline = "Si Miring Mageran 🧊"
+        desc = "Raksasa es unik dengan kemiringan sumbu rotasi 98 derajat, sehingga tampak menggelinding di bidang orbitnya. Memiliki atmosfer terdingin di tata surya.",
+        comp = "Fluida es air, metana, amonia, dengan atmosfer kaya hidrogen dan helium.",
+        tagline = "Raksasa Es Sumbu Miring"
     ),
     Planet(
         id = "neptune",
@@ -150,8 +149,8 @@ val SolarSystemData = listOf(
         secondaryColor = Color(0xFF5DADE2),
         dur = 42f,
         period = "165 tahun",
-        desc = "Planet terjauh dan berangin paling kencang di tata surya, kecepatan anginnya bisa tembus lebih dari 2.000 km/jam!",
-        comp = "Hidrogen, helium, dan metana, atmosfer badai super kencang",
-        tagline = "Raja Badai Beku Super Deep 💨"
+        desc = "Planet terluar berwarna biru pekat akibat metana atmosferik. Dikenal memiliki hembusan angin badai supersonik paling cepat di tata surya mencapai lebih dari 2.100 km/jam.",
+        comp = "Mantel es air, amonia, metana tebal, dan badai gas atmosferik cepat.",
+        tagline = "Dunia Badai Supersonik Terluar"
     )
 )
