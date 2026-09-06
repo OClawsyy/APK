@@ -13,11 +13,13 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,10 +41,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Public
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,6 +56,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -96,8 +103,8 @@ import kotlin.math.sin
 
 /**
  * Full-screen immersive detail view for a celestial body.
- * Displays a large animated planet centerpiece with all its orbiting bodies (moons, satellites, rings, storms),
- * clean non-alay typography, and comprehensive information.
+ * Displays a large animated planet centerpiece with smooth pinch/scroll zoom controls,
+ * all its orbiting bodies (moons, satellites, rings, storms), and rich scientific planetary metrics.
  */
 @Composable
 fun PlanetFullScreenDetail(
@@ -112,13 +119,21 @@ fun PlanetFullScreenDetail(
     val nextPlanet = allBodies[(currentIndex + 1) % allBodies.size]
 
     var isInfoExpanded by remember { mutableStateOf(true) }
-    var pulseTrigger by remember { mutableFloatStateOf(0f) }
 
-    val pulseAnim by animateFloatAsState(
-        targetValue = pulseTrigger,
-        animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing),
-        label = "pulse_animation"
+    // Smooth Zoom & Pan State (friendly scroll & pinch to prevent dizziness)
+    var targetZoom by remember { mutableFloatStateOf(1.0f) }
+    val animZoom by animateFloatAsState(
+        targetValue = targetZoom,
+        animationSpec = spring(stiffness = Spring.StiffnessLow),
+        label = "planet_zoom"
     )
+    var panOffset by remember { mutableStateOf(Offset.Zero) }
+
+    // Reset zoom and pan smoothly whenever planet changes
+    LaunchedEffect(planet.id) {
+        targetZoom = 1.0f
+        panOffset = Offset.Zero
+    }
 
     // Infinite rotation transitions for animated objects
     val transition = rememberInfiniteTransition(label = "planet_celestial_anim")
@@ -165,18 +180,22 @@ fun PlanetFullScreenDetail(
             .background(Color(0xFF070A10))
             .testTag("planet_info_sheet")
     ) {
-        // 1. Full-Screen Celestial Animation Canvas
+        // 1. Full-Screen Celestial Animation Canvas with Pinch & Pan Gestures
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
                 .pointerInput(planet.id) {
-                    detectTapGestures {
-                        pulseTrigger += 1f
+                    detectTransformGestures { _, pan, zoom, _ ->
+                        targetZoom = (targetZoom * zoom).coerceIn(0.6f, 3.0f)
+                        panOffset = Offset(
+                            x = (panOffset.x + pan.x).coerceIn(-400f, 400f),
+                            y = (panOffset.y + pan.y).coerceIn(-400f, 400f)
+                        )
                     }
                 }
         ) {
-            val center = Offset(size.width / 2f, size.height * 0.38f)
-            val planetRadius = size.width.coerceAtMost(size.height) * 0.22f
+            val center = Offset(size.width / 2f + panOffset.x, (size.height * 0.35f) + panOffset.y)
+            val planetRadius = (size.width.coerceAtMost(size.height) * 0.20f) * animZoom
 
             // A. Distant deep space background glow
             drawCircle(
@@ -193,26 +212,15 @@ fun PlanetFullScreenDetail(
                 radius = planetRadius * 2.8f
             )
 
-            // B. Interactive Tap Ripple Wave
-            if (pulseAnim > 0f) {
-                val waveFraction = (pulseAnim % 1f)
-                drawCircle(
-                    color = planet.secondaryColor.copy(alpha = (1f - waveFraction) * 0.5f),
-                    center = center,
-                    radius = planetRadius + waveFraction * planetRadius * 1.5f,
-                    style = Stroke(width = 2.dp.toPx() * (1f - waveFraction))
-                )
-            }
-
-            // C. Continuous Atmospheric Pulse Wave
+            // B. Continuous Atmospheric Pulse Wave
             drawCircle(
-                color = planet.color.copy(alpha = (1f - wavePulse) * 0.25f),
+                color = planet.color.copy(alpha = (1f - wavePulse) * 0.22f),
                 center = center,
-                radius = planetRadius * (1.05f + wavePulse * 0.4f),
+                radius = planetRadius * (1.05f + wavePulse * 0.35f),
                 style = Stroke(width = 1.5.dp.toPx())
             )
 
-            // D. Render celestial body and its unique animated objects
+            // C. Render celestial body and its unique animated objects
             drawFullPlanetWithFeatures(
                 planet = planet,
                 center = center,
@@ -305,14 +313,93 @@ fun PlanetFullScreenDetail(
             }
         }
 
-        // 3. Information Panel Card (Slide-up / Collapsible at bottom)
+        // 3. Floating Friendly Zoom Controls (Quick +/- and Reset to prevent dizziness)
+        Surface(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .statusBarsPadding()
+                .padding(top = 64.dp, end = 16.dp),
+            shape = RoundedCornerShape(20.dp),
+            color = Color(0xFF161B26).copy(alpha = 0.9f),
+            border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.1f))
+        ) {
+            Column(
+                modifier = Modifier.padding(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                // Zoom In Button (+)
+                IconButton(
+                    onClick = { targetZoom = (targetZoom + 0.25f).coerceAtMost(3.0f) },
+                    modifier = Modifier.size(34.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Perbesar (Zoom In)",
+                        tint = ElegantTextWhite,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+
+                // Current Zoom Label / Tap to reset
+                Surface(
+                    onClick = {
+                        targetZoom = 1.0f
+                        panOffset = Offset.Zero
+                    },
+                    shape = RoundedCornerShape(8.dp),
+                    color = Color.White.copy(alpha = 0.08f)
+                ) {
+                    Text(
+                        text = "${String.format("%.1f", animZoom)}x",
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            color = ElegantBlueLight,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 10.sp
+                        ),
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
+                    )
+                }
+
+                // Zoom Out Button (-)
+                IconButton(
+                    onClick = { targetZoom = (targetZoom - 0.25f).coerceAtLeast(0.6f) },
+                    modifier = Modifier.size(34.dp)
+                ) {
+                    Text(
+                        text = "—",
+                        color = ElegantTextWhite,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                // Reset Button
+                IconButton(
+                    onClick = {
+                        targetZoom = 1.0f
+                        panOffset = Offset.Zero
+                    },
+                    modifier = Modifier.size(30.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Reset Zoom",
+                        tint = ElegantTextMuted,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+        }
+
+        // 4. Information Panel Card (Slide-up / Collapsible at bottom with rich scientific details)
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding(),
             shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-            color = Color(0xFF121620).copy(alpha = 0.95f),
+            color = Color(0xFF121620).copy(alpha = 0.96f),
             border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.08f))
         ) {
             Column(
@@ -376,7 +463,7 @@ fun PlanetFullScreenDetail(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(280.dp)
+                            .height(310.dp)
                             .verticalScroll(rememberScrollState())
                             .padding(top = 12.dp)
                     ) {
@@ -395,64 +482,158 @@ fun PlanetFullScreenDetail(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Stats Grid: Masa Orbit & Kecepatan
+                        // Stats Grid 1: Diameter & Jarak dari Matahari
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
+                            ScientificStatCard(
+                                title = "DIAMETER",
+                                value = planet.diameter.ifEmpty { "${planet.size * 1000} km" },
+                                modifier = Modifier.weight(1f)
+                            )
+                            ScientificStatCard(
+                                title = "JARAK MATAHARI",
+                                value = planet.distanceFromSun.ifEmpty { "${planet.r * 1.5f} juta km" },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        // Stats Grid 2: Suhu & Rotasi Poros (Panjang Hari)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            ScientificStatCard(
+                                title = "SUHU RATA-RATA",
+                                value = planet.temperature.ifEmpty { "Data observasi" },
+                                modifier = Modifier.weight(1f)
+                            )
+                            ScientificStatCard(
+                                title = "PERIODE ROTASI",
+                                value = planet.rotationPeriod.ifEmpty { "1 hari" },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        // Stats Grid 3: Gravitasi & Satelit Alami
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            ScientificStatCard(
+                                title = "GRAVITASI",
+                                value = planet.gravity.ifEmpty { "9.8 m/s²" },
+                                modifier = Modifier.weight(1f)
+                            )
+                            ScientificStatCard(
+                                title = "SATELIT ALAMI",
+                                value = planet.moonsCount.ifEmpty { "0" },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        // Stats Grid 4: Masa Orbit & Waktu Revolusi
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            ScientificStatCard(
+                                title = "MASA ORBIT",
+                                value = planet.period,
+                                modifier = Modifier.weight(1f).testTag("stat_card_orbit")
+                            )
+                            ScientificStatCard(
+                                title = "SIMULASI REVOLUSI",
+                                value = if (planet.isSun) "Pusat Massa" else "${planet.dur} detik",
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+
+                        // Misi Antariksa Card (jika tersedia)
+                        if (planet.missions.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(12.dp))
                             Surface(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .testTag("stat_card_orbit"),
+                                modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(16.dp),
                                 color = ElegantCardBg,
                                 border = androidx.compose.foundation.BorderStroke(1.dp, ElegantCardBorder)
                             ) {
                                 Column(modifier = Modifier.padding(14.dp)) {
-                                    Text(
-                                        text = "MASA ORBIT",
-                                        style = MaterialTheme.typography.labelSmall.copy(
-                                            color = ElegantTextMuted,
-                                            fontSize = 10.sp,
-                                            fontWeight = FontWeight.Medium,
-                                            letterSpacing = 1.2.sp
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            imageVector = Icons.Default.Info,
+                                            contentDescription = "Misi Penjelajahan",
+                                            tint = ElegantBlueLight,
+                                            modifier = Modifier.size(16.dp)
                                         )
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(
+                                            text = "MISI PENJELAJAHAN TERKENAL",
+                                            style = MaterialTheme.typography.labelSmall.copy(
+                                                color = ElegantTextMuted,
+                                                fontSize = 10.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                letterSpacing = 1.1.sp
+                                            )
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(6.dp))
                                     Text(
-                                        text = planet.period,
+                                        text = planet.missions,
                                         style = MaterialTheme.typography.bodyMedium.copy(
-                                            fontWeight = FontWeight.SemiBold,
+                                            fontWeight = FontWeight.Normal,
                                             color = ElegantTextWhite,
-                                            fontSize = 14.sp
+                                            fontSize = 13.5.sp,
+                                            lineHeight = 20.sp
                                         )
                                     )
                                 }
                             }
+                        }
 
+                        // Fakta Ilmiah Unik Card (jika tersedia)
+                        if (planet.funFact.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(12.dp))
                             Surface(
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier.fillMaxWidth(),
                                 shape = RoundedCornerShape(16.dp),
                                 color = ElegantCardBg,
                                 border = androidx.compose.foundation.BorderStroke(1.dp, ElegantCardBorder)
                             ) {
                                 Column(modifier = Modifier.padding(14.dp)) {
-                                    Text(
-                                        text = "WAKTU REVOLUSI",
-                                        style = MaterialTheme.typography.labelSmall.copy(
-                                            color = ElegantTextMuted,
-                                            fontSize = 10.sp,
-                                            fontWeight = FontWeight.Medium,
-                                            letterSpacing = 1.2.sp
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            imageVector = Icons.Default.Star,
+                                            contentDescription = "Fakta Menarik",
+                                            tint = Color(0xFFFFD54F),
+                                            modifier = Modifier.size(16.dp)
                                         )
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(
+                                            text = "FAKTA ILMIAH MENARIK",
+                                            style = MaterialTheme.typography.labelSmall.copy(
+                                                color = Color(0xFFFFD54F),
+                                                fontSize = 10.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                letterSpacing = 1.1.sp
+                                            )
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(6.dp))
                                     Text(
-                                        text = if (planet.isSun) "Pusat Massa" else "${planet.dur} detik simulasi",
+                                        text = planet.funFact,
                                         style = MaterialTheme.typography.bodyMedium.copy(
-                                            fontWeight = FontWeight.SemiBold,
+                                            fontWeight = FontWeight.Normal,
                                             color = ElegantTextWhite,
-                                            fontSize = 14.sp
+                                            fontSize = 13.5.sp,
+                                            lineHeight = 20.sp
                                         )
                                     )
                                 }
@@ -579,6 +760,41 @@ fun PlanetFullScreenDetail(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ScientificStatCard(
+    title: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        color = ElegantCardBg,
+        border = androidx.compose.foundation.BorderStroke(1.dp, ElegantCardBorder)
+    ) {
+        Column(modifier = Modifier.padding(14.dp)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.labelSmall.copy(
+                    color = ElegantTextMuted,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium,
+                    letterSpacing = 1.2.sp
+                )
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = ElegantTextWhite,
+                    fontSize = 13.5.sp
+                )
+            )
         }
     }
 }

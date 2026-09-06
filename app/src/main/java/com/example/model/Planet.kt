@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 /**
  * Data class representing a celestial body in the solar system.
- * Includes physical and educational properties, orbital metrics, and composition details.
+ * Includes physical and educational properties, orbital metrics, and rich scientific details.
  */
 data class Planet(
     val id: String,
@@ -24,7 +24,16 @@ data class Planet(
     val isSun: Boolean = false,
     val milkyWayInfo: String = "",
     val easterEggTag: String = "",
-    val easterEggBody: String = ""
+    val easterEggBody: String = "",
+    // Extended Comprehensive Scientific Metrics
+    val diameter: String = "",
+    val temperature: String = "",
+    val distanceFromSun: String = "",
+    val rotationPeriod: String = "",
+    val moonsCount: String = "",
+    val gravity: String = "",
+    val missions: String = "",
+    val funFact: String = ""
 )
 
 val SunBody = Planet(
@@ -39,7 +48,15 @@ val SunBody = Planet(
     desc = "Bintang induk di pusat tata surya kita. Menampung 99,8% massa seluruh tata surya dan memancarkan energi gravitasi serta radiasi hangat ke seluruh planet.",
     comp = "73% Hidrogen, 25% Helium, dan plasma panas bersuhu 5.500°C di fotosfer.",
     tagline = "Bintang Induk Tata Surya",
-    isSun = true
+    isSun = true,
+    diameter = "1.392.700 km (109x Bumi)",
+    temperature = "5.500°C (fotosfer) / 15.000.000°C (inti)",
+    distanceFromSun = "0 km (Pusat Tata Surya)",
+    rotationPeriod = "27 hari (ekuator) / 36 hari (kutub)",
+    moonsCount = "8 planet, ratusan ribu asteroid & komet",
+    gravity = "274 m/s² (28x gravitasi Bumi)",
+    missions = "Parker Solar Probe, SOHO, Solar Orbiter",
+    funFact = "Energi foton yang diproduksi di inti fusi Matahari membutuhkan waktu 100.000 tahun untuk merambat keluar ke fotosfer, tetapi hanya butuh 8 menit 20 detik untuk melintasi ruang angkasa hingga menyinari Bumi."
 )
 
 val SolarSystemData = listOf(
@@ -54,7 +71,15 @@ val SolarSystemData = listOf(
         period = "88 hari",
         desc = "Planet terkecil dan paling dekat dengan Matahari. Karena hampir tidak memiliki atmosfer penahan panas, fluktuasi suhunya sangat ekstrem antara siang dan malam.",
         comp = "Inti logam besi masif (70%), kerak silikat dan batuan padat.",
-        tagline = "Planet Logam Terdekat"
+        tagline = "Planet Logam Terdekat",
+        diameter = "4.879 km (0,38x Bumi)",
+        temperature = "-180°C (malam) hingga 430°C (siang)",
+        distanceFromSun = "57,9 juta km (0,39 AU)",
+        rotationPeriod = "58,6 hari Bumi",
+        moonsCount = "0 (tidak memiliki satelit alami)",
+        gravity = "3,7 m/s² (0,38g Bumi)",
+        missions = "Mariner 10, MESSENGER, BepiColombo",
+        funFact = "Satu tahun di Merkurius (88 hari Bumi) berlangsung lebih cepat dibandingkan satu hari matahari penuh di permukaannya (176 hari Bumi)."
     ),
     Planet(
         id = "venus",
@@ -67,7 +92,15 @@ val SolarSystemData = listOf(
         period = "225 hari",
         desc = "Planet terpanas di tata surya akibat efek rumah kaca tak terkendali. Lapisan awan tebal memantulkan cahaya matahari, menjadikannya objek paling terang setelah Bulan.",
         comp = "Atmosfer 96% karbon dioksida, awan asam sulfat pekat, dan batuan vulkanik.",
-        tagline = "Bintang Kejora Berkabut Asam"
+        tagline = "Bintang Kejora Berkabut Asam",
+        diameter = "12.104 km (0,95x Bumi)",
+        temperature = "465°C (konstan siang dan malam)",
+        distanceFromSun = "108,2 juta km (0,72 AU)",
+        rotationPeriod = "243 hari Bumi (retrograde / berputar terbalik)",
+        moonsCount = "0 (tidak memiliki satelit alami)",
+        gravity = "8,87 m/s² (0,90g Bumi)",
+        missions = "Venera 7–14, Magellan, Akatsuki, DAVINCI+",
+        funFact = "Venus berputar berlawanan arah dari mayoritas planet di tata surya. Di Venus, matahari terbit dari barat dan terbenam di ufuk timur."
     ),
     Planet(
         id = "earth",
@@ -77,14 +110,22 @@ val SolarSystemData = listOf(
         color = Color(0xFF3D8BCF),
         secondaryColor = Color(0xFF48C9B0),
         dur = 14f,
-        period = "365 hari",
+        period = "365,25 hari",
         desc = "Satu-satunya objek luar angkasa yang terbukti menopang kehidupan. Memiliki hidrosfer air cair yang stabil, atmosfer kaya oksigen, dan medan magnet protektif.",
         comp = "Atmosfer 78% nitrogen dan 21% oksigen, kerak silikat, dan 71% permukaan berupa air laut.",
         tagline = "Dunia Biosfer Berpenghuni",
         isEarth = true,
         milkyWayInfo = "Bumi terletak di Lengan Orion, sekitar 26.000 tahun cahaya dari pusat galaksi Bima Sakti (Milky Way).",
         easterEggTag = "Catatan Wilayah Khusus",
-        easterEggBody = "Sertifikat sah: Penduduk Bumi resmi terdaftar di Koperasi Desa Merah Putih galaksi Bima Sakti."
+        easterEggBody = "Sertifikat sah: Penduduk Bumi resmi terdaftar di Koperasi Desa Merah Putih galaksi Bima Sakti.",
+        diameter = "12.742 km",
+        temperature = "-89°C hingga 58°C (rata-rata 15°C)",
+        distanceFromSun = "149,6 juta km (1,00 AU)",
+        rotationPeriod = "23 jam 56 menit 4 detik",
+        moonsCount = "1 satelit alami (Bulan)",
+        gravity = "9,807 m/s² (1,0g acuan)",
+        missions = "Apollo 11, Stasiun Luar Angkasa Internasional (ISS), Teleskop Hubble & James Webb",
+        funFact = "Bumi merupakan satu-satunya planet yang tidak dinamai dari dewa-dewi mitologi Romawi atau Yunani kuno, melainkan berakar dari bahasa Jermanik kuno yang berarti 'tanah'."
     ),
     Planet(
         id = "mars",
@@ -97,7 +138,15 @@ val SolarSystemData = listOf(
         period = "687 hari",
         desc = "Planet merah yang permukaannya dipenuhi debu besi oksida. Memiliki ngarai Valles Marineris dan gunung berapi terbesar di tata surya, Olympus Mons.",
         comp = "Debu besi oksida (karat), batuan basal vulkanik, atmosfer tipis karbon dioksida.",
-        tagline = "Dunia Merah Oksida Besi"
+        tagline = "Dunia Merah Oksida Besi",
+        diameter = "6.779 km (0,53x Bumi)",
+        temperature = "-140°C hingga 20°C (rata-rata -63°C)",
+        distanceFromSun = "227,9 juta km (1,52 AU)",
+        rotationPeriod = "24 jam 37 menit 22 detik (1 sol)",
+        moonsCount = "2 satelit (Phobos dan Deimos)",
+        gravity = "3,72 m/s² (0,38g Bumi)",
+        missions = "Viking 1 & 2, Curiosity, Perseverance, Ingenuity Drone",
+        funFact = "Gunung Olympus Mons di Mars memiliki ketinggian 21,9 km, hampir 3 kali tinggi Gunung Everest dan luas dasarnya setara ukuran seluruh pulau Jawa."
     ),
     Planet(
         id = "jupiter",
@@ -107,10 +156,18 @@ val SolarSystemData = listOf(
         color = Color(0xFFD2A679),
         secondaryColor = Color(0xFFEAD5B8),
         dur = 24f,
-        period = "12 tahun",
+        period = "11,86 tahun",
         desc = "Planet terbesar di tata surya kita. Badai antisiklon raksasa Great Red Spot telah berputar ratusan tahun. Gravitasinya melindungi planet bagian dalam dari tabrakan komet.",
         comp = "Gas hidrogen (90%), helium (10%), amonia, dan inti batuan terkompresi.",
-        tagline = "Raksasa Gas Pengendali Gravitasi"
+        tagline = "Raksasa Gas Pengendali Gravitasi",
+        diameter = "139.820 km (11x Bumi)",
+        temperature = "-110°C (lapisan awan atas)",
+        distanceFromSun = "778,5 juta km (5,20 AU)",
+        rotationPeriod = "9 jam 55 menit (rotasi terpendek di tata surya)",
+        moonsCount = "95 satelit terkonfirmasi (Io, Europa, Ganymede, Callisto)",
+        gravity = "24,79 m/s² (2,53g Bumi)",
+        missions = "Pioneer 10 & 11, Voyager 1 & 2, Galileo, Juno, JUICE",
+        funFact = "Ganymede, salah satu bulan Jupiter, memiliki ukuran lebih besar daripada planet Merkurius dan merupakan satu-satunya bulan yang memiliki medan magnet internal sendiri."
     ),
     Planet(
         id = "saturn",
@@ -120,12 +177,20 @@ val SolarSystemData = listOf(
         color = Color(0xFFE3C88E),
         secondaryColor = Color(0xFFF9E79F),
         dur = 30f,
-        period = "29 tahun",
+        period = "29,45 tahun",
         desc = "Terkenal dengan cincin konsentris memukau yang tersusun dari miliaran bongkahan es dan debu angkasa. Kerapatan jenisnya lebih ringan dari air.",
         comp = "Hidrogen, helium, es air, dan cincin partikel es kristal reflektif.",
         tagline = "Sistem Cincin Es Megah",
         hasRings = true,
-        ringColor = Color(0xCCEBD79E)
+        ringColor = Color(0xCCEBD79E),
+        diameter = "116.460 km (9,4x Bumi)",
+        temperature = "-140°C",
+        distanceFromSun = "1,43 miliar km (9,58 AU)",
+        rotationPeriod = "10 jam 33 menit",
+        moonsCount = "146 satelit alami (terbanyak, termasuk Titan & Enceladus)",
+        gravity = "10,44 m/s² (1,06g Bumi)",
+        missions = "Pioneer 11, Voyager 1 & 2, Cassini-Huygens",
+        funFact = "Massa jenis rata-rata Saturnus adalah 0,687 g/cm³, menjadikannya satu-satunya planet yang kerapatannya lebih kecil daripada air biasa (1 g/cm³)."
     ),
     Planet(
         id = "uranus",
@@ -138,7 +203,15 @@ val SolarSystemData = listOf(
         period = "84 tahun",
         desc = "Raksasa es unik dengan kemiringan sumbu rotasi 98 derajat, sehingga tampak menggelinding di bidang orbitnya. Memiliki atmosfer terdingin di tata surya.",
         comp = "Fluida es air, metana, amonia, dengan atmosfer kaya hidrogen dan helium.",
-        tagline = "Raksasa Es Sumbu Miring"
+        tagline = "Raksasa Es Sumbu Miring",
+        diameter = "50.724 km (4,0x Bumi)",
+        temperature = "-195°C (tercatat hingga -224°C)",
+        distanceFromSun = "2,87 miliar km (19,2 AU)",
+        rotationPeriod = "17 jam 14 menit (kemiringan sumbu 97,8°)",
+        moonsCount = "28 satelit terkonfirmasi (Titania, Oberon, Miranda)",
+        gravity = "8,69 m/s² (0,89g Bumi)",
+        missions = "Voyager 2 (terbang lintas tahun 1986)",
+        funFact = "Karena kemiringan sumbu rotasinya mencapai 98 derajat, kutub Uranus bergantian menghadap langsung ke Matahari selama 42 tahun terang benderang diikuti 42 tahun kegelapan total."
     ),
     Planet(
         id = "neptune",
@@ -148,9 +221,17 @@ val SolarSystemData = listOf(
         color = Color(0xFF3F5EBF),
         secondaryColor = Color(0xFF5DADE2),
         dur = 42f,
-        period = "165 tahun",
+        period = "164,8 tahun",
         desc = "Planet terluar berwarna biru pekat akibat metana atmosferik. Dikenal memiliki hembusan angin badai supersonik paling cepat di tata surya mencapai lebih dari 2.100 km/jam.",
         comp = "Mantel es air, amonia, metana tebal, dan badai gas atmosferik cepat.",
-        tagline = "Dunia Badai Supersonik Terluar"
+        tagline = "Dunia Badai Supersonik Terluar",
+        diameter = "49.244 km (3,9x Bumi)",
+        temperature = "-200°C",
+        distanceFromSun = "4,50 miliar km (30,1 AU)",
+        rotationPeriod = "16 jam 6 menit",
+        moonsCount = "16 satelit alami (termasuk Triton)",
+        gravity = "11,15 m/s² (1,14g Bumi)",
+        missions = "Voyager 2 (terbang lintas tahun 1989)",
+        funFact = "Bulan terbesarnya, Triton, mengorbit dengan arah berlawanan (retrograde) dari rotasi Neptunus dan memiliki geyser nitrogen cair aktif yang menyembur hingga 8 km ke angkasa."
     )
 )
