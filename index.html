@@ -81,6 +81,12 @@
 
       <!-- Controls: Speed, Pause, Scale, Quiz, Ambient Sound -->
       <div class="flex items-center gap-1.5 md:gap-2 pointer-events-auto flex-wrap justify-end">
+        <!-- Deep Space Galaxies & Milky Way Feature Button -->
+        <button onclick="openGalaxiesModal()" title="Jelajahi Galaksi di Semesta (Bima Sakti, Andromeda, Sombrero, Whirlpool)" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#E2E2E6] hover:text-white hover:border-[#BA68C8] text-xs font-semibold cursor-pointer transition-all shadow-md">
+          <span class="material-symbols-outlined text-[16px] text-[#CE93D8]">auto_awesome</span>
+          <span class="hidden sm:inline">Galaksi Semesta</span>
+        </button>
+
         <!-- Scale Comparison Feature Button -->
         <button onclick="openScaleModal()" title="Bandingkan Skala Ukuran Nyata" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#E2E2E6] hover:text-white hover:border-[#4F86F7] text-xs font-semibold cursor-pointer transition-all shadow-md">
           <span class="material-symbols-outlined text-[16px] text-[#4F86F7]">straighten</span>
@@ -134,8 +140,14 @@
         <span class="text-xs font-semibold tracking-wide hidden sm:inline">Kembali</span>
       </button>
 
-      <!-- Action Buttons: Share, Scale, Sound, Prev/Next -->
+      <!-- Action Buttons: Feature Pins, Share, Scale, Sound, Prev/Next -->
       <div class="pointer-events-auto flex items-center gap-1.5 md:gap-2">
+        <!-- Toggle Anatomical Feature Labels for Students -->
+        <button id="featurePinsToggleBtn" onclick="toggleFeaturePins()" title="Tampilkan/Sembunyikan Label Fitur Anatomi Planet" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26]/90 border border-[#4F86F7]/40 text-[#8AB4F8] hover:text-white hover:border-[#4F86F7] text-xs font-semibold cursor-pointer transition-all shadow-md backdrop-blur-md">
+          <span id="featurePinsIcon" class="material-symbols-outlined text-[16px]">pin_drop</span>
+          <span id="featurePinsLabel" class="hidden sm:inline">Label Anatomi</span>
+        </button>
+
         <!-- Share Planet Button -->
         <button onclick="shareCurrentPlanet()" title="Bagikan Planet Ini" class="w-9 h-9 rounded-full bg-[#161B26]/90 border border-white/10 text-[#C4C6D0] hover:text-white hover:border-[#4F86F7]/50 flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-md">
           <span class="material-symbols-outlined text-[18px]">share</span>
@@ -703,6 +715,113 @@
     </div>
   </div>
 
+  <!-- ========================================================================= -->
+  <!-- 7. MODAL EDUKASI: GALAKSI SEMESTA & BIMA SAKTI (DEEP SPACE OBSERVATORY)   -->
+  <!-- ========================================================================= -->
+  <div id="galaxiesModal" class="fixed inset-0 z-50 bg-[#06080E]/95 backdrop-blur-xl hidden flex flex-col items-center justify-center p-3 md:p-6 overflow-y-auto select-none">
+    <div class="bg-[#121624] border border-[#2B3248] rounded-3xl w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Modal Header -->
+      <div class="p-4 md:p-6 border-b border-white/10 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#9C27B0] via-[#E91E63] to-[#FF9800] flex items-center justify-center text-white shadow-lg">
+            <span class="material-symbols-outlined text-[22px]">auto_awesome</span>
+          </div>
+          <div>
+            <h3 class="text-lg md:text-xl font-bold text-white flex items-center gap-2">
+              <span>Galaksi-Galaksi di Alam Semesta</span>
+              <span class="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40">LATAR NYATA</span>
+            </h3>
+            <p class="text-xs text-[#919194]">Objek galaksi & nebula yang terlihat pada kanvas antariksa Planetarium Mini</p>
+          </div>
+        </div>
+
+        <button onclick="closeGalaxiesModal()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center cursor-pointer transition-colors">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <!-- Galaxies List Content -->
+      <div class="p-4 md:p-6 overflow-y-auto no-scrollbar space-y-3.5">
+        <!-- 1. Galaksi Bima Sakti -->
+        <div class="bg-gradient-to-r from-[#1A1A2E] via-[#16213E] to-[#0F3460] p-4 rounded-2xl border border-[#BA68C8]/30 space-y-1.5 shadow-md">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm md:text-base font-bold text-white flex items-center gap-2">
+              <span class="text-amber-400">🌌</span>
+              <span>Galaksi Bima Sakti (Milky Way)</span>
+            </h4>
+            <span class="text-[10px] font-semibold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/30">Rumah Tata Surya</span>
+          </div>
+          <p class="text-xs text-[#C4C6D0] leading-relaxed">
+            Galaksi spiral berpalang (*barred spiral galaxy*) tempat tinggal Matahari dan Bumi kita. Berdiameter sekitar <strong class="text-white">100.000 tahun cahaya</strong> dan menampung lebih dari <strong class="text-white">100–400 miliar bintang</strong>. Pada latar simulator, Bima Sakti digambarkan sebagai bentangan debu kosmik diagonal dengan pusat galaksi bercahaya emas tempat lubang hitam supermasif <strong class="text-[#FFD54F]">Sagittarius A*</strong> berada.
+          </p>
+        </div>
+
+        <!-- 2. Galaksi Andromeda (M31) -->
+        <div class="bg-[#171B2A] p-4 rounded-2xl border border-white/10 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="text-cyan-400">✨</span>
+              <span>Galaksi Andromeda (Messier 31)</span>
+            </h4>
+            <span class="text-[10px] font-semibold text-cyan-300 bg-cyan-500/10 px-2 py-0.5 rounded-md border border-cyan-500/30">Jarak: 2,5 Juta Tahun Cahaya</span>
+          </div>
+          <p class="text-xs text-[#C4C6D0] leading-relaxed">
+            Galaksi spiral raksasa tetangga terdekat Bima Sakti di Grup Lokal. Berisi sekitar <strong class="text-white">1 triliun bintang</strong> dan sedang bergerak mendekati Bima Sakti dengan kecepatan ~110 km/detik, diprediksi akan bergabung menjadi satu galaksi elips raksasa (*Milkomeda*) dalam 4,5 miliar tahun ke depan.
+          </p>
+        </div>
+
+        <!-- 3. Galaksi Pusaran (Whirlpool Galaxy - M51) -->
+        <div class="bg-[#171B2A] p-4 rounded-2xl border border-white/10 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="text-pink-400">🌀</span>
+              <span>Galaksi Pusaran (Whirlpool Galaxy - M51)</span>
+            </h4>
+            <span class="text-[10px] font-semibold text-pink-300 bg-pink-500/10 px-2 py-0.5 rounded-md border border-pink-500/30">Jarak: 23 Juta Tahun Cahaya</span>
+          </div>
+          <p class="text-xs text-[#C4C6D0] leading-relaxed">
+            Galaksi spiral klasik berdesain agung (*grand-design spiral*) yang menghadap langsung ke arah kita (*face-on*). Lengan spiralnya yang kaya akan gugus bintang muda biru dan nebula merah jambu terhubung oleh jembatan pasang surut gravitasi ke galaksi kerdil pendampingnya, NGC 5195.
+          </p>
+        </div>
+
+        <!-- 4. Galaksi Sombrero (Messier 104) -->
+        <div class="bg-[#171B2A] p-4 rounded-2xl border border-white/10 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="text-yellow-400">🪐</span>
+              <span>Galaksi Sombrero (Messier 104)</span>
+            </h4>
+            <span class="text-[10px] font-semibold text-yellow-300 bg-yellow-500/10 px-2 py-0.5 rounded-md border border-yellow-500/30">Jarak: 29 Juta Tahun Cahaya</span>
+          </div>
+          <p class="text-xs text-[#C4C6D0] leading-relaxed">
+            Memiliki tonjolan pusat bintang (*bulge*) yang sangat besar dan terang dengan jalur cincin debu gelap pekat melintasi bagian tengahnya, menyerupai topi Sombrero khas Meksiko jika dilihat dari samping (*edge-on*). Menampung lubang hitam seberat 1 miliar kali massa Matahari.
+          </p>
+        </div>
+
+        <!-- 5. Awan Magellan Besar & Nebula Kosmik -->
+        <div class="bg-[#171B2A] p-4 rounded-2xl border border-white/10 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="text-indigo-400">☁️</span>
+              <span>Awan Magellan Besar (LMC) & Nebula Emisi</span>
+            </h4>
+            <span class="text-[10px] font-semibold text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded-md border border-indigo-500/30">Galaksi Satelit Kerdil</span>
+          </div>
+          <p class="text-xs text-[#C4C6D0] leading-relaxed">
+            Galaksi satelit tak beraturan yang mengorbit Bima Sakti kita pada jarak 163.000 tahun cahaya. LMC menjadi rumah bagi <strong class="text-white">Nebula Tarantula</strong>, wilayah pembentuk bintang paling aktif dan masif di seluruh Grup Lokal galaksi.
+          </p>
+        </div>
+      </div>
+
+      <!-- Footer Button -->
+      <div class="p-4 border-t border-white/10 bg-[#0E121B] flex justify-end">
+        <button onclick="closeGalaxiesModal()" class="px-5 py-2.5 rounded-xl bg-[#4F86F7] hover:bg-[#3D74E6] text-white font-semibold text-xs transition-colors cursor-pointer shadow-md">
+          Tutup & Lanjut Eksplorasi
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- FLOATING TOAST NOTIFICATION -->
   <div id="toastNotification" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[110] px-4 py-2.5 rounded-full bg-[#161B26]/95 border border-[#4F86F7]/50 text-white text-xs font-semibold shadow-2xl backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 flex items-center gap-2">
     <span class="material-symbols-outlined text-[#4F86F7] text-[18px]">info</span>
@@ -943,16 +1062,29 @@
       }
     ];
 
-    // Starfield for main canvas
+    // =========================================================================
+    // DEEP-SPACE COSMOS & GALAXIES ENGINE (BIMA SAKTI, ANDROMEDA, SOMBRERO, DLL)
+    // =========================================================================
+    const STAR_SPECTRAL_COLORS = [
+      "rgba(187, 222, 251, ",  // Class O/B Blue-white giant
+      "rgba(255, 255, 255, ",  // Class A White
+      "rgba(255, 249, 196, ",  // Class F/G Yellow (Sun-like)
+      "rgba(255, 224, 178, ",  // Class K Amber Orange
+      "rgba(255, 204, 188, "   // Class M Red dwarf
+    ];
+
+    // Rich Deep-Space Starfield (260 multi-spectral twinkling stars)
     const stars = [];
-    for (let i = 0; i < 130; i++) {
+    for (let i = 0; i < 260; i++) {
       stars.push({
         x: Math.random(),
         y: Math.random(),
-        size: Math.random() * 1.8 + 0.8,
-        alpha: Math.random() * 0.5 + 0.3,
-        twinkle: Math.random() * 2 + 1,
-        depth: (i > 80 ? 1.2 : (i > 40 ? 0.6 : 0.2))
+        size: Math.random() < 0.09 ? Math.random() * 2.2 + 1.6 : Math.random() * 1.4 + 0.5,
+        alpha: Math.random() * 0.6 + 0.35,
+        twinkle: Math.random() * 2.6 + 1.0,
+        colorBase: STAR_SPECTRAL_COLORS[Math.floor(Math.random() * STAR_SPECTRAL_COLORS.length)],
+        depth: i < 70 ? 0.15 : (i < 190 ? 0.35 : 0.65),
+        hasSpikes: Math.random() < 0.06
       });
     }
 
@@ -975,6 +1107,7 @@
     let fullPanX = 0;
     let fullPanY = 0;
     let isInfoCollapsed = false;
+    let showFeaturePins = true; // Educational anatomy pinpoints for students!
 
     // Main Space Canvas
     const canvas = document.getElementById("spaceCanvas");
@@ -1001,6 +1134,330 @@
     const fullCtx = fullCanvas.getContext("2d");
     resizeCanvas();
 
+    // =========================================================================
+    // DEEP-SPACE RENDERING: NEBULAE, MILKY WAY, ANDROMEDA, SOMBRERO, WHIRLPOOL
+    // =========================================================================
+    function drawDeepSpaceCosmos(tCtx, w, h, pX, pY, isFullView) {
+      // 1. Deep space cosmic void background
+      const baseGrad = tCtx.createRadialGradient(w / 2, h / 2, 40, w / 2, h / 2, Math.max(w, h) * 0.95);
+      baseGrad.addColorStop(0, "#0B101D");
+      baseGrad.addColorStop(0.5, "#060810");
+      baseGrad.addColorStop(1, "#020306");
+      tCtx.fillStyle = baseGrad;
+      tCtx.fillRect(0, 0, w, h);
+
+      // 2. Interstellar Nebulae (Diffuse Glowing Gas Clouds in Jewel Tones)
+      tCtx.save();
+      // Nebula 1: Carina / Orion Magenta-Violet H II Region
+      const neb1X = w * 0.24 + pX * 0.025;
+      const neb1Y = h * 0.30 + pY * 0.025;
+      const neb1Grad = tCtx.createRadialGradient(neb1X, neb1Y, 10, neb1X, neb1Y, Math.max(w, h) * 0.35);
+      neb1Grad.addColorStop(0, "rgba(171, 71, 188, 0.16)");
+      neb1Grad.addColorStop(0.4, "rgba(233, 30, 99, 0.09)");
+      neb1Grad.addColorStop(0.7, "rgba(106, 27, 154, 0.05)");
+      neb1Grad.addColorStop(1, "transparent");
+      tCtx.fillStyle = neb1Grad;
+      tCtx.beginPath();
+      tCtx.arc(neb1X, neb1Y, Math.max(w, h) * 0.35, 0, Math.PI * 2);
+      tCtx.fill();
+
+      // Nebula 2: Cygnus Veil Cosmic Cyan-Teal Cloud
+      const neb2X = w * 0.78 + pX * 0.035;
+      const neb2Y = h * 0.70 + pY * 0.035;
+      const neb2Grad = tCtx.createRadialGradient(neb2X, neb2Y, 15, neb2X, neb2Y, Math.max(w, h) * 0.32);
+      neb2Grad.addColorStop(0, "rgba(0, 188, 212, 0.12)");
+      neb2Grad.addColorStop(0.45, "rgba(38, 166, 154, 0.07)");
+      neb2Grad.addColorStop(1, "transparent");
+      tCtx.fillStyle = neb2Grad;
+      tCtx.beginPath();
+      tCtx.arc(neb2X, neb2Y, Math.max(w, h) * 0.32, 0, Math.PI * 2);
+      tCtx.fill();
+
+      // Nebula 3: Deep Royal Indigo Molecular Cloud
+      const neb3X = w * 0.50 + pX * 0.02;
+      const neb3Y = h * 0.88 + pY * 0.02;
+      const neb3Grad = tCtx.createRadialGradient(neb3X, neb3Y, 20, neb3X, neb3Y, Math.max(w, h) * 0.28);
+      neb3Grad.addColorStop(0, "rgba(63, 81, 181, 0.10)");
+      neb3Grad.addColorStop(1, "transparent");
+      tCtx.fillStyle = neb3Grad;
+      tCtx.beginPath();
+      tCtx.arc(neb3X, neb3Y, Math.max(w, h) * 0.28, 0, Math.PI * 2);
+      tCtx.fill();
+      tCtx.restore();
+
+      // 3. GALAKSI BIMA SAKTI (THE MILKY WAY GALAXY CORE & ARC)
+      // Magnificent diagonal band passing through the cosmos with golden Sagittarius A* core
+      tCtx.save();
+      const mwX = w * 0.35 + pX * 0.03;
+      const mwY = h * 0.40 + pY * 0.03;
+      tCtx.translate(mwX, mwY);
+      tCtx.rotate((-36 * Math.PI) / 180);
+
+      // Sweeping Milky Way outer star band
+      const mwBandGrad = tCtx.createLinearGradient(0, -Math.min(w, h) * 0.22, 0, Math.min(w, h) * 0.22);
+      mwBandGrad.addColorStop(0, "transparent");
+      mwBandGrad.addColorStop(0.3, "rgba(186, 104, 200, 0.09)");
+      mwBandGrad.addColorStop(0.5, "rgba(255, 236, 179, 0.18)");
+      mwBandGrad.addColorStop(0.7, "rgba(129, 212, 250, 0.09)");
+      mwBandGrad.addColorStop(1, "transparent");
+      tCtx.fillStyle = mwBandGrad;
+      tCtx.fillRect(-Math.max(w, h) * 0.8, -Math.min(w, h) * 0.22, Math.max(w, h) * 1.6, Math.min(w, h) * 0.44);
+
+      // Galactic Bulge (Pusat Galaksi Bima Sakti / Sagittarius A*)
+      const mwCoreGrad = tCtx.createRadialGradient(0, 0, 8, 0, 0, 110);
+      mwCoreGrad.addColorStop(0, "rgba(255, 255, 255, 0.75)");
+      mwCoreGrad.addColorStop(0.2, "rgba(255, 213, 79, 0.55)");
+      mwCoreGrad.addColorStop(0.5, "rgba(255, 152, 0, 0.28)");
+      mwCoreGrad.addColorStop(0.8, "rgba(171, 71, 188, 0.12)");
+      mwCoreGrad.addColorStop(1, "transparent");
+      tCtx.fillStyle = mwCoreGrad;
+      tCtx.beginPath();
+      tCtx.ellipse(0, 0, 120, 52, 0, 0, Math.PI * 2);
+      tCtx.fill();
+
+      // Great Rift: Dark interstellar dust absorption lanes slicing the Milky Way
+      tCtx.strokeStyle = "rgba(4, 7, 14, 0.65)";
+      tCtx.lineWidth = 14;
+      tCtx.beginPath();
+      tCtx.moveTo(-160, -8);
+      tCtx.quadraticCurveTo(-60, 12, 0, -4);
+      tCtx.quadraticCurveTo(80, -18, 180, 6);
+      tCtx.stroke();
+
+      tCtx.lineWidth = 8;
+      tCtx.beginPath();
+      tCtx.moveTo(-140, 10);
+      tCtx.quadraticCurveTo(-30, -10, 60, 14);
+      tCtx.quadraticCurveTo(120, 20, 210, -8);
+      tCtx.stroke();
+
+      // Glowing pink H II starbirth knots along the galactic arms
+      const h2Knots = [
+        { x: -90, y: -15, r: 4, c: "rgba(236, 64, 122, 0.55)" },
+        { x: -45, y: 18, r: 3.5, c: "rgba(240, 98, 146, 0.5)" },
+        { x: 55, y: -22, r: 5, c: "rgba(233, 30, 99, 0.6)" },
+        { x: 110, y: 14, r: 4, c: "rgba(244, 143, 177, 0.5)" }
+      ];
+      h2Knots.forEach(k => {
+        tCtx.beginPath();
+        tCtx.arc(k.x, k.y, k.r, 0, Math.PI * 2);
+        tCtx.fillStyle = k.c;
+        tCtx.shadowColor = k.c;
+        tCtx.shadowBlur = 8;
+        tCtx.fill();
+        tCtx.shadowBlur = 0;
+      });
+
+      // Subtle Galactic Label in Overview mode
+      if (!isFullView) {
+        tCtx.fillStyle = "rgba(255, 214, 0, 0.55)";
+        tCtx.font = "bold 9px 'Plus Jakarta Sans', sans-serif";
+        tCtx.textAlign = "center";
+        tCtx.fillText("BIMA SAKTI (PUSAT GALAKSI)", 0, 48);
+      }
+      tCtx.restore();
+
+      // 4. GALAKSI ANDROMEDA (MESSIER 31)
+      // Inclined spiral galaxy with luminous core, blue spiral arms, and companion M32
+      tCtx.save();
+      const m31X = w * 0.82 + pX * 0.045;
+      const m31Y = h * 0.22 + pY * 0.045;
+      tCtx.translate(m31X, m31Y);
+      tCtx.rotate((34 * Math.PI) / 180);
+
+      // Outer spiral halo
+      const m31Halo = tCtx.createRadialGradient(0, 0, 6, 0, 0, 58);
+      m31Halo.addColorStop(0, "rgba(255, 253, 231, 0.85)");
+      m31Halo.addColorStop(0.25, "rgba(255, 224, 130, 0.5)");
+      m31Halo.addColorStop(0.6, "rgba(129, 212, 250, 0.24)");
+      m31Halo.addColorStop(0.85, "rgba(179, 157, 219, 0.12)");
+      m31Halo.addColorStop(1, "transparent");
+      tCtx.fillStyle = m31Halo;
+      tCtx.beginPath();
+      tCtx.ellipse(0, 0, 68, 24, 0, 0, Math.PI * 2);
+      tCtx.fill();
+
+      // Andromeda core nucleus
+      tCtx.fillStyle = "#FFFDE7";
+      tCtx.shadowColor = "rgba(255, 255, 255, 0.8)";
+      tCtx.shadowBlur = 10;
+      tCtx.beginPath();
+      tCtx.ellipse(0, 0, 10, 4.5, 0, 0, Math.PI * 2);
+      tCtx.fill();
+      tCtx.shadowBlur = 0;
+
+      // Dark dust ring lane silhouette cutting near edge
+      tCtx.strokeStyle = "rgba(6, 9, 16, 0.55)";
+      tCtx.lineWidth = 2.5;
+      tCtx.beginPath();
+      tCtx.ellipse(0, 5, 46, 12, 0, Math.PI * 0.1, Math.PI * 0.9);
+      tCtx.stroke();
+
+      // Companion galaxy Messier 32 (dwarf elliptical)
+      tCtx.fillStyle = "rgba(255, 248, 225, 0.65)";
+      tCtx.beginPath();
+      tCtx.arc(18, -14, 2.8, 0, Math.PI * 2);
+      tCtx.fill();
+
+      if (!isFullView) {
+        tCtx.fillStyle = "rgba(168, 199, 250, 0.6)";
+        tCtx.font = "bold 8.5px 'Plus Jakarta Sans', sans-serif";
+        tCtx.textAlign = "center";
+        tCtx.fillText("GALAKSI ANDROMEDA (M31)", 0, 28);
+      }
+      tCtx.restore();
+
+      // 5. GALAKSI SOMBRERO (MESSIER 104)
+      // Edge-on spiral with bright spherical bulge and crisp dark equatorial dust lane
+      tCtx.save();
+      const m104X = w * 0.13 + pX * 0.038;
+      const m104Y = h * 0.78 + pY * 0.038;
+      tCtx.translate(m104X, m104Y);
+      tCtx.rotate((-7 * Math.PI) / 180);
+
+      // Huge luminous spherical/elliptical bulge
+      const sBulge = tCtx.createRadialGradient(0, 0, 3, 0, 0, 32);
+      sBulge.addColorStop(0, "rgba(255, 255, 255, 0.8)");
+      sBulge.addColorStop(0.3, "rgba(255, 238, 178, 0.45)");
+      sBulge.addColorStop(0.7, "rgba(255, 204, 128, 0.15)");
+      sBulge.addColorStop(1, "transparent");
+      tCtx.fillStyle = sBulge;
+      tCtx.beginPath();
+      tCtx.ellipse(0, 0, 36, 22, 0, 0, Math.PI * 2);
+      tCtx.fill();
+
+      // Flat disc
+      tCtx.fillStyle = "rgba(255, 243, 224, 0.28)";
+      tCtx.beginPath();
+      tCtx.ellipse(0, 0, 52, 9, 0, 0, Math.PI * 2);
+      tCtx.fill();
+
+      // Prominent jet-black dust lane slicing horizontally across the galaxy
+      tCtx.strokeStyle = "rgba(4, 6, 12, 0.88)";
+      tCtx.lineWidth = 3;
+      tCtx.beginPath();
+      tCtx.moveTo(-46, 0);
+      tCtx.lineTo(46, 0);
+      tCtx.stroke();
+
+      if (!isFullView) {
+        tCtx.fillStyle = "rgba(255, 213, 79, 0.6)";
+        tCtx.font = "bold 8px 'Plus Jakarta Sans', sans-serif";
+        tCtx.textAlign = "center";
+        tCtx.fillText("GALAKSI SOMBRERO (M104)", 0, 22);
+      }
+      tCtx.restore();
+
+      // 6. GALAKSI PUSARAN (WHIRLPOOL GALAXY - M51)
+      // Face-on grand design spiral with logarithmic swirling arms and companion NGC 5195
+      tCtx.save();
+      const m51X = w * 0.86 + pX * 0.04;
+      const m51Y = h * 0.80 + pY * 0.04;
+      tCtx.translate(m51X, m51Y);
+
+      // Core glow
+      const m51Core = tCtx.createRadialGradient(0, 0, 2, 0, 0, 24);
+      m51Core.addColorStop(0, "rgba(255, 255, 255, 0.9)");
+      m51Core.addColorStop(0.35, "rgba(255, 214, 0, 0.5)");
+      m51Core.addColorStop(0.7, "rgba(129, 212, 250, 0.2)");
+      m51Core.addColorStop(1, "transparent");
+      tCtx.fillStyle = m51Core;
+      tCtx.beginPath();
+      tCtx.arc(0, 0, 24, 0, Math.PI * 2);
+      tCtx.fill();
+
+      // Swirling dual spiral arms
+      tCtx.strokeStyle = "rgba(144, 202, 249, 0.4)";
+      tCtx.lineWidth = 2.5;
+      tCtx.beginPath();
+      for (let theta = 0; theta < Math.PI * 3.5; theta += 0.1) {
+        const rad = 3 + theta * 4.2;
+        const ax = Math.cos(theta) * rad;
+        const ay = Math.sin(theta) * rad;
+        if (theta === 0) tCtx.moveTo(ax, ay);
+        else tCtx.lineTo(ax, ay);
+      }
+      tCtx.stroke();
+
+      tCtx.strokeStyle = "rgba(244, 143, 177, 0.35)";
+      tCtx.lineWidth = 2.2;
+      tCtx.beginPath();
+      for (let theta = Math.PI; theta < Math.PI * 4.2; theta += 0.1) {
+        const rad = 3 + (theta - Math.PI) * 4.2;
+        const ax = Math.cos(theta) * rad;
+        const ay = Math.sin(theta) * rad;
+        if (theta === Math.PI) tCtx.moveTo(ax, ay);
+        else tCtx.lineTo(ax, ay);
+      }
+      tCtx.stroke();
+
+      // Tidal bridge & Companion Galaxy NGC 5195
+      tCtx.strokeStyle = "rgba(255, 224, 178, 0.3)";
+      tCtx.lineWidth = 3;
+      tCtx.beginPath();
+      tCtx.moveTo(14, -10);
+      tCtx.lineTo(24, -18);
+      tCtx.stroke();
+
+      tCtx.fillStyle = "rgba(255, 238, 178, 0.7)";
+      tCtx.beginPath();
+      tCtx.arc(26, -20, 4.5, 0, Math.PI * 2);
+      tCtx.fill();
+
+      if (!isFullView) {
+        tCtx.fillStyle = "rgba(244, 143, 177, 0.6)";
+        tCtx.font = "bold 8px 'Plus Jakarta Sans', sans-serif";
+        tCtx.textAlign = "center";
+        tCtx.fillText("GALAKSI PUSARAN (M51)", 0, 26);
+      }
+      tCtx.restore();
+
+      // 7. AWAN MAGELLAN BESAR (LMC)
+      tCtx.save();
+      const lmcX = w * 0.52 + pX * 0.03;
+      const lmcY = h * 0.10 + pY * 0.03;
+      const lmcGrad = tCtx.createRadialGradient(lmcX, lmcY, 4, lmcX, lmcY, 48);
+      lmcGrad.addColorStop(0, "rgba(206, 147, 216, 0.22)");
+      lmcGrad.addColorStop(0.4, "rgba(179, 157, 219, 0.12)");
+      lmcGrad.addColorStop(1, "transparent");
+      tCtx.fillStyle = lmcGrad;
+      tCtx.beginPath();
+      tCtx.arc(lmcX, lmcY, 48, 0, Math.PI * 2);
+      tCtx.fill();
+
+      // Tarantula nebula glowing spot inside LMC
+      tCtx.fillStyle = "rgba(255, 64, 129, 0.45)";
+      tCtx.beginPath();
+      tCtx.arc(lmcX + 6, lmcY - 4, 3.5, 0, Math.PI * 2);
+      tCtx.fill();
+      tCtx.restore();
+
+      // 8. RICH MULTI-SPECTRAL STARFIELD WITH TWINKLE & DIFFRACTION SPIKES
+      stars.forEach(s => {
+        const px = ((s.x * w + pX * s.depth) % w + w) % w;
+        const py = ((s.y * h + pY * s.depth) % h + h) % h;
+        const twinkle = (Math.sin(elapsedTime * s.twinkle + s.x * 12) + 1) / 2;
+        const alpha = s.alpha * (0.5 + 0.5 * twinkle);
+
+        tCtx.beginPath();
+        tCtx.arc(px, py, s.size, 0, Math.PI * 2);
+        tCtx.fillStyle = `${s.colorBase}${alpha.toFixed(2)})`;
+        tCtx.fill();
+
+        // 4-Point cross-diffraction spike on prominent bright stars (JWST / Hubble optics)
+        if (s.hasSpikes && s.size > 1.8) {
+          tCtx.strokeStyle = `${s.colorBase}${(alpha * 0.6).toFixed(2)})`;
+          tCtx.lineWidth = 0.8;
+          tCtx.beginPath();
+          tCtx.moveTo(px - s.size * 3.5, py);
+          tCtx.lineTo(px + s.size * 3.5, py);
+          tCtx.moveTo(px, py - s.size * 3.5);
+          tCtx.lineTo(px, py + s.size * 3.5);
+          tCtx.stroke();
+        }
+      });
+    }
+
     // Master Animation Loop
     function animate(currentTime) {
       const dt = Math.min((currentTime - lastTime) / 1000, 0.1);
@@ -1011,7 +1468,7 @@
       }
 
       if (fullPlanet) {
-        // Draw Full-Screen Planet Mode
+        // Draw Full-Screen Planet Mode with detailed geography & deep space
         drawFullPlanetView(dt);
       } else {
         // Draw Solar System Overview Mode
@@ -1031,24 +1488,8 @@
 
       ctx.clearRect(0, 0, w, h);
 
-      // Cosmic background
-      const bgGrad = ctx.createRadialGradient(centerX, centerY, 40, centerX, centerY, Math.max(w, h) * 0.9);
-      bgGrad.addColorStop(0, "#101624");
-      bgGrad.addColorStop(0.5, "#070A10");
-      bgGrad.addColorStop(1, "#040508");
-      ctx.fillStyle = bgGrad;
-      ctx.fillRect(0, 0, w, h);
-
-      // Stars
-      stars.forEach(s => {
-        const px = ((s.x * w + panOffset.x * s.depth) % w + w) % w;
-        const py = ((s.y * h + panOffset.y * s.depth) % h + h) % h;
-        const twinkle = (Math.sin(elapsedTime * s.twinkle + s.x * 10) + 1) / 2;
-        ctx.beginPath();
-        ctx.arc(px, py, s.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${s.alpha * (0.6 + 0.4 * twinkle)})`;
-        ctx.fill();
-      });
+      // Deep space cosmos background with Milky Way & other galaxies!
+      drawDeepSpaceCosmos(ctx, w, h, panOffset.x, panOffset.y, false);
 
       const maxSolarR = 240;
       const minDimension = Math.min(w, h);
@@ -1060,7 +1501,7 @@
         const orbitR = planet.r * effRadiusScale;
         ctx.beginPath();
         ctx.arc(centerX, centerY, orbitR, 0, Math.PI * 2);
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.07)";
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
         ctx.lineWidth = 1;
         ctx.stroke();
       });
@@ -1072,7 +1513,7 @@
 
       // Sun glow
       const sunGlow = ctx.createRadialGradient(centerX, centerY, sunRadius * 0.5, centerX, centerY, sunRadius * 2.8);
-      sunGlow.addColorStop(0, "rgba(255, 180, 0, 0.45)");
+      sunGlow.addColorStop(0, "rgba(255, 180, 0, 0.5)");
       sunGlow.addColorStop(1, "transparent");
       ctx.fillStyle = sunGlow;
       ctx.beginPath();
@@ -1103,20 +1544,20 @@
         if (isHov) {
           ctx.beginPath();
           ctx.arc(px, py, pRadius + 6, 0, Math.PI * 2);
-          ctx.strokeStyle = "rgba(79, 134, 247, 0.6)";
-          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = "rgba(79, 134, 247, 0.8)";
+          ctx.lineWidth = 1.8;
           ctx.stroke();
         }
 
-        // Saturn Rings
+        // Saturn Rings in Overview
         if (planet.hasRings) {
           ctx.save();
           ctx.translate(px, py);
           ctx.rotate((22 * Math.PI) / 180);
           ctx.beginPath();
           ctx.ellipse(0, 0, pRadius * 2.3, pRadius * 0.65, 0, 0, Math.PI * 2);
-          ctx.strokeStyle = "rgba(227, 187, 118, 0.75)";
-          ctx.lineWidth = pRadius * 0.4;
+          ctx.strokeStyle = "rgba(227, 187, 118, 0.85)";
+          ctx.lineWidth = pRadius * 0.45;
           ctx.stroke();
           ctx.restore();
         }
@@ -1131,12 +1572,106 @@
         ctx.arc(px, py, pRadius, 0, Math.PI * 2);
         ctx.fillStyle = sphereGrad;
         ctx.fill();
+
+        // Distinct mini features in overview for quick recognition
+        if (planet.id === "earth") {
+          // Mini green continent patch on Earth
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(px, py, pRadius, 0, Math.PI * 2);
+          ctx.clip();
+          ctx.fillStyle = "rgba(76, 175, 80, 0.65)";
+          ctx.beginPath();
+          ctx.arc(px - pRadius * 0.2, py - pRadius * 0.1, pRadius * 0.5, 0, Math.PI * 2);
+          ctx.fill();
+          // Mini polar cap
+          ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+          ctx.beginPath();
+          ctx.ellipse(px, py - pRadius * 0.8, pRadius * 0.4, pRadius * 0.15, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        } else if (planet.id === "jupiter") {
+          // Mini gas belt & Red Spot
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(px, py, pRadius, 0, Math.PI * 2);
+          ctx.clip();
+          ctx.fillStyle = "rgba(109, 76, 65, 0.45)";
+          ctx.fillRect(px - pRadius, py - pRadius * 0.25, pRadius * 2, pRadius * 0.5);
+          ctx.fillStyle = "#C62828";
+          ctx.beginPath();
+          ctx.arc(px + pRadius * 0.3, py + pRadius * 0.15, pRadius * 0.2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        } else if (planet.id === "mars") {
+          // Mini white polar ice cap on Mars
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(px, py, pRadius, 0, Math.PI * 2);
+          ctx.clip();
+          ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+          ctx.beginPath();
+          ctx.ellipse(px, py - pRadius * 0.82, pRadius * 0.35, pRadius * 0.15, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
       });
 
       currentPositions = newPositions;
     }
 
-    // 2. Render Full-Screen Immersive Planet View with all animated objects & zoom/pan support
+    // =========================================================================
+    // SPHERICAL ORTHOGRAPHIC PROJECTION HELPER FOR PLANETARY GEOGRAPHY
+    // =========================================================================
+    function projectGeoPoint(lonDeg, latDeg, rotRad, cx, cy, r) {
+      const lonRad = (lonDeg * Math.PI) / 180;
+      const latRad = (latDeg * Math.PI) / 180;
+      const dLon = lonRad - rotRad;
+      const cosLat = Math.cos(latRad);
+      const sinLat = Math.sin(latRad);
+      const x = Math.sin(dLon) * cosLat;
+      const y = -sinLat;
+      const z = Math.cos(dLon) * cosLat;
+      return {
+        x: cx + x * r,
+        y: cy + y * r,
+        z: z,
+        visible: z > -0.05
+      };
+    }
+
+    // Helper: Draw a closed polygon on the sphere from an array of [lon, lat] points
+    function drawSphericalPolygon(targetCtx, points, rotRad, cx, cy, r, fillStyle, strokeStyle = null, lineWidth = 1) {
+      let anyVisible = false;
+      const projected = points.map(pt => {
+        const p = projectGeoPoint(pt[0], pt[1], rotRad, cx, cy, r);
+        if (p.visible) anyVisible = true;
+        return p;
+      });
+
+      if (!anyVisible) return;
+
+      targetCtx.beginPath();
+      projected.forEach((p, idx) => {
+        if (idx === 0) targetCtx.moveTo(p.x, p.y);
+        else targetCtx.lineTo(p.x, p.y);
+      });
+      targetCtx.closePath();
+
+      if (fillStyle) {
+        targetCtx.fillStyle = fillStyle;
+        targetCtx.fill();
+      }
+      if (strokeStyle) {
+        targetCtx.strokeStyle = strokeStyle;
+        targetCtx.lineWidth = lineWidth;
+        targetCtx.stroke();
+      }
+    }
+
+    // =========================================================================
+    // 2. RENDER FULL-SCREEN IMMERSIVE PLANET WITH REAL ANATOMICAL DETAILS
+    // =========================================================================
     function drawFullPlanetView(dt) {
       const w = window.innerWidth;
       const h = window.innerHeight;
@@ -1146,23 +1681,8 @@
 
       fullCtx.clearRect(0, 0, w, h);
 
-      // Deep space backdrop with dynamic colored aura
-      const baseGrad = fullCtx.createRadialGradient(centerX, centerY, 50, centerX, centerY, Math.max(w, h) * 0.85);
-      baseGrad.addColorStop(0, "#101626");
-      baseGrad.addColorStop(0.6, "#06080E");
-      baseGrad.addColorStop(1, "#020305");
-      fullCtx.fillStyle = baseGrad;
-      fullCtx.fillRect(0, 0, w, h);
-
-      // Background stars
-      stars.forEach(s => {
-        const px = s.x * w;
-        const py = s.y * h;
-        fullCtx.beginPath();
-        fullCtx.arc(px, py, s.size * 0.9, 0, Math.PI * 2);
-        fullCtx.fillStyle = `rgba(255, 255, 255, ${s.alpha * 0.5})`;
-        fullCtx.fill();
-      });
+      // Deep space backdrop with Milky Way & other galaxies!
+      drawDeepSpaceCosmos(fullCtx, w, h, fullPanX, fullPanY, true);
 
       const p = fullPlanet;
       // Impressive centerpiece planet radius scaled by user zoom
@@ -1180,17 +1700,62 @@
       fullCtx.fill();
 
       // ============================================
-      // DRAW CELESTIAL PHENOMENA SPECIFIC TO PLANET
-      // ============================================
-
       // A. Back-layer orbiting objects (Behind Planet)
+      // ============================================
       drawPlanetOrbiters(p, centerX, centerY, planetRadius, true);
 
-      // B. Planet Sphere Body
+      // ============================================
+      // B. Saturn Back Rings (Rendered Behind Sphere)
+      // ============================================
+      if (p.hasRings) {
+        fullCtx.save();
+        fullCtx.translate(centerX, centerY);
+        fullCtx.rotate((22 * Math.PI) / 180);
+
+        // Ring C (Crepe Ring - Semi-transparent inside)
+        fullCtx.beginPath();
+        fullCtx.ellipse(0, 0, planetRadius * 1.55, planetRadius * 0.44, 0, Math.PI, Math.PI * 2);
+        fullCtx.strokeStyle = "rgba(180, 160, 130, 0.35)";
+        fullCtx.lineWidth = planetRadius * 0.25;
+        fullCtx.stroke();
+
+        // Ring B (Bright, dense, main inner ring)
+        fullCtx.beginPath();
+        fullCtx.ellipse(0, 0, planetRadius * 1.95, planetRadius * 0.55, 0, Math.PI, Math.PI * 2);
+        fullCtx.strokeStyle = "rgba(255, 248, 200, 0.85)";
+        fullCtx.lineWidth = planetRadius * 0.38;
+        fullCtx.stroke();
+
+        // Cassini Division (4.800 km jet-black gap)
+        fullCtx.beginPath();
+        fullCtx.ellipse(0, 0, planetRadius * 2.12, planetRadius * 0.60, 0, Math.PI, Math.PI * 2);
+        fullCtx.strokeStyle = "#04060C";
+        fullCtx.lineWidth = 3.5;
+        fullCtx.stroke();
+
+        // Ring A (Outer Ring)
+        fullCtx.beginPath();
+        fullCtx.ellipse(0, 0, planetRadius * 2.30, planetRadius * 0.65, 0, Math.PI, Math.PI * 2);
+        fullCtx.strokeStyle = "rgba(230, 215, 175, 0.65)";
+        fullCtx.lineWidth = planetRadius * 0.22;
+        fullCtx.stroke();
+
+        // Geometric cast shadow of planet sphere across back rings
+        fullCtx.fillStyle = "rgba(3, 5, 10, 0.85)";
+        fullCtx.beginPath();
+        fullCtx.ellipse(planetRadius * 0.45, -planetRadius * 0.25, planetRadius * 0.9, planetRadius * 0.75, 0, 0, Math.PI * 2);
+        fullCtx.fill();
+
+        fullCtx.restore();
+      }
+
+      // ============================================
+      // C. Planet Sphere Base Body
+      // ============================================
       const sphereGrad = fullCtx.createRadialGradient(
         centerX - planetRadius * 0.35,
         centerY - planetRadius * 0.35,
-        planetRadius * 0.1,
+        planetRadius * 0.08,
         centerX,
         centerY,
         planetRadius * 1.25
@@ -1204,112 +1769,942 @@
       fullCtx.fillStyle = sphereGrad;
       fullCtx.fill();
 
-      // C. Authentic atmospheric & surface animations
-      if (p.id === "sun") {
-        // Corona Prominences & Solar Flares
-        for (let i = 0; i < 10; i++) {
-          const flareAngle = (i * (Math.PI * 2 / 10)) + elapsedTime * 0.3;
-          const flareLen = planetRadius * (1.2 + 0.2 * Math.sin(elapsedTime * 3.5 + i));
+      // =========================================================================
+      // D. SCIENTIFICALLY ACCURATE SURFACE ANATOMY & GEOGRAPHY (FOR STUDENTS)
+      // =========================================================================
+      fullCtx.save();
+      fullCtx.beginPath();
+      fullCtx.arc(centerX, centerY, planetRadius, 0, Math.PI * 2);
+      fullCtx.clip();
+
+      const featurePinsToDraw = [];
+
+      if (p.id === "earth") {
+        // =====================================================================
+        // BUMI (EARTH): REAL CONTINENTS, NUSANTARA / INDONESIA, ISLANDS, CLOUDS
+        // =====================================================================
+        const earthRot = (elapsedTime * 0.14) % (Math.PI * 2);
+
+        // 1. Deep Ocean Base with Specular Sun Glint
+        const oceanGrad = fullCtx.createRadialGradient(
+          centerX - planetRadius * 0.35,
+          centerY - planetRadius * 0.35,
+          planetRadius * 0.1,
+          centerX,
+          centerY,
+          planetRadius * 1.15
+        );
+        oceanGrad.addColorStop(0, "#1976D2");  // Sunlit ocean
+        oceanGrad.addColorStop(0.4, "#0D47A1"); // Deep cobalt abyss
+        oceanGrad.addColorStop(0.85, "#06224D");
+        oceanGrad.addColorStop(1, "#020B1A");   // Ocean limb
+        fullCtx.fillStyle = oceanGrad;
+        fullCtx.fillRect(centerX - planetRadius, centerY - planetRadius, planetRadius * 2, planetRadius * 2);
+
+        // Specular highlight on ocean surface
+        const glintGrad = fullCtx.createRadialGradient(
+          centerX - planetRadius * 0.32,
+          centerY - planetRadius * 0.32,
+          0,
+          centerX - planetRadius * 0.32,
+          centerY - planetRadius * 0.32,
+          planetRadius * 0.45
+        );
+        glintGrad.addColorStop(0, "rgba(255, 255, 255, 0.45)");
+        glintGrad.addColorStop(0.4, "rgba(100, 181, 246, 0.18)");
+        glintGrad.addColorStop(1, "transparent");
+        fullCtx.fillStyle = glintGrad;
+        fullCtx.fillRect(centerX - planetRadius, centerY - planetRadius, planetRadius * 2, planetRadius * 2);
+
+        // Colors for terrain
+        const cEmerald = "#2E7D32";       // Lush rainforest (Indonesia, Amazon, Congo)
+        const cTropical = "#43A047";      // Tropical green
+        const cSahara = "#FBC02D";        // Golden desert sand (Sahara, Arabia, Gobi)
+        const cOutback = "#D84315";       // Red desert (Australian outback)
+        const cGlacial = "#FFFFFF";       // Snow & Ice caps
+        const cCoastline = "#A5D6A7";     // Coastal margin
+        const cCyanReef = "rgba(0, 229, 255, 0.45)"; // Shallow coral reef waters
+
+        // Helper for drawing landmass with shallow cyan shelf water
+        const renderLandWithReef = (pts, landColor, borderColor = cCoastline) => {
+          // Draw cyan coastal shelf water first
+          drawSphericalPolygon(fullCtx, pts, earthRot, centerX, centerY, planetRadius, cCyanReef, null, 0);
+          // Draw landmass on top
+          drawSphericalPolygon(fullCtx, pts, earthRot, centerX, centerY, planetRadius, landColor, borderColor, 0.8);
+        };
+
+        // --- 1. KEPULAUAN INDONESIA / NUSANTARA (SHAPED ISLANDS & CORAL REEFS) ---
+        // Pulau Sumatra (elongated NW-SE)
+        const sumatraPts = [
+          [95.3, 5.8], [97.5, 4.2], [99.8, 2.5], [102.5, 0.1], [104.8, -2.8],
+          [106.0, -5.9], [104.5, -5.6], [102.0, -3.8], [99.5, -1.5], [97.0, 1.2], [95.2, 5.5]
+        ];
+        renderLandWithReef(sumatraPts, cEmerald);
+
+        // Pulau Jawa (curved elongated island east-west)
+        const jawaPts = [
+          [105.8, -6.0], [108.5, -6.3], [111.5, -6.8], [114.4, -7.8],
+          [114.6, -8.7], [112.0, -8.4], [109.0, -7.8], [106.2, -7.0], [105.8, -6.0]
+        ];
+        renderLandWithReef(jawaPts, cTropical);
+
+        // Pulau Kalimantan / Borneo (large rounded tropical island)
+        const kalimantanPts = [
+          [109.2, 1.8], [111.0, 4.2], [115.5, 4.5], [118.8, 5.0], [119.2, 3.8],
+          [117.5, 0.5], [116.8, -3.5], [114.5, -4.0], [111.5, -3.2], [109.0, -1.5], [109.2, 1.8]
+        ];
+        renderLandWithReef(kalimantanPts, cEmerald);
+
+        // Pulau Sulawesi (Distinctive 4-armed K-shape!)
+        const sulawesiPts = [
+          [120.5, 1.5], [123.0, 1.2], [125.0, 1.6], [124.5, 0.5], [121.8, 0.2],
+          [123.5, -0.8], [121.5, -1.8], [123.2, -3.5], [122.5, -5.5], [120.0, -5.2],
+          [119.5, -3.0], [119.8, -0.5], [120.5, 1.5]
+        ];
+        renderLandWithReef(sulawesiPts, cTropical);
+
+        // Pulau Papua / Irian (Bird's head Vogelkop & central cordillera spine)
+        const papuaPts = [
+          [131.0, -0.8], [133.5, -0.5], [135.5, -2.5], [140.0, -2.8], [142.0, -3.5],
+          [142.0, -8.8], [138.5, -7.5], [135.0, -4.5], [132.5, -4.0], [131.0, -2.0], [131.0, -0.8]
+        ];
+        renderLandWithReef(papuaPts, cEmerald);
+
+        // Semenanjung Malaya & Asia Tenggara (Indochina)
+        const indochinaPts = [
+          [98.5, 6.0], [101.5, 6.5], [103.8, 1.3], [102.5, 2.5], [100.5, 7.5],
+          [100.5, 14.0], [105.5, 20.5], [109.0, 15.0], [106.0, 9.5], [102.5, 11.5], [98.5, 6.0]
+        ];
+        renderLandWithReef(indochinaPts, cTropical);
+
+        // Kepulauan Filipina
+        const filipinaPts = [
+          [120.5, 18.5], [122.5, 16.5], [124.0, 12.5], [126.0, 7.5], [124.5, 6.5], [121.5, 9.5], [120.0, 14.5], [120.5, 18.5]
+        ];
+        renderLandWithReef(filipinaPts, cTropical);
+
+        // --- 2. BENUA AUSTRALIA ---
+        const australiaPts = [
+          [115.0, -22.0], [122.0, -17.0], [131.0, -12.0], [136.0, -12.0],
+          [142.0, -10.5], [145.0, -15.0], [153.5, -28.0], [150.0, -37.5],
+          [140.0, -38.0], [135.0, -34.0], [128.0, -32.0], [115.0, -34.0],
+          [113.0, -26.0], [115.0, -22.0]
+        ];
+        renderLandWithReef(australiaPts, cOutback, "#FF8A65");
+
+        // --- 3. BENUA ASIA & INDIA ---
+        // Indian Subcontinent (Triangular peninsula)
+        const indiaPts = [
+          [68.5, 23.5], [77.5, 8.5], [80.5, 13.0], [87.5, 21.5], [88.5, 26.5], [75.0, 31.0], [68.5, 23.5]
+        ];
+        renderLandWithReef(indiaPts, cTropical);
+
+        // Snow-capped Himalaya Mountain Spine
+        const himalayaPts = [
+          [74.0, 34.0], [79.0, 31.0], [86.0, 28.0], [92.0, 27.5], [96.0, 29.0],
+          [92.0, 29.5], [85.0, 30.5], [78.0, 33.0], [74.0, 34.0]
+        ];
+        drawSphericalPolygon(fullCtx, himalayaPts, earthRot, centerX, centerY, planetRadius, cGlacial, "rgba(255,255,255,0.9)", 1.2);
+
+        // China & East Asia
+        const eastAsiaPts = [
+          [100.0, 22.0], [118.0, 24.0], [122.0, 31.0], [125.0, 40.0], [130.0, 48.0],
+          [115.0, 45.0], [95.0, 42.0], [85.0, 35.0], [100.0, 22.0]
+        ];
+        renderLandWithReef(eastAsiaPts, "#558B2F");
+
+        // Jazirah Arab & Timur Tengah
+        const arabiaPts = [
+          [35.0, 28.0], [44.0, 30.0], [50.0, 26.0], [58.0, 23.0], [54.0, 16.0], [44.0, 12.5], [35.0, 28.0]
+        ];
+        renderLandWithReef(arabiaPts, cSahara);
+
+        // --- 4. BENUA AFRIKA ---
+        const africaPts = [
+          [-17.0, 14.5], [-5.0, 5.0], [9.5, 4.5], [10.0, -4.5], [18.0, -34.5],
+          [28.0, -32.5], [36.0, -18.0], [41.0, -10.0], [51.0, 10.5], [43.0, 12.5],
+          [32.0, 31.5], [11.0, 37.0], [-6.0, 36.0], [-17.0, 21.0], [-17.0, 14.5]
+        ];
+        renderLandWithReef(africaPts, cSahara);
+
+        // Green Nile River & Delta ribbon in Africa
+        const nilePts = [
+          [30.0, 31.5], [32.5, 31.5], [31.5, 24.0], [32.5, 15.0], [31.0, 15.0], [30.5, 24.0], [30.0, 31.5]
+        ];
+        drawSphericalPolygon(fullCtx, nilePts, earthRot, centerX, centerY, planetRadius, "#388E3C");
+
+        // Congo Rainforest patch in Central Africa
+        const congoPts = [
+          [12.0, 2.0], [25.0, 3.0], [28.0, -5.0], [16.0, -6.0], [12.0, 2.0]
+        ];
+        drawSphericalPolygon(fullCtx, congoPts, earthRot, centerX, centerY, planetRadius, "#1B5E20");
+
+        // Pulau Madagaskar
+        const madagascarPts = [
+          [44.0, -12.0], [50.0, -13.0], [48.0, -25.0], [44.0, -25.0], [44.0, -12.0]
+        ];
+        renderLandWithReef(madagascarPts, cTropical);
+
+        // --- 5. BENUA EROPA ---
+        const europePts = [
+          [-9.0, 37.0], [3.0, 43.0], [15.0, 38.0], [25.0, 40.0], [30.0, 46.0],
+          [30.0, 60.0], [10.0, 65.0], [5.0, 58.0], [-5.0, 48.0], [-9.0, 43.0], [-9.0, 37.0]
+        ];
+        renderLandWithReef(europePts, "#689F38");
+
+        // --- 6. BENUA AMERIKA UTARA & SELATAN ---
+        // North America
+        const northAmericaPts = [
+          [-165.0, 65.0], [-130.0, 50.0], [-122.0, 34.0], [-105.0, 20.0], [-80.0, 25.0],
+          [-75.0, 35.0], [-60.0, 46.0], [-80.0, 55.0], [-95.0, 68.0], [-165.0, 65.0]
+        ];
+        renderLandWithReef(northAmericaPts, "#689F38");
+
+        // South America & Amazon Basin
+        const southAmericaPts = [
+          [-78.0, 9.0], [-60.0, 6.0], [-35.0, -5.0], [-40.0, -22.0], [-55.0, -35.0],
+          [-68.0, -54.0], [-74.0, -45.0], [-72.0, -20.0], [-81.0, -4.0], [-78.0, 9.0]
+        ];
+        renderLandWithReef(southAmericaPts, cEmerald);
+
+        // Greenland Glacial Ice Shield
+        const greenlandPts = [
+          [-52.0, 60.0], [-25.0, 68.0], [-18.0, 80.0], [-45.0, 83.0], [-55.0, 72.0], [-52.0, 60.0]
+        ];
+        drawSphericalPolygon(fullCtx, greenlandPts, earthRot, centerX, centerY, planetRadius, cGlacial, "rgba(255,255,255,0.9)", 1);
+
+        // --- 7. KUTUB ES ABADI (ANTARTIKA & ARKTIK) ---
+        // Antarctic Ice Sheet (South Pole)
+        fullCtx.fillStyle = "rgba(245, 245, 255, 0.95)";
+        fullCtx.beginPath();
+        fullCtx.ellipse(centerX, centerY + planetRadius * 0.88, planetRadius * 0.55, planetRadius * 0.22, 0, 0, Math.PI * 2);
+        fullCtx.fill();
+
+        // Arctic Sea Ice (North Pole)
+        fullCtx.fillStyle = "rgba(240, 248, 255, 0.90)";
+        fullCtx.beginPath();
+        fullCtx.ellipse(centerX, centerY - planetRadius * 0.88, planetRadius * 0.50, planetRadius * 0.20, 0, 0, Math.PI * 2);
+        fullCtx.fill();
+
+        // --- 8. DYNAMIC ROTATING CLOUDS & TROPICAL CYCLONE SPIRAL ---
+        const cloudRot = (elapsedTime * 0.17) % (Math.PI * 2);
+
+        // Tropical Cyclone Spiral Hurricane (over warm Pacific/Indian Ocean)
+        const cycloneCenter = projectGeoPoint(135.0, 15.0, cloudRot, centerX, centerY, planetRadius);
+        if (cycloneCenter.visible) {
+          fullCtx.save();
+          fullCtx.translate(cycloneCenter.x, cycloneCenter.y);
+          fullCtx.rotate(elapsedTime * 0.8);
+          // Spiral arms of hurricane
+          for (let a = 0; a < 3; a++) {
+            fullCtx.strokeStyle = "rgba(255, 255, 255, 0.65)";
+            fullCtx.lineWidth = 3.5;
+            fullCtx.beginPath();
+            for (let t = 0; t < Math.PI * 2; t += 0.2) {
+              const rCurve = (t * 5.5) * (planetRadius / 150);
+              const curAng = t + (a * (Math.PI * 2 / 3));
+              const cx = Math.cos(curAng) * rCurve;
+              const cy = Math.sin(curAng) * rCurve;
+              if (t === 0) fullCtx.moveTo(cx, cy);
+              else fullCtx.lineTo(cx, cy);
+            }
+            fullCtx.stroke();
+          }
+          // Clear eye of the cyclone
+          fullCtx.fillStyle = "rgba(13, 71, 161, 0.5)";
+          fullCtx.beginPath();
+          fullCtx.arc(0, 0, 3.5, 0, Math.PI * 2);
+          fullCtx.fill();
+          fullCtx.restore();
+        }
+
+        // Swirling ITCZ equatorial cloud ribbons & mid-latitude weather fronts
+        for (let i = 0; i < 4; i++) {
+          const latCloud = (i - 1.5) * 35;
+          const shiftLon = Math.sin(elapsedTime * 0.3 + i * 2) * 45;
+          const cloudPt = projectGeoPoint(shiftLon, latCloud, cloudRot, centerX, centerY, planetRadius);
+          if (cloudPt.visible) {
+            fullCtx.fillStyle = "rgba(255, 255, 255, 0.42)";
+            fullCtx.beginPath();
+            fullCtx.ellipse(cloudPt.x, cloudPt.y, planetRadius * 0.65, planetRadius * 0.10, 0.1 * (i % 2 === 0 ? 1 : -1), 0, Math.PI * 2);
+            fullCtx.fill();
+          }
+        }
+
+        // Register Educational Feature Pins for Earth
+        const nusantaraPos = projectGeoPoint(118.0, -2.0, earthRot, centerX, centerY, planetRadius);
+        if (nusantaraPos.visible) {
+          featurePinsToDraw.push({
+            pos: nusantaraPos,
+            title: "🇮🇩 Kepulauan Indonesia (Nusantara)",
+            desc: "Sumatra, Jawa, Kalimantan, Sulawesi, Papua & terumbu karang tropis",
+            color: "#4CAF50"
+          });
+        }
+
+        const himalayaPos = projectGeoPoint(86.0, 28.0, earthRot, centerX, centerY, planetRadius);
+        if (himalayaPos.visible) {
+          featurePinsToDraw.push({
+            pos: himalayaPos,
+            title: "🏔️ Benua Asia & Himalaya",
+            desc: "Puncak es tertinggi dunia & dataran Eurasia",
+            color: "#81C784"
+          });
+        }
+
+        const saharaPos = projectGeoPoint(18.0, 22.0, earthRot, centerX, centerY, planetRadius);
+        if (saharaPos.visible) {
+          featurePinsToDraw.push({
+            pos: saharaPos,
+            title: "🏜️ Gurun Sahara & Benua Afrika",
+            desc: "Lautan pasir terbesar & lembah subur Sungai Nil",
+            color: "#FFD54F"
+          });
+        }
+
+        const australiaPos = projectGeoPoint(134.0, -25.0, earthRot, centerX, centerY, planetRadius);
+        if (australiaPos.visible) {
+          featurePinsToDraw.push({
+            pos: australiaPos,
+            title: "🦘 Benua Australia & Outback",
+            desc: "Gurun merah tengah benua & pesisir samudra",
+            color: "#FF7043"
+          });
+        }
+
+        const antartikaPos = projectGeoPoint(0.0, -82.0, earthRot, centerX, centerY, planetRadius);
+        if (antartikaPos.visible) {
+          featurePinsToDraw.push({
+            pos: antartikaPos,
+            title: "❄️ Kutub Es Antartika",
+            desc: "Lapisan tudung es abadi benua paling dingin di Bumi",
+            color: "#80DEEA"
+          });
+        }
+
+        if (cycloneCenter.visible) {
+          featurePinsToDraw.push({
+            pos: cycloneCenter,
+            title: "🌀 Pusaran Siklon Tropis",
+            desc: "Badai spiral atmosferik dengan mata siklon di samudra",
+            color: "#E0E0E0"
+          });
+        }
+
+      } else if (p.id === "mars") {
+        // =====================================================================
+        // MARS: VALLES MARINERIS, OLYMPUS MONS, BASALTIC MARIA, POLAR ICE CAPS
+        // =====================================================================
+        const marsRot = (elapsedTime * 0.12) % (Math.PI * 2);
+
+        // Dark Basaltic Maria (Syrtis Major, Acidalia Planitia, Hellas Basin)
+        const syrtisPts = [
+          [60.0, 5.0], [75.0, 15.0], [80.0, 25.0], [70.0, 28.0], [60.0, 15.0], [60.0, 5.0]
+        ];
+        drawSphericalPolygon(fullCtx, syrtisPts, marsRot, centerX, centerY, planetRadius, "rgba(50, 20, 15, 0.75)");
+
+        const mareErythraeum = [
+          [-55.0, -18.0], [-25.0, -22.0], [-15.0, -35.0], [-45.0, -32.0], [-55.0, -18.0]
+        ];
+        drawSphericalPolygon(fullCtx, mareErythraeum, marsRot, centerX, centerY, planetRadius, "rgba(55, 22, 16, 0.7)");
+
+        // Valles Marineris Canyon (4.000 km gigantic canyon system)
+        const vallesPts = [
+          [-90.0, -12.0], [-70.0, -14.0], [-50.0, -13.0], [-32.0, -15.0],
+          [-32.0, -17.0], [-50.0, -15.5], [-70.0, -16.0], [-90.0, -14.0], [-90.0, -12.0]
+        ];
+        drawSphericalPolygon(fullCtx, vallesPts, marsRot, centerX, centerY, planetRadius, "#2A1009", "#E64A19", 1.2);
+
+        // Olympus Mons (22 km high shield volcano with double caldera)
+        const olyPt = projectGeoPoint(-133.0, 18.0, marsRot, centerX, centerY, planetRadius);
+        if (olyPt.visible) {
+          // Volcanic base apron
+          fullCtx.fillStyle = "rgba(191, 54, 12, 0.85)";
+          fullCtx.beginPath();
+          fullCtx.arc(olyPt.x, olyPt.y, planetRadius * 0.18, 0, Math.PI * 2);
+          fullCtx.fill();
+
+          // Escarpment cliff shadow
+          fullCtx.strokeStyle = "rgba(42, 16, 9, 0.85)";
+          fullCtx.lineWidth = 2.5;
+          fullCtx.stroke();
+
+          // Summit caldera
+          fullCtx.fillStyle = "#1E0A05";
+          fullCtx.beginPath();
+          fullCtx.ellipse(olyPt.x, olyPt.y, planetRadius * 0.05, planetRadius * 0.035, 0, 0, Math.PI * 2);
+          fullCtx.fill();
+        }
+
+        // Swirling Polar Ice Caps (CO2 + Water Ice with spiral chasmata)
+        fullCtx.fillStyle = "rgba(255, 255, 255, 0.92)";
+        fullCtx.beginPath();
+        fullCtx.ellipse(centerX, centerY - planetRadius * 0.86, planetRadius * 0.42, planetRadius * 0.16, 0, 0, Math.PI * 2);
+        fullCtx.fill();
+
+        // Spiral chasmata cuts in ice cap
+        fullCtx.strokeStyle = "rgba(100, 30, 15, 0.6)";
+        fullCtx.lineWidth = 1.5;
+        fullCtx.beginPath();
+        fullCtx.arc(centerX, centerY - planetRadius * 0.86, planetRadius * 0.22, 0, Math.PI * 1.4);
+        fullCtx.stroke();
+
+        // South polar cap
+        fullCtx.fillStyle = "rgba(250, 250, 255, 0.85)";
+        fullCtx.beginPath();
+        fullCtx.ellipse(centerX, centerY + planetRadius * 0.88, planetRadius * 0.35, planetRadius * 0.14, 0, 0, Math.PI * 2);
+        fullCtx.fill();
+
+        // Mars Pins
+        if (olyPt.visible) {
+          featurePinsToDraw.push({
+            pos: olyPt,
+            title: "🌋 Gunung Olympus Mons (22 km)",
+            desc: "Gunung api perisai tertinggi di tata surya (3x tinggi Everest)",
+            color: "#FFAB91"
+          });
+        }
+
+        const vallesPinPt = projectGeoPoint(-60.0, -14.0, marsRot, centerX, centerY, planetRadius);
+        if (vallesPinPt.visible) {
+          featurePinsToDraw.push({
+            pos: vallesPinPt,
+            title: "🏜️ Ngarai Valles Marineris (4.000 km)",
+            desc: "Ngarai raksasa yang membelah seperempat lingkar ekuator Mars",
+            color: "#FF8A65"
+          });
+        }
+
+        const syrtisPinPt = projectGeoPoint(70.0, 18.0, marsRot, centerX, centerY, planetRadius);
+        if (syrtisPinPt.visible) {
+          featurePinsToDraw.push({
+            pos: syrtisPinPt,
+            title: "🌑 Dataran Basal Syrtis Major",
+            desc: "Kawasan batuan vulkanik gelap kuno paling mencolok di Mars",
+            color: "#D7CCC8"
+          });
+        }
+
+        featurePinsToDraw.push({
+          pos: { x: centerX, y: centerY - planetRadius * 0.86, visible: true },
+          title: "❄️ Tudung Es Kutub (Planum Boreum)",
+          desc: "Lapisan es air & karbondioksida beku dengan alur spiral",
+          color: "#E0F7FA"
+        });
+
+      } else if (p.id === "jupiter") {
+        // =====================================================================
+        // JUPITER: ALTERNATING BELTS & ZONES, FESTOON SWIRLS, GREAT RED SPOT
+        // =====================================================================
+        const jupBands = [
+          { y: -0.80, h: 0.14, c: "rgba(93, 64, 55, 0.65)" },   // North Polar Hood
+          { y: -0.62, h: 0.10, c: "rgba(188, 170, 164, 0.45)" }, // North North Temperate Zone
+          { y: -0.48, h: 0.16, c: "rgba(109, 76, 65, 0.75)" },  // North Equatorial Belt (NEB)
+          { y: -0.28, h: 0.22, c: "rgba(245, 238, 228, 0.55)" }, // Equatorial Zone (EZ)
+          { y: -0.02, h: 0.20, c: "rgba(121, 85, 72, 0.85)" },  // South Equatorial Belt (SEB)
+          { y: 0.22, h: 0.16, c: "rgba(238, 228, 218, 0.5)" },   // South Tropical Zone
+          { y: 0.42, h: 0.14, c: "rgba(141, 110, 99, 0.7)" },   // South Temperate Belt
+          { y: 0.60, h: 0.22, c: "rgba(78, 52, 46, 0.65)" }     // South Polar Hood
+        ];
+
+        jupBands.forEach(b => {
+          const by = centerY + b.y * planetRadius;
+          const bh = b.h * planetRadius;
+          fullCtx.fillStyle = b.c;
+          fullCtx.fillRect(centerX - planetRadius, by, planetRadius * 2, bh);
+
+          // Wavy festoon turbulent boundary plumes
+          fullCtx.strokeStyle = b.c;
+          fullCtx.lineWidth = 3;
+          fullCtx.beginPath();
+          for (let x = -planetRadius; x <= planetRadius; x += 15) {
+            const waveY = by + Math.sin((x * 0.08) + elapsedTime * 1.5) * 4;
+            if (x === -planetRadius) fullCtx.moveTo(centerX + x, waveY);
+            else fullCtx.lineTo(centerX + x, waveY);
+          }
+          fullCtx.stroke();
+        });
+
+        // Great Red Spot (Bintik Merah Raksasa - 350+ years old anticyclone)
+        const grsX = centerX + Math.cos(elapsedTime * 0.35) * (planetRadius * 0.42);
+        const grsY = centerY + planetRadius * 0.18;
+        const grsRx = planetRadius * 0.24;
+        const grsRy = planetRadius * 0.13;
+
+        // Outer turbulent vortex collar
+        fullCtx.fillStyle = "rgba(198, 40, 40, 0.85)";
+        fullCtx.beginPath();
+        fullCtx.ellipse(grsX, grsY, grsRx, grsRy, 0, 0, Math.PI * 2);
+        fullCtx.fill();
+
+        // Inner crimson eye
+        fullCtx.fillStyle = "#B71C1C";
+        fullCtx.beginPath();
+        fullCtx.ellipse(grsX, grsY, grsRx * 0.6, grsRy * 0.6, 0, 0, Math.PI * 2);
+        fullCtx.fill();
+
+        // Core white storm center
+        fullCtx.fillStyle = "rgba(255, 235, 238, 0.65)";
+        fullCtx.beginPath();
+        fullCtx.ellipse(grsX, grsY, grsRx * 0.2, grsRy * 0.25, 0, 0, Math.PI * 2);
+        fullCtx.fill();
+
+        // Turbulent eddy wake behind the spot
+        fullCtx.strokeStyle = "rgba(239, 154, 154, 0.55)";
+        fullCtx.lineWidth = 2;
+        fullCtx.beginPath();
+        fullCtx.arc(grsX + grsRx * 1.2, grsY - 2, 8, 0, Math.PI * 1.5);
+        fullCtx.stroke();
+
+        // White Ovals (String of Pearls in South Temperate Zone)
+        for (let i = 0; i < 3; i++) {
+          const woX = centerX + Math.sin(elapsedTime * 0.4 + i * 1.8) * (planetRadius * 0.6);
+          const woY = centerY + planetRadius * 0.44;
+          fullCtx.fillStyle = "rgba(255, 255, 255, 0.85)";
+          fullCtx.beginPath();
+          fullCtx.ellipse(woX, woY, planetRadius * 0.07, planetRadius * 0.04, 0, 0, Math.PI * 2);
+          fullCtx.fill();
+        }
+
+        featurePinsToDraw.push({
+          pos: { x: grsX, y: grsY, visible: true },
+          title: "🌀 Bintik Merah Raksasa (Great Red Spot)",
+          desc: "Badai antisiklon raksasa berumur lebih dari 350 tahun (lebih besar dari Bumi)",
+          color: "#EF5350"
+        });
+
+        featurePinsToDraw.push({
+          pos: { x: centerX, y: centerY - planetRadius * 0.40, visible: true },
+          title: "〰️ Sabuk Ekuator Utara (NEB)",
+          desc: "Zona pusaran gas gelap kecokelatan dengan turbulensi angin jet ekstrem",
+          color: "#D7CCC8"
+        });
+
+        featurePinsToDraw.push({
+          pos: { x: centerX + planetRadius * 0.35, y: centerY + planetRadius * 0.44, visible: true },
+          title: "⚪ Badai Oval Putih (String of Pearls)",
+          desc: "Rangkaian badai antisiklonik berputar kencang di lintang selatan",
+          color: "#FFFFFF"
+        });
+
+      } else if (p.id === "saturn") {
+        // =====================================================================
+        // SATURNUS: ATMOSPHERIC STRIPING, NORTH POLAR HEXAGON & RING SHADOW
+        // =====================================================================
+        // Subtle butter-ochre atmospheric banding
+        const satBands = [
+          { y: -0.75, h: 0.20, c: "rgba(168, 140, 90, 0.35)" },
+          { y: -0.45, h: 0.25, c: "rgba(220, 195, 140, 0.25)" },
+          { y: -0.15, h: 0.20, c: "rgba(195, 165, 110, 0.35)" },
+          { y: 0.15, h: 0.25, c: "rgba(235, 210, 155, 0.2)" },
+          { y: 0.50, h: 0.25, c: "rgba(180, 150, 95, 0.35)" }
+        ];
+        satBands.forEach(b => {
+          fullCtx.fillStyle = b.c;
+          fullCtx.fillRect(centerX - planetRadius, centerY + b.y * planetRadius, planetRadius * 2, b.h * planetRadius);
+        });
+
+        // Cast Shadow of Rings cutting across the equator of Saturn!
+        fullCtx.fillStyle = "rgba(4, 6, 12, 0.78)";
+        fullCtx.beginPath();
+        fullCtx.ellipse(centerX, centerY - planetRadius * 0.08, planetRadius * 0.98, planetRadius * 0.12, (20 * Math.PI) / 180, 0, Math.PI * 2);
+        fullCtx.fill();
+
+        // North Polar Hexagon (Distinct 6-sided geometric jet stream storm!)
+        fullCtx.save();
+        fullCtx.translate(centerX, centerY - planetRadius * 0.85);
+        fullCtx.rotate(elapsedTime * 0.2);
+        fullCtx.strokeStyle = "rgba(100, 120, 80, 0.75)";
+        fullCtx.fillStyle = "rgba(80, 100, 70, 0.4)";
+        fullCtx.lineWidth = 2.5;
+        fullCtx.beginPath();
+        const hexR = planetRadius * 0.24;
+        for (let s = 0; s < 6; s++) {
+          const hAngle = s * (Math.PI / 3);
+          const hx = Math.cos(hAngle) * hexR;
+          const hy = Math.sin(hAngle) * (hexR * 0.55); // compressed for polar tilt
+          if (s === 0) fullCtx.moveTo(hx, hy);
+          else fullCtx.lineTo(hx, hy);
+        }
+        fullCtx.closePath();
+        fullCtx.fill();
+        fullCtx.stroke();
+        fullCtx.restore();
+
+        featurePinsToDraw.push({
+          pos: { x: centerX, y: centerY - planetRadius * 0.85, visible: true },
+          title: "🛑 Heksagon Kutub Utara",
+          desc: "Pola badai jet stream unik bersegi enam berdiameter 30.000 km",
+          color: "#C5E1A5"
+        });
+
+        featurePinsToDraw.push({
+          pos: { x: centerX + planetRadius * 0.4, y: centerY - planetRadius * 0.08, visible: true },
+          title: "🌑 Bayangan Cincin pada Permukaan",
+          desc: "Miliaran partikel es cincin menghalangi sinar matahari ke bola planet",
+          color: "#BCAAA4"
+        });
+
+      } else if (p.id === "sun") {
+        // =====================================================================
+        // MATAHARI: CONVECTIVE PLASMA GRANULES, SUNSPOTS, CORONAL PROMINENCES
+        // =====================================================================
+        // Boiling convective granules pattern
+        for (let i = 0; i < 28; i++) {
+          const gx = centerX + (Math.sin(i * 3.7 + elapsedTime * 0.5) * planetRadius * 0.75);
+          const gy = centerY + (Math.cos(i * 5.1 + elapsedTime * 0.4) * planetRadius * 0.75);
+          const gr = planetRadius * (0.08 + 0.04 * Math.sin(i + elapsedTime));
+          fullCtx.fillStyle = i % 2 === 0 ? "rgba(255, 238, 88, 0.35)" : "rgba(255, 112, 67, 0.3)";
+          fullCtx.beginPath();
+          fullCtx.arc(gx, gy, gr, 0, Math.PI * 2);
+          fullCtx.fill();
+        }
+
+        // Sunspot Groups (Bintik Matahari dengan Umbra & Penumbra)
+        const sunspots = [
+          { x: -0.32, y: -0.15, r: 0.09 },
+          { x: -0.22, y: -0.10, r: 0.05 },
+          { x: 0.28, y: 0.22, r: 0.08 },
+          { x: 0.38, y: 0.26, r: 0.04 }
+        ];
+        sunspots.forEach(sp => {
+          const sx = centerX + sp.x * planetRadius;
+          const sy = centerY + sp.y * planetRadius;
+          const sr = sp.r * planetRadius;
+
+          // Penumbra (brownish outer rim)
+          fullCtx.fillStyle = "#8D2B0B";
+          fullCtx.beginPath();
+          fullCtx.arc(sx, sy, sr, 0, Math.PI * 2);
+          fullCtx.fill();
+
+          // Umbra (dark magnetic core)
+          fullCtx.fillStyle = "#1A0502";
+          fullCtx.beginPath();
+          fullCtx.arc(sx, sy, sr * 0.55, 0, Math.PI * 2);
+          fullCtx.fill();
+        });
+
+        // Coronal loops & solar prominences leaping out
+        fullCtx.restore(); // unclip temporarily to draw prominences beyond the limb
+        fullCtx.save();
+        for (let i = 0; i < 12; i++) {
+          const flareAngle = (i * (Math.PI * 2 / 12)) + elapsedTime * 0.2;
+          const flareLen = planetRadius * (1.22 + 0.25 * Math.sin(elapsedTime * 3.2 + i * 1.5));
           const fx = centerX + Math.cos(flareAngle) * flareLen;
           const fy = centerY + Math.sin(flareAngle) * flareLen;
 
           fullCtx.beginPath();
-          fullCtx.moveTo(centerX, centerY);
-          fullCtx.lineTo(fx, fy);
-          fullCtx.strokeStyle = i % 2 === 0 ? "rgba(255, 214, 0, 0.4)" : "rgba(255, 87, 34, 0.35)";
-          fullCtx.lineWidth = 14;
+          fullCtx.moveTo(centerX + Math.cos(flareAngle) * planetRadius * 0.9, centerY + Math.sin(flareAngle) * planetRadius * 0.9);
+          fullCtx.quadraticCurveTo(
+            centerX + Math.cos(flareAngle + 0.2) * (flareLen * 1.1),
+            centerY + Math.sin(flareAngle + 0.2) * (flareLen * 1.1),
+            fx, fy
+          );
+          fullCtx.strokeStyle = i % 2 === 0 ? "rgba(255, 214, 0, 0.6)" : "rgba(255, 87, 34, 0.55)";
+          fullCtx.lineWidth = 8;
           fullCtx.lineCap = "round";
           fullCtx.stroke();
         }
-      } else if (p.id === "earth") {
-        // Swirling white clouds & continental masses
-        fullCtx.save();
-        fullCtx.beginPath();
-        fullCtx.arc(centerX, centerY, planetRadius, 0, Math.PI * 2);
-        fullCtx.clip();
 
-        // Greenish continental patch
-        fullCtx.fillStyle = "rgba(46, 125, 50, 0.55)";
-        fullCtx.beginPath();
-        fullCtx.arc(centerX - planetRadius * 0.2, centerY - planetRadius * 0.1, planetRadius * 0.45, 0, Math.PI * 2);
-        fullCtx.fill();
-
-        // Swirling translucent cloud belts
-        for (let i = 0; i < 3; i++) {
-          const cloudY = centerY + (i - 1) * planetRadius * 0.4;
-          const cloudShift = Math.sin(elapsedTime * 0.5 + i) * planetRadius * 0.3;
-          fullCtx.fillStyle = "rgba(255, 255, 255, 0.35)";
-          fullCtx.beginPath();
-          fullCtx.ellipse(centerX + cloudShift, cloudY, planetRadius * 0.75, 12, 0, 0, Math.PI * 2);
-          fullCtx.fill();
-        }
-        fullCtx.restore();
-      } else if (p.id === "jupiter") {
-        // Swirling gas bands & Great Red Spot
-        fullCtx.save();
-        fullCtx.beginPath();
-        fullCtx.arc(centerX, centerY, planetRadius, 0, Math.PI * 2);
-        fullCtx.clip();
-
-        const bands = ["rgba(141, 110, 99, 0.5)", "rgba(215, 204, 200, 0.35)", "rgba(93, 64, 55, 0.55)", "rgba(188, 170, 164, 0.35)"];
-        bands.forEach((bColor, idx) => {
-          const by = centerY + (idx - 1.5) * planetRadius * 0.45;
-          fullCtx.fillStyle = bColor;
-          fullCtx.fillRect(centerX - planetRadius, by, planetRadius * 2, 14);
+        featurePinsToDraw.push({
+          pos: { x: centerX - planetRadius * 0.32, y: centerY - planetRadius * 0.15, visible: true },
+          title: "⚫ Bintik Matahari (Sunspot Umbra)",
+          desc: "Daerah medan magnet kuat bersuhu lebih dingin (3.700°C)",
+          color: "#FFA726"
         });
 
-        // Great Red Spot
-        const spotX = centerX + Math.cos(elapsedTime * 0.4) * (planetRadius * 0.45);
-        const spotY = centerY + planetRadius * 0.32;
-        fullCtx.fillStyle = "#B71C1C";
+        featurePinsToDraw.push({
+          pos: { x: centerX + planetRadius * 0.8, y: centerY - planetRadius * 0.7, visible: true },
+          title: "🔥 Lidah Api / Prominensa Korona",
+          desc: "Busur plasma raksasa yang melayang mengikuti garis medan magnet",
+          color: "#FF5722"
+        });
+
+        featurePinsToDraw.push({
+          pos: { x: centerX, y: centerY, visible: true },
+          title: "🟡 Fotosfer Granulasi Plasma",
+          desc: "Sel konveksi plasma mendidih bersuhu 5.500°C di permukaan",
+          color: "#FFEE58"
+        });
+
+      } else if (p.id === "mercury") {
+        // =====================================================================
+        // MERKURIUS: CALORIS BASIN, IMPACT CRATERS & RAYED EJECTA
+        // =====================================================================
+        // Caloris Basin (1.550 km gigantic impact basin with multi-ring ridges)
+        const calX = centerX - planetRadius * 0.28;
+        const calY = centerY - planetRadius * 0.18;
+        fullCtx.strokeStyle = "rgba(220, 220, 220, 0.65)";
+        fullCtx.lineWidth = 2.5;
         fullCtx.beginPath();
-        fullCtx.ellipse(spotX, spotY, planetRadius * 0.22, planetRadius * 0.12, 0, 0, Math.PI * 2);
+        fullCtx.arc(calX, calY, planetRadius * 0.28, 0, Math.PI * 2);
+        fullCtx.stroke();
+
+        fullCtx.strokeStyle = "rgba(100, 100, 100, 0.5)";
+        fullCtx.lineWidth = 2;
+        fullCtx.beginPath();
+        fullCtx.arc(calX, calY, planetRadius * 0.16, 0, Math.PI * 2);
+        fullCtx.stroke();
+
+        // Rayed Impact Craters (Kuiper & Debussy style)
+        const rayCraters = [
+          { x: 0.25, y: 0.35, r: 12 },
+          { x: -0.15, y: 0.45, r: 8 },
+          { x: 0.35, y: -0.32, r: 10 }
+        ];
+        rayCraters.forEach(rc => {
+          const cx = centerX + rc.x * planetRadius;
+          const cy = centerY + rc.y * planetRadius;
+
+          // Radiating white ejecta rays
+          for (let r = 0; r < 8; r++) {
+            const rAng = r * (Math.PI / 4);
+            fullCtx.strokeStyle = "rgba(255, 255, 255, 0.45)";
+            fullCtx.lineWidth = 1.2;
+            fullCtx.beginPath();
+            fullCtx.moveTo(cx, cy);
+            fullCtx.lineTo(cx + Math.cos(rAng) * 28, cy + Math.sin(rAng) * 28);
+            fullCtx.stroke();
+          }
+
+          // Crater central pit
+          fullCtx.fillStyle = "rgba(255, 255, 255, 0.85)";
+          fullCtx.beginPath();
+          fullCtx.arc(cx, cy, 4, 0, Math.PI * 2);
+          fullCtx.fill();
+        });
+
+        featurePinsToDraw.push({
+          pos: { x: calX, y: calY, visible: true },
+          title: "💥 Cekungan Kawah Caloris (1.550 km)",
+          desc: "Cekungan tumbukan meteorit terbesar di Merkurius berpagar pegunungan",
+          color: "#E0E0E0"
+        });
+
+        featurePinsToDraw.push({
+          pos: { x: centerX + planetRadius * 0.25, y: centerY + planetRadius * 0.35, visible: true },
+          title: "✨ Kawah Tumbukan Sinar Putih",
+          desc: "Jejak lontaran material batuan muda berkilau memancar ratusan kilometer",
+          color: "#FFFFFF"
+        });
+
+      } else if (p.id === "venus") {
+        // =====================================================================
+        // VENUS: Y-SHAPED GLOBAL CHEVRON CLOUDS & POLAR VORTEX
+        // =====================================================================
+        // Dense swirling chevron cloud ribbons
+        for (let i = 0; i < 5; i++) {
+          const vy = centerY + (i - 2) * planetRadius * 0.32;
+          const vShift = Math.sin(elapsedTime * 0.6 + i) * planetRadius * 0.25;
+          fullCtx.fillStyle = i % 2 === 0 ? "rgba(255, 248, 225, 0.35)" : "rgba(230, 200, 120, 0.3)";
+          fullCtx.beginPath();
+          fullCtx.ellipse(centerX + vShift, vy, planetRadius * 0.88, planetRadius * 0.14, 0, 0, Math.PI * 2);
+          fullCtx.fill();
+        }
+
+        // Global Y-shaped UV circulation feature
+        fullCtx.strokeStyle = "rgba(180, 140, 50, 0.4)";
+        fullCtx.lineWidth = 12;
+        fullCtx.beginPath();
+        fullCtx.moveTo(centerX - planetRadius * 0.7, centerY - planetRadius * 0.4);
+        fullCtx.quadraticCurveTo(centerX, centerY, centerX + planetRadius * 0.6, centerY);
+        fullCtx.moveTo(centerX - planetRadius * 0.7, centerY + planetRadius * 0.4);
+        fullCtx.quadraticCurveTo(centerX, centerY, centerX + planetRadius * 0.6, centerY);
+        fullCtx.stroke();
+
+        featurePinsToDraw.push({
+          pos: { x: centerX, y: centerY, visible: true },
+          title: "☁️ Sirkulasi Awan Huruf-Y",
+          desc: "Pola pusaran awan asam sulfat global akibat super-rotasi atmosfer 360 km/jam",
+          color: "#FFE082"
+        });
+
+      } else if (p.id === "uranus") {
+        // =====================================================================
+        // URANUS: AQUAMARINE ICE GIANT, 98° TILTED POLAR HOOD & METHANE HAZE
+        // =====================================================================
+        // Bright polar hood facing sunwards
+        fullCtx.fillStyle = "rgba(224, 247, 250, 0.45)";
+        fullCtx.beginPath();
+        fullCtx.arc(centerX - planetRadius * 0.35, centerY, planetRadius * 0.55, 0, Math.PI * 2);
         fullCtx.fill();
-        fullCtx.restore();
-      } else if (p.id === "mars") {
-        // Polar white ice cap
-        fullCtx.save();
+
+        featurePinsToDraw.push({
+          pos: { x: centerX - planetRadius * 0.35, y: centerY, visible: true },
+          title: "📐 Sumbu Miring Ekstrem 98°",
+          desc: "Kutub Uranus menghadap langsung ke Matahari seolah menggelinding pada orbitnya",
+          color: "#80DEEA"
+        });
+
+      } else if (p.id === "neptune") {
+        // =====================================================================
+        // NEPTUNUS: GREAT DARK SPOT & WHITE CIRRUS SCOOTER CLOUDS
+        // =====================================================================
+        // Great Dark Spot (oval cyclonic storm)
+        const gdsX = centerX - planetRadius * 0.28;
+        const gdsY = centerY - planetRadius * 0.12;
+        fullCtx.fillStyle = "#0D2B66";
         fullCtx.beginPath();
-        fullCtx.arc(centerX, centerY, planetRadius, 0, Math.PI * 2);
-        fullCtx.clip();
-        fullCtx.fillStyle = "rgba(236, 239, 241, 0.85)";
-        fullCtx.beginPath();
-        fullCtx.ellipse(centerX, centerY - planetRadius * 0.85, planetRadius * 0.45, planetRadius * 0.2, 0, 0, Math.PI * 2);
+        fullCtx.ellipse(gdsX, gdsY, planetRadius * 0.22, planetRadius * 0.12, -0.2, 0, Math.PI * 2);
         fullCtx.fill();
-        fullCtx.restore();
+
+        // White Scooter Cloud (methane cirrus cloud racing along the storm border)
+        const scX = gdsX + planetRadius * 0.26;
+        const scY = gdsY + planetRadius * 0.08;
+        fullCtx.fillStyle = "rgba(255, 255, 255, 0.95)";
+        fullCtx.beginPath();
+        fullCtx.ellipse(scX, scY, planetRadius * 0.12, planetRadius * 0.035, -0.3, 0, Math.PI * 2);
+        fullCtx.fill();
+
+        featurePinsToDraw.push({
+          pos: { x: gdsX, y: gdsY, visible: true },
+          title: "🌀 Bintik Gelap Raksasa (Great Dark Spot)",
+          desc: "Pusaran badai antisiklon raksasa berputar di tengah atmosfer metana biru",
+          color: "#64B5F6"
+        });
+
+        featurePinsToDraw.push({
+          pos: { x: scX, y: scY, visible: true },
+          title: "💨 Awan Sirus Putih Melesat (Scooter)",
+          desc: "Kristal es metana cerah yang melesat dalam angin supersonik 2.100 km/jam",
+          color: "#FFFFFF"
+        });
       }
 
-      // D. Saturn rings (Front & Center)
+      fullCtx.restore();
+
+      // ============================================
+      // E. Saturn Front Rings (Rendered Over Sphere)
+      // ============================================
       if (p.hasRings) {
         fullCtx.save();
         fullCtx.translate(centerX, centerY);
-        fullCtx.rotate((20 * Math.PI) / 180);
+        fullCtx.rotate((22 * Math.PI) / 180);
 
-        // Concentric Rings
+        // Ring C (Crepe ring)
         fullCtx.beginPath();
-        fullCtx.ellipse(0, 0, planetRadius * 2.2, planetRadius * 0.65, 0, 0, Math.PI * 2);
-        fullCtx.strokeStyle = "rgba(255, 249, 196, 0.75)";
-        fullCtx.lineWidth = planetRadius * 0.45;
+        fullCtx.ellipse(0, 0, planetRadius * 1.55, planetRadius * 0.44, 0, 0, Math.PI);
+        fullCtx.strokeStyle = "rgba(180, 160, 130, 0.4)";
+        fullCtx.lineWidth = planetRadius * 0.25;
         fullCtx.stroke();
 
-        // Cassini Gap
+        // Ring B (Bright, dense, main ring)
         fullCtx.beginPath();
-        fullCtx.ellipse(0, 0, planetRadius * 2.1, planetRadius * 0.62, 0, 0, Math.PI * 2);
-        fullCtx.strokeStyle = "#06080E";
-        fullCtx.lineWidth = 3;
+        fullCtx.ellipse(0, 0, planetRadius * 1.95, planetRadius * 0.55, 0, 0, Math.PI);
+        fullCtx.strokeStyle = "rgba(255, 248, 200, 0.9)";
+        fullCtx.lineWidth = planetRadius * 0.38;
         fullCtx.stroke();
+
+        // Cassini Division (4.800 km gap)
+        fullCtx.beginPath();
+        fullCtx.ellipse(0, 0, planetRadius * 2.12, planetRadius * 0.60, 0, 0, Math.PI);
+        fullCtx.strokeStyle = "#04060C";
+        fullCtx.lineWidth = 3.5;
+        fullCtx.stroke();
+
+        // Ring A (Outer ring)
+        fullCtx.beginPath();
+        fullCtx.ellipse(0, 0, planetRadius * 2.30, planetRadius * 0.65, 0, 0, Math.PI);
+        fullCtx.strokeStyle = "rgba(230, 215, 175, 0.7)";
+        fullCtx.lineWidth = planetRadius * 0.22;
+        fullCtx.stroke();
+
         fullCtx.restore();
+
+        featurePinsToDraw.push({
+          pos: { x: centerX + planetRadius * 1.8, y: centerY + planetRadius * 0.55, visible: true },
+          title: "💍 Divisi Cassini (Celah 4.800 km)",
+          desc: "Celah hitam terlebar di antara Cincin A dan Cincin B akibat resonansi gravitasi Mimas",
+          color: "#FFF59D"
+        });
       }
 
-      // E. Atmosphere Rim Glow
+      // ============================================
+      // F. Atmosphere Rim Glow (Rayleigh Scattering)
+      // ============================================
       fullCtx.beginPath();
       fullCtx.arc(centerX, centerY, planetRadius, 0, Math.PI * 2);
-      fullCtx.strokeStyle = `${p.secColor}66`;
-      fullCtx.lineWidth = 2.5;
+      fullCtx.strokeStyle = p.id === "earth" ? "rgba(66, 165, 245, 0.75)" : `${p.secColor}77`;
+      fullCtx.lineWidth = p.id === "earth" ? 3.5 : 2.5;
       fullCtx.stroke();
 
-      // F. Front-layer orbiting objects (In Front of Planet)
+      // Outer luminous scattering limb for Earth
+      if (p.id === "earth") {
+        const earthLimb = fullCtx.createRadialGradient(centerX, centerY, planetRadius * 0.96, centerX, centerY, planetRadius * 1.08);
+        earthLimb.addColorStop(0, "rgba(66, 165, 245, 0.45)");
+        earthLimb.addColorStop(0.5, "rgba(33, 150, 243, 0.15)");
+        earthLimb.addColorStop(1, "transparent");
+        fullCtx.fillStyle = earthLimb;
+        fullCtx.beginPath();
+        fullCtx.arc(centerX, centerY, planetRadius * 1.08, 0, Math.PI * 2);
+        fullCtx.fill();
+      }
+
+      // ============================================
+      // G. Front-layer orbiting objects (In Front)
+      // ============================================
       drawPlanetOrbiters(p, centerX, centerY, planetRadius, false);
+
+      // ============================================
+      // H. INTERACTIVE EDUCATIONAL FEATURE PINPOINTS
+      // ============================================
+      if (showFeaturePins && featurePinsToDraw.length > 0) {
+        featurePinsToDraw.forEach((pin, idx) => {
+          if (!pin.pos.visible) return;
+
+          const px = pin.pos.x;
+          const py = pin.pos.y;
+
+          // Glowing animated pulsating anchor dot
+          const pulseR = 4 + Math.sin(elapsedTime * 3.5 + idx) * 1.8;
+          fullCtx.fillStyle = pin.color || "#4F86F7";
+          fullCtx.beginPath();
+          fullCtx.arc(px, py, pulseR, 0, Math.PI * 2);
+          fullCtx.fill();
+
+          fullCtx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+          fullCtx.lineWidth = 1.5;
+          fullCtx.beginPath();
+          fullCtx.arc(px, py, 5.5, 0, Math.PI * 2);
+          fullCtx.stroke();
+
+          // Angled leader callout line
+          const isRight = px >= centerX;
+          const targetX = isRight ? px + 35 : px - 35;
+          const targetY = py - 22;
+
+          fullCtx.strokeStyle = "rgba(255, 255, 255, 0.55)";
+          fullCtx.lineWidth = 1.2;
+          fullCtx.beginPath();
+          fullCtx.moveTo(px, py);
+          fullCtx.lineTo(targetX, targetY);
+          fullCtx.lineTo(isRight ? targetX + 15 : targetX - 15, targetY);
+          fullCtx.stroke();
+
+          // Floating Callout Badge Card
+          fullCtx.font = "bold 11px 'Plus Jakarta Sans', sans-serif";
+          const titleWidth = fullCtx.measureText(pin.title).width;
+          const badgeW = Math.max(titleWidth + 24, 130);
+          const badgeH = 26;
+          const badgeX = isRight ? targetX + 18 : targetX - 18 - badgeW;
+          const badgeY = targetY - badgeH / 2;
+
+          fullCtx.fillStyle = "rgba(18, 22, 34, 0.90)";
+          fullCtx.beginPath();
+          fullCtx.roundRect(badgeX, badgeY, badgeW, badgeH, 13);
+          fullCtx.fill();
+
+          fullCtx.strokeStyle = pin.color || "rgba(79, 134, 247, 0.6)";
+          fullCtx.lineWidth = 1.2;
+          fullCtx.stroke();
+
+          // Title text
+          fullCtx.fillStyle = "#FFFFFF";
+          fullCtx.textAlign = "left";
+          fullCtx.fillText(pin.title, badgeX + 10, badgeY + 16);
+        });
+      }
     }
 
     // Helper: Draw Orbiting Moons, Satellites, and Space Objects
@@ -3716,6 +5111,39 @@
         toast.style.opacity = "0";
         toast.style.transform = "translate(-50%, 0)";
       }, 2600);
+    }
+
+    // ==========================================
+    // 5. GALAKSI SEMESTA & ANATOMI PIN LABELS
+    // ==========================================
+    function openGalaxiesModal() {
+      const modal = document.getElementById("galaxiesModal");
+      if (modal) modal.classList.remove("hidden");
+      playCosmicChime(587.33); // D5 note chime
+    }
+
+    function closeGalaxiesModal() {
+      const modal = document.getElementById("galaxiesModal");
+      if (modal) modal.classList.add("hidden");
+    }
+
+    function toggleFeaturePins() {
+      showFeaturePins = !showFeaturePins;
+      const icon = document.getElementById("featurePinsIcon");
+      const btn = document.getElementById("featurePinsToggleBtn");
+      if (showFeaturePins) {
+        if (icon) icon.className = "material-symbols-outlined text-[16px] text-[#4F86F7]";
+        if (btn) {
+          btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#4F86F7]/20 border border-[#4F86F7] text-[#D2E3FC] hover:text-white text-xs font-semibold cursor-pointer transition-all shadow-md backdrop-blur-md";
+        }
+        showToast("Label fitur edukasi planet: DITAMPILKAN");
+      } else {
+        if (icon) icon.className = "material-symbols-outlined text-[16px] text-[#919194]";
+        if (btn) {
+          btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26]/90 border border-white/10 text-[#919194] hover:text-white text-xs font-semibold cursor-pointer transition-all shadow-md backdrop-blur-md";
+        }
+        showToast("Label fitur edukasi planet: DISEMBUNYIKAN");
+      }
     }
 
     // URL Hash deep link routing
