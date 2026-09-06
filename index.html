@@ -147,7 +147,7 @@
         </button>
 
         <!-- Ambient Sound Toggle in Modal -->
-        <button id="fullSoundBtn" onclick="toggleAmbientSound()" title="Musik Ambient Luar Angkasa" class="w-9 h-9 rounded-full bg-[#161B26]/90 border border-white/10 text-[#C4C6D0] hover:text-white hover:border-[#4F86F7]/50 flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-md">
+        <button id="fullSoundBtn" onclick="toggleFullViewSound()" title="Putar Suara Asli Planet (Sonifikasi NASA)" class="w-9 h-9 rounded-full bg-[#161B26]/90 border border-white/10 text-[#C4C6D0] hover:text-white hover:border-[#4F86F7]/50 flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-md">
           <span id="fullSoundIcon" class="material-symbols-outlined text-[18px]">volume_off</span>
         </button>
 
@@ -226,6 +226,61 @@
           </div>
           <span class="material-symbols-outlined text-[16px] text-[#80DEEA]">arrow_forward</span>
         </button>
+
+        <!-- Real Planet Sound (NASA Sonification) Audio Player Card -->
+        <div id="planetSoundCard" class="bg-gradient-to-br from-[#121827] via-[#161F34] to-[#111728] p-4 rounded-2xl border border-[#4F86F7]/35 shadow-xl relative overflow-hidden">
+          <!-- Background Glow Ambient -->
+          <div id="soundGlowAura" class="absolute -right-6 -top-6 w-32 h-32 rounded-full bg-[#4F86F7]/20 blur-2xl pointer-events-none transition-all duration-700"></div>
+
+          <!-- Card Header -->
+          <div class="flex items-center justify-between mb-2.5 relative z-10">
+            <div class="flex items-center gap-2">
+              <div id="soundPulseBadge" class="w-2.5 h-2.5 rounded-full bg-[#919194] transition-all"></div>
+              <span class="text-xs font-bold text-white tracking-wide flex items-center gap-1.5">
+                <span>Suara Gelombang Asli Planet</span>
+                <span class="material-symbols-outlined text-[16px] text-[#8AB4F8]">graphic_eq</span>
+              </span>
+            </div>
+            <span id="soundStatusBadge" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/5 text-[#919194] border border-white/10 transition-colors">
+              SIAP DIPUTAR
+            </span>
+          </div>
+
+          <!-- Real-Time Audio Oscilloscope & Frequency Visualizer Canvas -->
+          <div class="relative w-full h-16 bg-[#080B12] rounded-xl overflow-hidden border border-white/10 mb-3 flex items-center justify-center shadow-inner">
+            <canvas id="soundVisualizerCanvas" class="w-full h-full block"></canvas>
+            <div id="soundVisOverlay" class="absolute inset-0 flex items-center justify-center pointer-events-none text-[11px] text-[#919194] bg-black/20 backdrop-blur-[1px] transition-opacity">
+              <span class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[15px] text-[#4F86F7]">headphones</span>
+                <span>Ketuk putar untuk mendengarkan sonifikasi NASA</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Scientific Source & Mission Info Box -->
+          <div class="mb-3 bg-black/35 p-2.5 rounded-xl border border-white/5 space-y-1 text-[11px] leading-snug">
+            <div class="flex items-start gap-1.5">
+              <span class="text-[#8AB4F8] font-bold flex-shrink-0">Misi / Rekaman:</span>
+              <span id="soundSourceText" class="text-white font-medium">-</span>
+            </div>
+            <div class="flex items-start gap-1.5">
+              <span class="text-[#80DEEA] font-bold flex-shrink-0">Fenomena Fisika:</span>
+              <span id="soundPhenomenonText" class="text-[#C4C6D0] leading-snug">-</span>
+            </div>
+          </div>
+
+          <!-- Interactive Controls: Play/Pause Button + Volume Slider -->
+          <div class="flex items-center justify-between gap-3 relative z-10">
+            <button id="planetPlayBtn" onclick="togglePlanetSound()" class="flex-1 py-2.5 px-4 rounded-xl bg-[#4F86F7] hover:bg-[#3D74E6] text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg hover:shadow-[#4F86F7]/25 transition-all">
+              <span id="planetPlayIcon" class="material-symbols-outlined text-[18px]">play_arrow</span>
+              <span id="planetPlayLabel">Putar Suara Asli Planet</span>
+            </button>
+            <div class="flex items-center gap-2 px-3 py-2 bg-black/30 rounded-xl border border-white/10" title="Atur Volume Suara Planet">
+              <span class="material-symbols-outlined text-[16px] text-[#919194]">volume_up</span>
+              <input type="range" id="planetVolumeSlider" min="0" max="1" step="0.05" value="0.75" oninput="setPlanetSoundVolume(this.value)" class="w-16 md:w-20 accent-[#4F86F7] cursor-pointer h-1.5 bg-white/20 rounded-lg">
+            </div>
+          </div>
+        </div>
 
         <!-- Stats Grid 1: Diameter & Jarak Matahari -->
         <div class="grid grid-cols-2 gap-3">
@@ -392,18 +447,46 @@
           </div>
         </div>
 
-        <!-- Interactive Visual Comparison Canvas (Side by Side true scale) -->
+        <!-- Interactive Visual Comparison Canvas (Optimized Scale & View Modes) -->
         <div>
-          <div class="flex justify-between items-center mb-2">
-            <span class="text-xs font-semibold text-white">Visualisasi Perbandingan Skala Relatif:</span>
-            <span class="text-[11px] text-[#919194]">Geser horizontal untuk melihat Matahari</span>
-          </div>
-          <div class="relative w-full rounded-2xl overflow-hidden border border-white/10 bg-[#07090F] shadow-inner">
-            <canvas id="scaleComparisonCanvas" class="w-full h-44 block cursor-ew-resize"></canvas>
-            <div class="absolute bottom-2 right-3 pointer-events-none text-[10px] text-[#919194]">
-              Skala visual proporsional matematis
+          <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-semibold text-white">Visualisasi Perbandingan Skala:</span>
+              <span id="scaleModeDesc" class="text-[10px] text-[#8AB4F8] bg-[#4F86F7]/15 px-2 py-0.5 rounded-full font-medium">Mode Pas Layar</span>
+            </div>
+
+            <!-- View Mode Toggle Buttons & Zoom -->
+            <div class="flex items-center gap-1.5">
+              <button onclick="setScaleViewMode('fit')" id="btnModeFit" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#4F86F7] text-white transition-all cursor-pointer shadow-sm">
+                Pas Layar
+              </button>
+              <button onclick="setScaleViewMode('true')" id="btnModeTrue" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#1C202B] hover:bg-[#282E3E] text-[#C4C6D0] border border-white/10 transition-all cursor-pointer">
+                Skala Nyata 1:1
+              </button>
+              <div id="scaleZoomControls" class="hidden items-center gap-1 pl-1 border-l border-white/10">
+                <button onclick="zoomScaleCanvas(1.2)" title="Perbesar" class="w-6 h-6 rounded-md bg-[#1C202B] hover:bg-[#282E3E] text-white flex items-center justify-center text-xs cursor-pointer">+</button>
+                <button onclick="zoomScaleCanvas(0.8)" title="Perkecil" class="w-6 h-6 rounded-md bg-[#1C202B] hover:bg-[#282E3E] text-white flex items-center justify-center text-xs cursor-pointer">-</button>
+                <button onclick="resetScaleZoom()" title="Reset" class="px-1.5 h-6 rounded-md bg-[#1C202B] hover:bg-[#282E3E] text-[10px] text-[#C4C6D0] flex items-center justify-center cursor-pointer">Reset</button>
+              </div>
             </div>
           </div>
+
+          <!-- The Canvas Card Container -->
+          <div class="relative w-full rounded-2xl overflow-hidden border border-white/10 bg-[#07090F] shadow-inner">
+            <canvas id="scaleComparisonCanvas" class="w-full h-52 block cursor-grab active:cursor-grabbing"></canvas>
+            
+            <!-- Dynamic Inspector Bar at bottom of canvas -->
+            <div id="scaleInspectorBar" class="absolute bottom-2 left-2 right-2 pointer-events-none flex items-center justify-between px-3 py-1.5 rounded-xl bg-[#0F131D]/85 border border-white/10 backdrop-blur-md text-[11px]">
+              <span id="scaleInspectName" class="font-bold text-white flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#4F86F7] inline-block"></span>
+                <span>Sentuh atau arahkan kursor ke objek untuk inspeksi</span>
+              </span>
+              <span id="scaleInspectDetail" class="text-[#8AB4F8] font-mono text-[10px]">Perbandingan Proporsional</span>
+            </div>
+          </div>
+          <p class="text-[10px] text-[#919194] mt-1.5 text-center">
+            Tip: Klik / sentuh objek di atas untuk melihat detail perbandingan ukuran secara langsung.
+          </p>
         </div>
 
         <!-- The Mind-Blowing Scale Summary Table / Cards -->
@@ -651,7 +734,10 @@
         funFact: "Menampung 99,86% total massa seluruh tata surya dan sanggup menampung 1,3 juta planet Bumi di dalamnya.",
         comp: "73% Hidrogen, 25% Helium, dan plasma panas bersuhu 5.500°C di fotosfer.",
         desc: "Bintang induk di pusat tata surya kita. Menampung 99,8% massa seluruh tata surya dan memancarkan radiasi energi yang menghidupi Bumi.",
-        isSun: true
+        isSun: true,
+        soundMission: "SOHO / MDI & Parker Solar Probe (Helioseismologi NASA)",
+        soundPhenomenon: "Getaran akustik resonansi gelombang tekanan di dalam inti & fotosfer plasma matahari (drone berosilasi 40-120 Hz).",
+        soundType: "sun"
       },
       {
         id: "mercury",
@@ -673,7 +759,10 @@
         missions: "Mariner 10, MESSENGER, BepiColombo",
         funFact: "Merkurius menyusut perlahan seiring pendinginan inti besinya yang masif selama miliaran tahun.",
         comp: "Inti logam besi padat (70%), mantel silikat, kerak batuan.",
-        desc: "Planet terkecil dan paling dekat dengan Matahari. Karena hampir tidak memiliki atmosfer pelindung, fluktuasi suhunya sangat ekstrem antara siang dan malam."
+        desc: "Planet terkecil dan paling dekat dengan Matahari. Karena hampir tidak memiliki atmosfer pelindung, fluktuasi suhunya sangat ekstrem antara siang dan malam.",
+        soundMission: "NASA MESSENGER & ESA BepiColombo (Magnetospheric Waves)",
+        soundPhenomenon: "Gelombang plasma whistler-mode frekuensi tinggi dan desis rekoneksi magnetik akibat terpaan badai matahari ekstrem.",
+        soundType: "mercury"
       },
       {
         id: "venus",
@@ -695,7 +784,10 @@
         missions: "Venera 7-14, Magellan, Akatsuki, DAVINCI",
         funFact: "Satu hari di Venus lebih panjang dari satu tahunnya, dan Matahari terbit dari barat karena rotasi terbalik.",
         comp: "Atmosfer 96% karbon dioksida, awan asam sulfat pekat, batuan vulkanik.",
-        desc: "Planet terpanas di tata surya akibat efek rumah kaca tak terkendali. Lapisan awan tebalnya memantulkan cahaya dengan kuat ke antariksa."
+        desc: "Planet terpanas di tata surya akibat efek rumah kaca tak terkendali. Lapisan awan tebalnya memantulkan cahaya dengan kuat ke antariksa.",
+        soundMission: "JAXA Akatsuki & Pioneer Venus (Ionospheric Wave Sensors)",
+        soundPhenomenon: "Deru turbulensi atmosfer super-kritis (tekanan 92 atm) dipadu letupan gelombang kilat listrik awan asam sulfat pekat.",
+        soundType: "venus"
       },
       {
         id: "earth",
@@ -718,7 +810,10 @@
         funFact: "Satu-satunya objek kosmik yang terkonfirmasi memiliki lempeng tektonik aktif dan siklus air cair terbuka.",
         comp: "Atmosfer 78% nitrogen dan 21% oksigen, kerak silikat, 71% permukaan berupa air laut.",
         desc: "Satu-satunya planet yang terbukti menopang kehidupan. Memiliki hidrosfer air cair yang stabil, atmosfer kaya oksigen, dan medan magnet protektif.",
-        isEarth: true
+        isEarth: true,
+        soundMission: "NASA Van Allen Probes EMFISIS (Earthsong / Dawn Chorus)",
+        soundPhenomenon: "Gelombang chorus elektromagnetik di sabuk radiasi Van Allen yang meliuk merdu menyerupai kicauan burung fajar di atmosfer atas.",
+        soundType: "earth"
       },
       {
         id: "mars",
@@ -740,7 +835,10 @@
         missions: "Viking, Curiosity, Perseverance, Ingenuity, Hope",
         funFact: "Memiliki gunung berapi terbesar di tata surya (Olympus Mons, setinggi 22 km atau hampir 3x Gunung Everest).",
         comp: "Debu besi oksida (karat), batuan basal vulkanik, atmosfer tipis karbon dioksida.",
-        desc: "Planet merah yang permukaannya dipenuhi debu besi oksida. Memiliki ngarai Valles Marineris dan gunung berapi terbesar di tata surya, Olympus Mons."
+        desc: "Planet merah yang permukaannya dipenuhi debu besi oksida. Memiliki ngarai Valles Marineris dan gunung berapi terbesar di tata surya, Olympus Mons.",
+        soundMission: "NASA Perseverance SuperCam Microphone & InSight SEIS",
+        soundPhenomenon: "Rekaman mikrofon fisik nyata desau angin kawah Jezero berfrekuensi variabel & resonansi seismik lempeng batuan Mars.",
+        soundType: "mars"
       },
       {
         id: "jupiter",
@@ -762,7 +860,10 @@
         missions: "Voyager 1 & 2, Galileo, Juno, Juice",
         funFact: "Ganymede, salah satu bulan Jupiter, berukuran lebih besar daripada planet Merkurius.",
         comp: "Gas hidrogen (90%), helium (10%), amonia, dan inti batuan terkompresi.",
-        desc: "Planet terbesar di tata surya kita. Badai antisiklon raksasa Great Red Spot telah berputar ratusan tahun. Gravitasinya bertindak sebagai perisai pelindung planet dalam."
+        desc: "Planet terbesar di tata surya kita. Badai antisiklon raksasa Great Red Spot telah berputar ratusan tahun. Gravitasinya bertindak sebagai perisai pelindung planet dalam.",
+        soundMission: "NASA Juno Waves Instrument & Voyager 1 PWS (Bow Shock)",
+        soundPhenomenon: "Auman gemuruh gelombang busur kejut plasma raksasa & modulasi frekuensi magnetik masif saat menembus medan magnetik terkuat tata surya.",
+        soundType: "jupiter"
       },
       {
         id: "saturn",
@@ -785,7 +886,10 @@
         funFact: "Saturnus memiliki massa jenis lebih rendah daripada air; jika ada wadah air raksasa, Saturnus akan mengapung.",
         comp: "Gas hidrogen, helium, es air, dan cincin partikel es kristal reflektif.",
         desc: "Terkenal dengan cincin konsentris memukau yang tersusun dari miliaran bongkahan es dan debu angkasa. Kerapatan jenisnya lebih ringan dari air.",
-        hasRings: true
+        hasRings: true,
+        soundMission: "NASA Cassini RPWS (Saturn Kilometric Radiation - SKR)",
+        soundPhenomenon: "Siulan sirene meliuk misterius (eerie gliding sirens) dari emisi gelombang radio partikel plasma yang berputar di kutub aurora Saturnus.",
+        soundType: "saturn"
       },
       {
         id: "uranus",
@@ -807,7 +911,10 @@
         missions: "Voyager 2 (1986)",
         funFact: "Kemiringan sumbu putar mencapai 97,8°, membuat kutub-kutubnya menghadap langsung ke Matahari selama puluhan tahun.",
         comp: "Fluida es air, metana, amonia, dengan atmosfer kaya hidrogen dan helium.",
-        desc: "Raksasa es unik dengan kemiringan sumbu rotasi 98 derajat, sehingga tampak menggelinding di bidang orbitnya. Memiliki atmosfer terdingin di tata surya."
+        desc: "Raksasa es unik dengan kemiringan sumbu rotasi 98 derajat, sehingga tampak menggelinding di bidang orbitnya. Memiliki atmosfer terdingin di tata surya.",
+        soundMission: "NASA Voyager 2 Plasma Wave System (1986 Planetary Flyby)",
+        soundPhenomenon: "Dentingan kristal dingin etereal & resonansi asimetris dari medan magnetik Uranus yang miring eksentrik 59 derajat.",
+        soundType: "uranus"
       },
       {
         id: "neptune",
@@ -829,7 +936,10 @@
         missions: "Voyager 2 (1989)",
         funFact: "Bulan terbesarnya, Triton, mengorbit terbalik (retrograde) dan memiliki geyser nitrogen aktif yang menyembur ke angkasa.",
         comp: "Mantel es air, amonia, metana tebal, dan badai gas atmosferik cepat.",
-        desc: "Planet terluar berwarna biru pekat akibat metana atmosferik. Dikenal memiliki hembusan angin badai supersonik tercepat di tata surya mencapai lebih dari 2.100 km/jam."
+        desc: "Planet terluar berwarna biru pekat akibat metana atmosferik. Dikenal memiliki hembusan angin badai supersonik tercepat di tata surya mencapai lebih dari 2.100 km/jam.",
+        soundMission: "NASA Voyager 2 Plasma Wave Subsystem (1989 Heliosphere Boundary)",
+        soundPhenomenon: "Deru angin supersonik abisal (>2.100 km/jam) dipadu getaran plasma batas terluar pengaruh tata surya.",
+        soundType: "neptune"
       }
     ];
 
@@ -1398,15 +1508,25 @@
         window.location.hash = '#' + planet.id;
       }
 
+      // Update real planet sound UI & cross-fade if currently playing
+      updatePlanetSoundUI(planet);
+      if (isPlanetSoundPlaying) {
+        playPlanetRealSound(planet.id, true);
+      }
+
       // Play subtle cosmic chime if ambient sound active
       playCosmicChime(planet.isSun ? 330 : (220 + (PLANETS.indexOf(planet) * 45)));
 
       // Show modal
       document.getElementById("fullPlanetModal").classList.remove("hidden");
       updateChips();
+      startVisualizerLoop();
     }
 
     function exitFullScreenPlanet() {
+      if (isPlanetSoundPlaying) {
+        stopPlanetRealSound();
+      }
       fullPlanet = null;
       selectedPlanet = null;
       stopMilkyWayAnimation();
@@ -1766,7 +1886,7 @@
     }
 
     // ==========================================
-    // 6. AMBIENT SOUND (WEB AUDIO API SYNTHESIS)
+    // 6. AMBIENT & REAL PLANETARY AUDIO ENGINE (NASA SONIFIKASI)
     // ==========================================
     let audioCtx = null;
     let isAudioActive = false;
@@ -1774,11 +1894,22 @@
     let oscDrone1 = null;
     let oscDrone2 = null;
 
+    // Real Planet Audio Subsystem
+    let planetMasterGain = null;
+    let planetAnalyser = null;
+    let isPlanetSoundPlaying = false;
+    let planetSoundVolume = 0.75;
+    let activePlanetAudioNodes = [];
+    let activePlanetIntervals = [];
+    let currentPlayingPlanetId = null;
+    let visAnimFrame = null;
+
     function initAudioContext() {
       if (!audioCtx) {
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AudioContextClass();
 
+        // 1. Background Overview Cosmic Drone
         masterGainNode = audioCtx.createGain();
         masterGainNode.gain.setValueAtTime(0, audioCtx.currentTime);
         masterGainNode.connect(audioCtx.destination);
@@ -1803,7 +1934,709 @@
 
         oscDrone1.start();
         oscDrone2.start();
+
+        // 2. Real Planet Sonification Master & Visualizer Chain
+        planetMasterGain = audioCtx.createGain();
+        planetMasterGain.gain.setValueAtTime(planetSoundVolume, audioCtx.currentTime);
+
+        planetAnalyser = audioCtx.createAnalyser();
+        planetAnalyser.fftSize = 128;
+        planetAnalyser.smoothingTimeConstant = 0.82;
+
+        planetMasterGain.connect(planetAnalyser);
+        planetAnalyser.connect(audioCtx.destination);
       }
+    }
+
+    // Helper: Procedural Noise Buffer Generator (White, Pink, Brown)
+    function createNoiseBuffer(ctx, type = "white") {
+      const bufferSize = Math.floor(ctx.sampleRate * 2.8);
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = buffer.getChannelData(0);
+
+      if (type === "white") {
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+      } else if (type === "pink") {
+        let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          b0 = 0.99886 * b0 + white * 0.0555179;
+          b1 = 0.99332 * b1 + white * 0.0750759;
+          b2 = 0.96900 * b2 + white * 0.1538520;
+          b3 = 0.86650 * b3 + white * 0.3104856;
+          b4 = 0.55000 * b4 + white * 0.5329522;
+          b5 = -0.7616 * b5 - white * 0.0168980;
+          output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
+          b6 = white * 0.115926;
+        }
+      } else if (type === "brown") {
+        let lastOut = 0.0;
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          output[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = output[i];
+          output[i] *= 3.5;
+        }
+      }
+      return buffer;
+    }
+
+    // Stop all active audio nodes for planetary sonification
+    function stopPlanetRealSound(preserveState = false) {
+      if (!preserveState) {
+        isPlanetSoundPlaying = false;
+        currentPlayingPlanetId = null;
+      }
+
+      // Clear any recurring interval triggers (e.g. lightning crackles, whistlers)
+      activePlanetIntervals.forEach(id => clearInterval(id));
+      activePlanetIntervals = [];
+
+      // Gracefully fade out & stop running audio nodes
+      activePlanetAudioNodes.forEach(node => {
+        try {
+          if (node.gain && node.gain.cancelScheduledValues && audioCtx) {
+            node.gain.cancelScheduledValues(audioCtx.currentTime);
+            node.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.15);
+          }
+          if (node.stop) {
+            node.stop(audioCtx.currentTime + 0.18);
+          }
+        } catch (e) {}
+      });
+      activePlanetAudioNodes = [];
+
+      // Update UI components
+      updatePlanetSoundButtons(false);
+    }
+
+    // Synthesize Authentic Planetary Space Audio Based on NASA / ESA Mission Recordings
+    function playPlanetRealSound(planetId, isCrossfade = false) {
+      initAudioContext();
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+
+      stopPlanetRealSound(true);
+
+      isPlanetSoundPlaying = true;
+      currentPlayingPlanetId = planetId;
+      const now = audioCtx.currentTime;
+
+      // Planet local sub-gain with gentle fade-in
+      const planetGain = audioCtx.createGain();
+      planetGain.gain.setValueAtTime(0.0001, now);
+      planetGain.gain.linearRampToValueAtTime(1.0, now + (isCrossfade ? 0.7 : 0.4));
+      planetGain.connect(planetMasterGain);
+      activePlanetAudioNodes.push(planetGain);
+
+      if (planetId === "sun") {
+        // ====================================================
+        // 1. MATAHARI: SOHO MDI & Parker Solar Probe (Helioseismologi)
+        // Deep resonant pressure waves in solar plasma (46-110 Hz) + convective bubbling
+        // ====================================================
+        const osc1 = audioCtx.createOscillator();
+        osc1.type = "sine";
+        osc1.frequency.setValueAtTime(46, now);
+
+        const osc2 = audioCtx.createOscillator();
+        osc2.type = "sine";
+        osc2.frequency.setValueAtTime(78, now);
+
+        const subGain = audioCtx.createGain();
+        subGain.gain.setValueAtTime(0.35, now);
+        osc1.connect(subGain);
+        osc2.connect(subGain);
+        subGain.connect(planetGain);
+        osc1.start(now);
+        osc2.start(now);
+        activePlanetAudioNodes.push(osc1, osc2);
+
+        // Brown noise through resonant filter for boiling granules
+        const brownBuffer = createNoiseBuffer(audioCtx, "brown");
+        const noiseSource = audioCtx.createBufferSource();
+        noiseSource.buffer = brownBuffer;
+        noiseSource.loop = true;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(110, now);
+        filter.Q.setValueAtTime(3.5, now);
+
+        const filterLFO = audioCtx.createOscillator();
+        filterLFO.frequency.setValueAtTime(0.25, now);
+        const lfoGain = audioCtx.createGain();
+        lfoGain.gain.setValueAtTime(45, now);
+        filterLFO.connect(lfoGain);
+        lfoGain.connect(filter.frequency);
+
+        const noiseGain = audioCtx.createGain();
+        noiseGain.gain.setValueAtTime(0.42, now);
+
+        noiseSource.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(planetGain);
+
+        noiseSource.start(now);
+        filterLFO.start(now);
+        activePlanetAudioNodes.push(noiseSource, filterLFO);
+
+      } else if (planetId === "mercury") {
+        // ====================================================
+        // 2. MERKURIUS: MESSENGER & BepiColombo (Whistler Waves & Shocks)
+        // High-frequency eerie magnetic chirps & solar wind static
+        // ====================================================
+        const staticBuffer = createNoiseBuffer(audioCtx, "white");
+        const staticSource = audioCtx.createBufferSource();
+        staticSource.buffer = staticBuffer;
+        staticSource.loop = true;
+
+        const hpFilter = audioCtx.createBiquadFilter();
+        hpFilter.type = "highpass";
+        hpFilter.frequency.setValueAtTime(1400, now);
+
+        const staticGain = audioCtx.createGain();
+        staticGain.gain.setValueAtTime(0.08, now);
+        staticSource.connect(hpFilter);
+        hpFilter.connect(staticGain);
+        staticGain.connect(planetGain);
+        staticSource.start(now);
+        activePlanetAudioNodes.push(staticSource);
+
+        // Periodic magnetic whistler-mode downward chirps
+        function triggerWhistlerChirp() {
+          if (!isPlanetSoundPlaying || currentPlayingPlanetId !== "mercury") return;
+          try {
+            const chirpOsc = audioCtx.createOscillator();
+            chirpOsc.type = "sine";
+            const chirpGain = audioCtx.createGain();
+            const t = audioCtx.currentTime;
+
+            chirpOsc.frequency.setValueAtTime(1800 + Math.random() * 400, t);
+            chirpOsc.frequency.exponentialRampToValueAtTime(450, t + 0.35);
+
+            chirpGain.gain.setValueAtTime(0.12, t);
+            chirpGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+
+            chirpOsc.connect(chirpGain);
+            chirpGain.connect(planetGain);
+            chirpOsc.start(t);
+            chirpOsc.stop(t + 0.36);
+          } catch (e) {}
+        }
+        const whistlerInt = setInterval(triggerWhistlerChirp, 1100);
+        activePlanetIntervals.push(whistlerInt);
+        triggerWhistlerChirp();
+
+      } else if (planetId === "venus") {
+        // ====================================================
+        // 3. VENUS: Akatsuki & Pioneer Venus (Atmosfer 92 atm & Kilat)
+        // Crushing dense atmospheric roar layered with electric acid cloud discharges
+        // ====================================================
+        const pinkBuffer = createNoiseBuffer(audioCtx, "pink");
+        const noiseSource = audioCtx.createBufferSource();
+        noiseSource.buffer = pinkBuffer;
+        noiseSource.loop = true;
+
+        const lpFilter = audioCtx.createBiquadFilter();
+        lpFilter.type = "lowpass";
+        lpFilter.frequency.setValueAtTime(190, now);
+        lpFilter.Q.setValueAtTime(4.0, now);
+
+        const roarGain = audioCtx.createGain();
+        roarGain.gain.setValueAtTime(0.48, now);
+        noiseSource.connect(lpFilter);
+        lpFilter.connect(roarGain);
+        roarGain.connect(planetGain);
+        noiseSource.start(now);
+        activePlanetAudioNodes.push(noiseSource);
+
+        // Sub-bass heavy atmospheric mass
+        const subOsc = audioCtx.createOscillator();
+        subOsc.type = "sine";
+        subOsc.frequency.setValueAtTime(36, now);
+        const subGain = audioCtx.createGain();
+        subGain.gain.setValueAtTime(0.28, now);
+        subOsc.connect(subGain);
+        subGain.connect(planetGain);
+        subOsc.start(now);
+        activePlanetAudioNodes.push(subOsc);
+
+        // Random lightning crackles in sulfuric acid atmosphere
+        function triggerVenusLightning() {
+          if (!isPlanetSoundPlaying || currentPlayingPlanetId !== "venus") return;
+          try {
+            const t = audioCtx.currentTime;
+            const zapOsc = audioCtx.createOscillator();
+            zapOsc.type = "sawtooth";
+            zapOsc.frequency.setValueAtTime(360, t);
+            zapOsc.frequency.exponentialRampToValueAtTime(70, t + 0.08);
+
+            const zapGain = audioCtx.createGain();
+            zapGain.gain.setValueAtTime(0.16, t);
+            zapGain.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+
+            zapOsc.connect(zapGain);
+            zapGain.connect(planetGain);
+            zapOsc.start(t);
+            zapOsc.stop(t + 0.1);
+          } catch (e) {}
+        }
+        const lightningInt = setInterval(triggerVenusLightning, 1800);
+        activePlanetIntervals.push(lightningInt);
+
+      } else if (planetId === "earth") {
+        // ====================================================
+        // 4. BUMI: NASA Van Allen Probes EMFISIS (Earthsong / Dawn Chorus)
+        // Iconic bird-like whistler chirping in radiation belt & Schumann resonance
+        // ====================================================
+        const drone1 = audioCtx.createOscillator();
+        drone1.type = "sine";
+        drone1.frequency.setValueAtTime(130, now);
+
+        const drone2 = audioCtx.createOscillator();
+        drone2.type = "sine";
+        drone2.frequency.setValueAtTime(260, now);
+
+        const droneGain = audioCtx.createGain();
+        droneGain.gain.setValueAtTime(0.18, now);
+        drone1.connect(droneGain);
+        drone2.connect(droneGain);
+        droneGain.connect(planetGain);
+        drone1.start(now);
+        drone2.start(now);
+        activePlanetAudioNodes.push(drone1, drone2);
+
+        // Van Allen Dawn Chorus rising bird chirps
+        function triggerEarthChorus() {
+          if (!isPlanetSoundPlaying || currentPlayingPlanetId !== "earth") return;
+          try {
+            const t = audioCtx.currentTime;
+            const birdOsc = audioCtx.createOscillator();
+            birdOsc.type = "sine";
+            const startF = 1100 + Math.random() * 400;
+            const endF = 2400 + Math.random() * 600;
+            birdOsc.frequency.setValueAtTime(startF, t);
+            birdOsc.frequency.exponentialRampToValueAtTime(endF, t + 0.22);
+
+            const birdGain = audioCtx.createGain();
+            birdGain.gain.setValueAtTime(0.12, t);
+            birdGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.24);
+
+            birdOsc.connect(birdGain);
+            birdGain.connect(planetGain);
+            birdOsc.start(t);
+            birdOsc.stop(t + 0.25);
+          } catch (e) {}
+        }
+        const chorusInt = setInterval(triggerEarthChorus, 650);
+        activePlanetIntervals.push(chorusInt);
+        triggerEarthChorus();
+
+      } else if (planetId === "mars") {
+        // ====================================================
+        // 5. MARS: NASA Perseverance (SuperCam Mic) & InSight SEIS
+        // Actual recorded thin wind gusts in Jezero crater & seismic rumble
+        // ====================================================
+        const whiteBuffer = createNoiseBuffer(audioCtx, "white");
+        const windSource = audioCtx.createBufferSource();
+        windSource.buffer = whiteBuffer;
+        windSource.loop = true;
+
+        const windFilter = audioCtx.createBiquadFilter();
+        windFilter.type = "bandpass";
+        windFilter.frequency.setValueAtTime(320, now);
+        windFilter.Q.setValueAtTime(3.2, now);
+
+        // LFO simulating variable Martian wind gusts
+        const windLFO = audioCtx.createOscillator();
+        windLFO.frequency.setValueAtTime(0.18, now);
+        const lfoDepth = audioCtx.createGain();
+        lfoDepth.gain.setValueAtTime(160, now);
+        windLFO.connect(lfoDepth);
+        lfoDepth.connect(windFilter.frequency);
+
+        const windGain = audioCtx.createGain();
+        windGain.gain.setValueAtTime(0.38, now);
+
+        windSource.connect(windFilter);
+        windFilter.connect(windGain);
+        windGain.connect(planetGain);
+        windSource.start(now);
+        windLFO.start(now);
+        activePlanetAudioNodes.push(windSource, windLFO);
+
+        // InSight Seismic Bedrock Resonance
+        const seismicOsc = audioCtx.createOscillator();
+        seismicOsc.type = "sine";
+        seismicOsc.frequency.setValueAtTime(42, now);
+        const seisGain = audioCtx.createGain();
+        seisGain.gain.setValueAtTime(0.25, now);
+        seismicOsc.connect(seisGain);
+        seisGain.connect(planetGain);
+        seismicOsc.start(now);
+        activePlanetAudioNodes.push(seismicOsc);
+
+      } else if (planetId === "jupiter") {
+        // ====================================================
+        // 6. JUPITER: NASA Juno & Voyager 1 (Bow Shock & Io Plasma Torus)
+        // Thunderous FM synthesis alien howl & magnetic plasma roar
+        // ====================================================
+        const carrier = audioCtx.createOscillator();
+        carrier.type = "sawtooth";
+        carrier.frequency.setValueAtTime(86, now);
+
+        const modulator = audioCtx.createOscillator();
+        modulator.type = "sine";
+        modulator.frequency.setValueAtTime(13.5, now);
+
+        const modIndex = audioCtx.createGain();
+        modIndex.gain.setValueAtTime(115, now);
+        modulator.connect(modIndex);
+        modIndex.connect(carrier.frequency);
+
+        const bpFilter = audioCtx.createBiquadFilter();
+        bpFilter.type = "bandpass";
+        bpFilter.frequency.setValueAtTime(290, now);
+        bpFilter.Q.setValueAtTime(2.8, now);
+
+        const filterSweep = audioCtx.createOscillator();
+        filterSweep.frequency.setValueAtTime(0.28, now);
+        const sweepGain = audioCtx.createGain();
+        sweepGain.gain.setValueAtTime(130, now);
+        filterSweep.connect(sweepGain);
+        sweepGain.connect(bpFilter.frequency);
+
+        const jupGain = audioCtx.createGain();
+        jupGain.gain.setValueAtTime(0.45, now);
+
+        carrier.connect(bpFilter);
+        bpFilter.connect(jupGain);
+        jupGain.connect(planetGain);
+
+        carrier.start(now);
+        modulator.start(now);
+        filterSweep.start(now);
+        activePlanetAudioNodes.push(carrier, modulator, filterSweep);
+
+      } else if (planetId === "saturn") {
+        // ====================================================
+        // 7. SATURNUS: NASA Cassini RPWS (Saturn Kilometric Radiation - SKR)
+        // The famous eerie gliding sirens echoing across Saturnian auroras
+        // ====================================================
+        const siren1 = audioCtx.createOscillator();
+        siren1.type = "sine";
+        siren1.frequency.setValueAtTime(360, now);
+
+        const siren2 = audioCtx.createOscillator();
+        siren2.type = "sine";
+        siren2.frequency.setValueAtTime(540, now);
+
+        // Portamento Pitch modulation LFOs
+        const glideLFO1 = audioCtx.createOscillator();
+        glideLFO1.frequency.setValueAtTime(0.12, now);
+        const glideDepth1 = audioCtx.createGain();
+        glideDepth1.gain.setValueAtTime(140, now);
+        glideLFO1.connect(glideDepth1);
+        glideDepth1.connect(siren1.frequency);
+
+        const glideLFO2 = audioCtx.createOscillator();
+        glideLFO2.frequency.setValueAtTime(0.17, now);
+        const glideDepth2 = audioCtx.createGain();
+        glideDepth2.gain.setValueAtTime(180, now);
+        glideLFO2.connect(glideDepth2);
+        glideDepth2.connect(siren2.frequency);
+
+        // Echo delay for haunting space acoustics
+        const delay = audioCtx.createDelay();
+        delay.delayTime.setValueAtTime(0.18, now);
+        const delayFeedback = audioCtx.createGain();
+        delayFeedback.gain.setValueAtTime(0.36, now);
+        delay.connect(delayFeedback);
+        delayFeedback.connect(delay);
+
+        const saturnGain = audioCtx.createGain();
+        saturnGain.gain.setValueAtTime(0.28, now);
+
+        siren1.connect(saturnGain);
+        siren2.connect(saturnGain);
+        saturnGain.connect(delay);
+        saturnGain.connect(planetGain);
+        delay.connect(planetGain);
+
+        siren1.start(now);
+        siren2.start(now);
+        glideLFO1.start(now);
+        glideLFO2.start(now);
+        activePlanetAudioNodes.push(siren1, siren2, glideLFO1, glideLFO2);
+
+      } else if (planetId === "uranus") {
+        // ====================================================
+        // 8. URANUS: NASA Voyager 2 (PWS Flyby Recording)
+        // Cold, crystalline, spectral bell shimmering over an icy hollow drone
+        // ====================================================
+        const bell1 = audioCtx.createOscillator();
+        bell1.type = "sine";
+        bell1.frequency.setValueAtTime(880, now);
+
+        const bell2 = audioCtx.createOscillator();
+        bell2.type = "sine";
+        bell2.frequency.setValueAtTime(1320, now);
+
+        const tremolo = audioCtx.createOscillator();
+        tremolo.frequency.setValueAtTime(3.2, now);
+        const tremGain = audioCtx.createGain();
+        tremGain.gain.setValueAtTime(0.08, now);
+        tremolo.connect(tremGain.gain);
+
+        const hollowDrone = audioCtx.createOscillator();
+        hollowDrone.type = "triangle";
+        hollowDrone.frequency.setValueAtTime(70, now);
+
+        const uranusGain = audioCtx.createGain();
+        uranusGain.gain.setValueAtTime(0.22, now);
+
+        bell1.connect(uranusGain);
+        bell2.connect(uranusGain);
+        hollowDrone.connect(uranusGain);
+        uranusGain.connect(planetGain);
+
+        bell1.start(now);
+        bell2.start(now);
+        tremolo.start(now);
+        hollowDrone.start(now);
+        activePlanetAudioNodes.push(bell1, bell2, tremolo, hollowDrone);
+
+      } else if (planetId === "neptune") {
+        // ====================================================
+        // 9. NEPTUNUS: NASA Voyager 2 (Supersonic Plasma Waves)
+        // Deep abyssal ocean-like sonic wind roar (>2.100 km/h) & outer heliosphere bow
+        // ====================================================
+        const brownBuffer = createNoiseBuffer(audioCtx, "brown");
+        const noiseSource = audioCtx.createBufferSource();
+        noiseSource.buffer = brownBuffer;
+        noiseSource.loop = true;
+
+        const lpFilter = audioCtx.createBiquadFilter();
+        lpFilter.type = "lowpass";
+        lpFilter.frequency.setValueAtTime(145, now);
+        lpFilter.Q.setValueAtTime(3.2, now);
+
+        const supersonicLFO = audioCtx.createOscillator();
+        supersonicLFO.frequency.setValueAtTime(0.15, now);
+        const lfoDepth = audioCtx.createGain();
+        lfoDepth.gain.setValueAtTime(65, now);
+        supersonicLFO.connect(lfoDepth);
+        lfoDepth.connect(lpFilter.frequency);
+
+        const subBass = audioCtx.createOscillator();
+        subBass.type = "sine";
+        subBass.frequency.setValueAtTime(52, now);
+
+        const nepGain = audioCtx.createGain();
+        nepGain.gain.setValueAtTime(0.44, now);
+
+        noiseSource.connect(lpFilter);
+        lpFilter.connect(nepGain);
+        subBass.connect(nepGain);
+        nepGain.connect(planetGain);
+
+        noiseSource.start(now);
+        supersonicLFO.start(now);
+        subBass.start(now);
+        activePlanetAudioNodes.push(noiseSource, supersonicLFO, subBass);
+      }
+
+      // Start audio visualizer animation loop
+      startVisualizerLoop();
+      updatePlanetSoundButtons(true);
+    }
+
+    // Toggle Planet Sound Play / Pause
+    function togglePlanetSound() {
+      if (!fullPlanet) return;
+
+      if (isPlanetSoundPlaying && currentPlayingPlanetId === fullPlanet.id) {
+        stopPlanetRealSound(false);
+        showToast(`Suara asli ${fullPlanet.name}: Diberhentikan`);
+      } else {
+        playPlanetRealSound(fullPlanet.id);
+        showToast(`Memutar rekaman suara asli ${fullPlanet.name} (${fullPlanet.soundMission || "NASA"})`);
+      }
+    }
+
+    // Modal Header Sound Button Handler
+    function toggleFullViewSound() {
+      if (fullPlanet) {
+        togglePlanetSound();
+      } else {
+        toggleAmbientSound();
+      }
+    }
+
+    // Set Volume for Planetary Audio
+    function setPlanetSoundVolume(val) {
+      planetSoundVolume = parseFloat(val);
+      if (planetMasterGain && audioCtx) {
+        planetMasterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+        planetMasterGain.gain.linearRampToValueAtTime(planetSoundVolume, audioCtx.currentTime + 0.05);
+      }
+    }
+
+    // Update Planet Audio Card Labels & State
+    function updatePlanetSoundUI(planet) {
+      if (!planet) return;
+      const srcText = document.getElementById("soundSourceText");
+      const phenomText = document.getElementById("soundPhenomenonText");
+      const aura = document.getElementById("soundGlowAura");
+
+      if (srcText) srcText.innerText = planet.soundMission || "NASA Jet Propulsion Laboratory";
+      if (phenomText) phenomText.innerText = planet.soundPhenomenon || "Gelombang sonifikasi plasma antariksa";
+      if (aura) aura.style.background = `${planet.color}25`;
+
+      updatePlanetSoundButtons(isPlanetSoundPlaying && currentPlayingPlanetId === planet.id);
+    }
+
+    // Sync button labels & badges
+    function updatePlanetSoundButtons(isPlaying) {
+      const playBtn = document.getElementById("planetPlayBtn");
+      const playIcon = document.getElementById("planetPlayIcon");
+      const playLabel = document.getElementById("planetPlayLabel");
+      const statusBadge = document.getElementById("soundStatusBadge");
+      const pulseDot = document.getElementById("soundPulseBadge");
+      const fullIcon = document.getElementById("fullSoundIcon");
+      const visOverlay = document.getElementById("soundVisOverlay");
+
+      if (isPlaying) {
+        if (playIcon) playIcon.innerText = "pause";
+        if (playLabel) playLabel.innerText = "Hentikan Suara Asli";
+        if (playBtn) {
+          playBtn.classList.remove("bg-[#4F86F7]");
+          playBtn.classList.add("bg-[#E53935]");
+        }
+        if (statusBadge) {
+          statusBadge.innerText = "SEDANG MEMUTAR (NASA)";
+          statusBadge.className = "text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 animate-pulse";
+        }
+        if (pulseDot) {
+          pulseDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34D399]";
+        }
+        if (fullIcon) fullIcon.innerText = "volume_up";
+        if (visOverlay) visOverlay.style.opacity = "0";
+      } else {
+        if (playIcon) playIcon.innerText = "play_arrow";
+        if (playLabel) playLabel.innerText = fullPlanet ? `Putar Suara Asli ${fullPlanet.name}` : "Putar Suara Asli Planet";
+        if (playBtn) {
+          playBtn.classList.remove("bg-[#E53935]");
+          playBtn.classList.add("bg-[#4F86F7]");
+        }
+        if (statusBadge) {
+          statusBadge.innerText = "SIAP DIPUTAR";
+          statusBadge.className = "text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/5 text-[#919194] border border-white/10";
+        }
+        if (pulseDot) {
+          pulseDot.className = "w-2.5 h-2.5 rounded-full bg-[#919194]";
+        }
+        if (fullIcon) fullIcon.innerText = "volume_off";
+        if (visOverlay) visOverlay.style.opacity = "1";
+      }
+    }
+
+    // ====================================================
+    // REAL-TIME SOUND WAVEFORM & FREQUENCY VISUALIZER
+    // ====================================================
+    function startVisualizerLoop() {
+      if (!visAnimFrame) {
+        drawSoundVisualizer();
+      }
+    }
+
+    function drawSoundVisualizer() {
+      const visCanvas = document.getElementById("soundVisualizerCanvas");
+      if (!visCanvas) return;
+
+      const vCtx = visCanvas.getContext("2d");
+      const dpr = window.devicePixelRatio || 1;
+      const rect = visCanvas.getBoundingClientRect();
+
+      if (rect.width > 0 && rect.height > 0) {
+        if (visCanvas.width !== rect.width * dpr || visCanvas.height !== rect.height * dpr) {
+          visCanvas.width = rect.width * dpr;
+          visCanvas.height = rect.height * dpr;
+          vCtx.scale(dpr, dpr);
+        }
+      }
+
+      const w = rect.width;
+      const h = rect.height;
+      vCtx.clearRect(0, 0, w, h);
+
+      const pColor = (fullPlanet && fullPlanet.color) ? fullPlanet.color : "#4F86F7";
+      const pSecColor = (fullPlanet && fullPlanet.secColor) ? fullPlanet.secColor : "#80DEEA";
+
+      if (planetAnalyser && isPlanetSoundPlaying) {
+        const bufferLength = planetAnalyser.frequencyBinCount;
+        const freqData = new Uint8Array(bufferLength);
+        const timeData = new Uint8Array(bufferLength);
+        planetAnalyser.getByteFrequencyData(freqData);
+        planetAnalyser.getByteTimeDomainData(timeData);
+
+        // 1. Draw Spectrum Frequency Bars (Aura Glow)
+        const barCount = 32;
+        const barWidth = w / barCount;
+
+        for (let i = 0; i < barCount; i++) {
+          const sampleIdx = Math.floor((i / barCount) * (bufferLength * 0.75));
+          const val = freqData[sampleIdx] / 255.0;
+          const barHeight = Math.max(2, val * h * 0.85);
+
+          const grad = vCtx.createLinearGradient(0, h, 0, h - barHeight);
+          grad.addColorStop(0, `${pColor}25`);
+          grad.addColorStop(0.7, `${pColor}88`);
+          grad.addColorStop(1, pSecColor);
+
+          vCtx.fillStyle = grad;
+          vCtx.fillRect(i * barWidth + 1, h - barHeight, barWidth - 2, barHeight);
+        }
+
+        // 2. Draw Smooth Oscilloscope Waveform (Neon Wire)
+        vCtx.lineWidth = 2.0;
+        vCtx.strokeStyle = pSecColor;
+        vCtx.shadowColor = pColor;
+        vCtx.shadowBlur = 10;
+        vCtx.beginPath();
+
+        const sliceWidth = w / bufferLength;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+          const v = timeData[i] / 128.0;
+          const y = (v * h) / 2;
+
+          if (i === 0) {
+            vCtx.moveTo(x, y);
+          } else {
+            vCtx.lineTo(x, y);
+          }
+          x += sliceWidth;
+        }
+
+        vCtx.stroke();
+        vCtx.shadowBlur = 0;
+
+      } else {
+        // Flat line idle state
+        vCtx.strokeStyle = "rgba(255, 255, 255, 0.12)";
+        vCtx.lineWidth = 1.5;
+        vCtx.beginPath();
+        vCtx.moveTo(0, h / 2);
+        vCtx.lineTo(w, h / 2);
+        vCtx.stroke();
+      }
+
+      visAnimFrame = requestAnimationFrame(drawSoundVisualizer);
     }
 
     function toggleAmbientSound() {
@@ -1955,36 +2788,40 @@
     initSpaceLoader();
 
     // ==========================================
-    // 2. FITUR PERBANDINGAN SKALA RELATIF
+    // 2. FITUR PERBANDINGAN SKALA RELATIF (OPTIMIZED)
     // ==========================================
     let currentScaleEarthCm = 6.7; // default: bola tenis 6.7 cm
     let scaleCanvas = null;
     let scaleCtx = null;
+    let scaleViewMode = "fit"; // "fit" (Pas Layar) or "true" (Skala Nyata 1:1)
     let scalePanOffset = 0;
+    let scaleZoom = 1.0;
     let isScaleDragging = false;
     let scaleDragStartX = 0;
+    let hoveredScaleObject = null;
+    let renderedScaleObjects = [];
 
     const REAL_DATA = {
-      sun: { name: "Matahari", dKm: 1392700, color: "#FFA500" },
-      jupiter: { name: "Jupiter", dKm: 139820, color: "#FFA726" },
-      saturn: { name: "Saturnus", dKm: 116460, color: "#E3BB76" },
-      uranus: { name: "Uranus", dKm: 50724, color: "#80DEEA" },
-      neptune: { name: "Neptunus", dKm: 49244, color: "#29B6F6" },
-      earth: { name: "Bumi", dKm: 12742, color: "#4F86F7" },
-      venus: { name: "Venus", dKm: 12104, color: "#FFD54F" },
-      mars: { name: "Mars", dKm: 6779, color: "#FF5722" },
-      mercury: { name: "Merkurius", dKm: 4879, color: "#9E9E9E" },
-      moon: { name: "Bulan", dKm: 3474, color: "#ECEFF1" }
+      sun: { name: "Matahari", dKm: 1392700, color: "#FFA500", glow: "#FFD54F", ratio: "109.3×" },
+      jupiter: { name: "Jupiter", dKm: 139820, color: "#FFA726", glow: "#FFE082", ratio: "11.0×" },
+      saturn: { name: "Saturnus", dKm: 116460, color: "#E3BB76", glow: "#FFF59D", ratio: "9.1×" },
+      uranus: { name: "Uranus", dKm: 50724, color: "#80DEEA", glow: "#E0F7FA", ratio: "4.0×" },
+      neptune: { name: "Neptunus", dKm: 49244, color: "#29B6F6", glow: "#B3E5FC", ratio: "3.9×" },
+      earth: { name: "Bumi", dKm: 12742, color: "#4F86F7", glow: "#80D8FF", ratio: "1.0× (Acuan)" },
+      venus: { name: "Venus", dKm: 12104, color: "#FFD54F", glow: "#FFF9C4", ratio: "0.95×" },
+      mars: { name: "Mars", dKm: 6779, color: "#FF5722", glow: "#FFAB91", ratio: "0.53×" },
+      mercury: { name: "Merkurius", dKm: 4879, color: "#B0BEC5", glow: "#ECEFF1", ratio: "0.38×" },
+      moon: { name: "Bulan", dKm: 3474, color: "#ECEFF1", glow: "#FFFFFF", ratio: "0.27×" }
     };
 
     function getObjectAnalogy(sizeCm) {
-      if (sizeCm >= 500) return `Bola raksasa setinggi gedung (${(sizeCm/100).toFixed(1)} meter!)`;
+      if (sizeCm >= 500) return `Bola raksasa gedung (${(sizeCm/100).toFixed(1)} meter)`;
       if (sizeCm >= 100) return `Bola raksasa ${(sizeCm/100).toFixed(1)} meter`;
       if (sizeCm >= 50) return `Bola yoga besar (${sizeCm.toFixed(1)} cm)`;
-      if (sizeCm >= 20) return `Bola basket / sepak (${sizeCm.toFixed(1)} cm)`;
+      if (sizeCm >= 20) return `Bola basket (${sizeCm.toFixed(1)} cm)`;
       if (sizeCm >= 10) return `Buah melon / semangka (${sizeCm.toFixed(1)} cm)`;
       if (sizeCm >= 5) return `Bola tenis / buah apel (${sizeCm.toFixed(1)} cm)`;
-      if (sizeCm >= 3) return `Bola golf / telur ayam (${sizeCm.toFixed(1)} cm)`;
+      if (sizeCm >= 3) return `Bola golf / telur (${sizeCm.toFixed(1)} cm)`;
       if (sizeCm >= 1.5) return `Kelereng / bola bekel (${sizeCm.toFixed(1)} cm)`;
       if (sizeCm >= 0.5) return `Kacang polong (${(sizeCm * 10).toFixed(1)} mm)`;
       return `Biji wijen / pasir (${(sizeCm * 10).toFixed(1)} mm)`;
@@ -1992,12 +2829,60 @@
 
     function openScaleModal(targetPlanetId) {
       document.getElementById("scaleModal").classList.remove("hidden");
-      renderScaleUI();
-      initScaleCanvas();
+      setTimeout(() => {
+        initScaleCanvas();
+        renderScaleUI();
+        if (targetPlanetId && REAL_DATA[targetPlanetId]) {
+          const item = renderedScaleObjects.find(o => o.id === targetPlanetId);
+          if (item) inspectScaleObject(item);
+        }
+      }, 50);
     }
 
     function closeScaleModal() {
       document.getElementById("scaleModal").classList.add("hidden");
+    }
+
+    function setScaleViewMode(mode) {
+      scaleViewMode = mode;
+      scalePanOffset = 0;
+      scaleZoom = 1.0;
+
+      const btnFit = document.getElementById("btnModeFit");
+      const btnTrue = document.getElementById("btnModeTrue");
+      const zoomControls = document.getElementById("scaleZoomControls");
+      const desc = document.getElementById("scaleModeDesc");
+
+      if (mode === "fit") {
+        if (btnFit) btnFit.className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#4F86F7] text-white transition-all cursor-pointer shadow-sm";
+        if (btnTrue) btnTrue.className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#1C202B] hover:bg-[#282E3E] text-[#C4C6D0] border border-white/10 transition-all cursor-pointer";
+        if (zoomControls) {
+          zoomControls.classList.add("hidden");
+          zoomControls.classList.remove("flex");
+        }
+        if (desc) desc.innerText = "Mode Pas Layar";
+      } else {
+        if (btnTrue) btnTrue.className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#4F86F7] text-white transition-all cursor-pointer shadow-sm";
+        if (btnFit) btnFit.className = "px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#1C202B] hover:bg-[#282E3E] text-[#C4C6D0] border border-white/10 transition-all cursor-pointer";
+        if (zoomControls) {
+          zoomControls.classList.remove("hidden");
+          zoomControls.classList.add("flex");
+        }
+        if (desc) desc.innerText = "Mode Skala Nyata 1:1";
+      }
+
+      drawScaleCanvas();
+    }
+
+    function zoomScaleCanvas(factor) {
+      scaleZoom = Math.max(0.4, Math.min(3.5, scaleZoom * factor));
+      drawScaleCanvas();
+    }
+
+    function resetScaleZoom() {
+      scaleZoom = 1.0;
+      scalePanOffset = 0;
+      drawScaleCanvas();
     }
 
     function setScalePreset(preset) {
@@ -2024,6 +2909,22 @@
     function onScaleSliderChange(val) {
       currentScaleEarthCm = parseFloat(val);
       renderScaleUI();
+    }
+
+    function inspectScaleObject(item) {
+      hoveredScaleObject = item;
+      const nameEl = document.getElementById("scaleInspectName");
+      const detailEl = document.getElementById("scaleInspectDetail");
+      if (nameEl && detailEl) {
+        nameEl.innerHTML = `
+          <span class="w-2.5 h-2.5 rounded-full inline-block" style="background:${item.color}; box-shadow: 0 0 6px ${item.color}"></span>
+          <span class="text-white font-bold">${item.name}</span>
+          <span class="text-[#8AB4F8]">(${item.ratio})</span>
+          <span class="text-[#C4C6D0] hidden sm:inline">&bull; ${item.analogy}</span>
+        `;
+        detailEl.innerHTML = `Diameter: <span class="text-white">${item.dKm.toLocaleString('id-ID')} km</span> (${item.sizeStr})`;
+      }
+      drawScaleCanvas();
     }
 
     function renderScaleUI() {
@@ -2056,7 +2957,11 @@
           const analogy = getObjectAnalogy(sizeCm);
 
           const card = document.createElement("div");
-          card.className = "p-3 rounded-xl bg-[#181D29] border border-[#2B3240] flex items-center gap-3";
+          card.className = "p-3 rounded-xl bg-[#181D29] border border-[#2B3240] hover:border-[#4F86F7]/50 flex items-center gap-3 transition-colors cursor-pointer";
+          card.onclick = () => {
+            const obj = renderedScaleObjects.find(o => o.id === id);
+            if (obj) inspectScaleObject(obj);
+          };
           card.innerHTML = `
             <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background: ${item.color}25; border: 1.5px solid ${item.color};">
               <div class="w-3 h-3 rounded-full" style="background: ${item.color}"></div>
@@ -2081,101 +2986,359 @@
       if (!scaleCanvas) return;
       scaleCtx = scaleCanvas.getContext("2d");
 
-      const rect = scaleCanvas.getBoundingClientRect();
-      scaleCanvas.width = rect.width * (window.devicePixelRatio || 1);
-      scaleCanvas.height = rect.height * (window.devicePixelRatio || 1);
+      resizeScaleCanvas();
 
+      // Mouse drag for true scale mode
       scaleCanvas.onmousedown = (e) => {
         isScaleDragging = true;
         scaleDragStartX = e.clientX;
+        checkScaleCanvasHit(e.clientX, e.clientY);
       };
+
       window.addEventListener("mousemove", (e) => {
-        if (isScaleDragging) {
+        if (isScaleDragging && scaleViewMode === "true") {
           scalePanOffset += (e.clientX - scaleDragStartX);
           scaleDragStartX = e.clientX;
           drawScaleCanvas();
+        } else if (scaleCanvas && !isScaleDragging) {
+          const rect = scaleCanvas.getBoundingClientRect();
+          if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+            checkScaleCanvasHit(e.clientX, e.clientY);
+          }
         }
       });
+
       window.addEventListener("mouseup", () => { isScaleDragging = false; });
 
+      // Touch events
       scaleCanvas.ontouchstart = (e) => {
         if (e.touches.length === 1) {
           isScaleDragging = true;
           scaleDragStartX = e.touches[0].clientX;
+          checkScaleCanvasHit(e.touches[0].clientX, e.touches[0].clientY);
         }
       };
+
       scaleCanvas.ontouchmove = (e) => {
-        if (isScaleDragging && e.touches.length === 1) {
+        if (isScaleDragging && e.touches.length === 1 && scaleViewMode === "true") {
           scalePanOffset += (e.touches[0].clientX - scaleDragStartX);
           scaleDragStartX = e.touches[0].clientX;
           drawScaleCanvas();
         }
       };
-      scaleCanvas.ontouchend = () => { isScaleDragging = false; };
 
+      scaleCanvas.ontouchend = () => { isScaleDragging = false; };
+    }
+
+    function resizeScaleCanvas() {
+      if (!scaleCanvas || !scaleCtx) return;
+      const rect = scaleCanvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      const dpr = window.devicePixelRatio || 1;
+      scaleCanvas.width = Math.round(rect.width * dpr);
+      scaleCanvas.height = Math.round(rect.height * dpr);
+      scaleCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       drawScaleCanvas();
+    }
+
+    window.addEventListener("resize", () => {
+      const modal = document.getElementById("scaleModal");
+      if (modal && !modal.classList.contains("hidden")) {
+        resizeScaleCanvas();
+      }
+    });
+
+    function checkScaleCanvasHit(clientX, clientY) {
+      if (!scaleCanvas) return;
+      const rect = scaleCanvas.getBoundingClientRect();
+      const clickX = clientX - rect.left;
+      const clickY = clientY - rect.top;
+
+      let found = null;
+      for (const obj of renderedScaleObjects) {
+        const dist = Math.hypot(clickX - obj.x, clickY - obj.y);
+        const touchRadius = Math.max(obj.r, 16);
+        if (dist <= touchRadius) {
+          found = obj;
+          break;
+        }
+      }
+
+      if (found) {
+        inspectScaleObject(found);
+      }
     }
 
     function drawScaleCanvas() {
       if (!scaleCanvas || !scaleCtx) return;
-      const w = scaleCanvas.width;
-      const h = scaleCanvas.height;
+      const rect = scaleCanvas.getBoundingClientRect();
+      const w = rect.width || 600;
+      const h = rect.height || 208;
+      if (w === 0 || h === 0) return;
+
       scaleCtx.clearRect(0, 0, w, h);
+      renderedScaleObjects = [];
 
-      const baselineY = h * 0.70;
-      const earthPx = Math.max(8, (h * 0.12) * (currentScaleEarthCm / 6.7));
-      const kmToPx = earthPx / 12742;
+      const k = currentScaleEarthCm / 12742;
+      const baselineY = Math.round(h * 0.58);
 
-      scaleCtx.save();
-      scaleCtx.translate(scalePanOffset, 0);
-
-      let currentX = 40;
-
-      // Draw Sun on far left
-      const sunR = (1392700 / 2) * kmToPx;
-      scaleCtx.fillStyle = "#FFA500";
-      scaleCtx.shadowColor = "#FFD600";
-      scaleCtx.shadowBlur = 18;
+      // Subtle celestial backdrop grid & guide line
+      scaleCtx.strokeStyle = "rgba(255, 255, 255, 0.06)";
+      scaleCtx.lineWidth = 1;
+      scaleCtx.setLineDash([4, 4]);
       scaleCtx.beginPath();
-      scaleCtx.arc(currentX + sunR, baselineY, sunR, 0, Math.PI * 2);
-      scaleCtx.fill();
-      scaleCtx.shadowBlur = 0;
+      scaleCtx.moveTo(10, baselineY);
+      scaleCtx.lineTo(w - 10, baselineY);
+      scaleCtx.stroke();
+      scaleCtx.setLineDash([]);
 
-      scaleCtx.fillStyle = "#FFFFFF";
-      scaleCtx.font = "bold 12px 'Plus Jakarta Sans', sans-serif";
-      scaleCtx.textAlign = "center";
-      scaleCtx.fillText("Matahari", currentX + sunR, baselineY + 22);
+      const orderedList = [
+        "sun", "mercury", "venus", "earth", "moon", "mars", "jupiter", "saturn", "uranus", "neptune"
+      ];
 
-      currentX += (sunR * 2) + 50;
+      if (scaleViewMode === "fit") {
+        // ==========================================
+        // MODE 1: FIT KE LAYAR (ALL OBJECTS FIT CLEANLY)
+        // ==========================================
+        // Proportional display calibrated so Sun & all 8 planets + Moon fit neatly
+        const sunR = Math.min(46, Math.max(34, h * 0.23));
+        const startX = Math.max(sunR + 15, Math.round(w * 0.09));
+        const endX = w - 24;
+        const remainingSpace = endX - (startX + sunR + 10);
+        const stepX = remainingSpace / (orderedList.length - 1);
 
-      // Draw 8 Planets
-      const planetsList = ["mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune"];
-      planetsList.forEach(id => {
-        const p = REAL_DATA[id];
-        const r = Math.max(2, (p.dKm / 2) * kmToPx);
+        orderedList.forEach((id, idx) => {
+          const p = REAL_DATA[id];
+          const sizeCm = p.dKm * k;
+          const sizeStr = sizeCm >= 100 ? `${(sizeCm/100).toFixed(2)} m` : `${sizeCm.toFixed(2)} cm`;
+          const analogy = getObjectAnalogy(sizeCm);
 
-        scaleCtx.fillStyle = p.color;
+          let r = 0;
+          let posX = 0;
+
+          if (id === "sun") {
+            r = sunR;
+            posX = startX;
+          } else {
+            // Well-proportioned perceptual radii that preserve realistic relative hierarchy
+            if (id === "jupiter") r = 21;
+            else if (id === "saturn") r = 17;
+            else if (id === "uranus") r = 10.5;
+            else if (id === "neptune") r = 10;
+            else if (id === "earth") r = 6.2;
+            else if (id === "venus") r = 5.9;
+            else if (id === "mars") r = 4.0;
+            else if (id === "mercury") r = 2.8;
+            else if (id === "moon") r = 1.8;
+
+            posX = (startX + sunR + 10) + ((idx - 1) * stepX) + (stepX * 0.5);
+          }
+
+          const posY = baselineY;
+          renderedScaleObjects.push({
+            id, name: p.name, x: posX, y: posY, r, color: p.color, dKm: p.dKm, ratio: p.ratio, sizeStr, analogy
+          });
+
+          const isHovered = hoveredScaleObject && hoveredScaleObject.id === id;
+
+          // Draw Hover Focus Aura
+          if (isHovered) {
+            scaleCtx.strokeStyle = "#80DEEA";
+            scaleCtx.lineWidth = 2;
+            scaleCtx.beginPath();
+            scaleCtx.arc(posX, posY, Math.max(r + 6, 14), 0, Math.PI * 2);
+            scaleCtx.stroke();
+          }
+
+          // Draw Saturn's Ring (back half)
+          if (id === "saturn") {
+            scaleCtx.strokeStyle = "rgba(245, 230, 180, 0.45)";
+            scaleCtx.lineWidth = 3.5;
+            scaleCtx.beginPath();
+            scaleCtx.ellipse(posX, posY, r * 2.1, r * 0.52, -0.22, Math.PI, Math.PI * 2);
+            scaleCtx.stroke();
+          }
+
+          // Draw Object Sphere
+          if (id === "sun") {
+            const grad = scaleCtx.createRadialGradient(posX - r * 0.25, posY - r * 0.25, r * 0.1, posX, posY, r);
+            grad.addColorStop(0, "#FFF9C4");
+            grad.addColorStop(0.4, "#FFB300");
+            grad.addColorStop(0.85, "#FF6F00");
+            grad.addColorStop(1, "#E65100");
+            scaleCtx.fillStyle = grad;
+            scaleCtx.shadowColor = "#FFD54F";
+            scaleCtx.shadowBlur = 14;
+            scaleCtx.beginPath();
+            scaleCtx.arc(posX, posY, r, 0, Math.PI * 2);
+            scaleCtx.fill();
+            scaleCtx.shadowBlur = 0;
+          } else {
+            const grad = scaleCtx.createRadialGradient(posX - r * 0.3, posY - r * 0.3, r * 0.1, posX, posY, r);
+            grad.addColorStop(0, p.glow || "#FFFFFF");
+            grad.addColorStop(0.7, p.color);
+            grad.addColorStop(1, "#05070D");
+            scaleCtx.fillStyle = grad;
+            scaleCtx.beginPath();
+            scaleCtx.arc(posX, posY, r, 0, Math.PI * 2);
+            scaleCtx.fill();
+          }
+
+          // Draw Saturn's Ring (front half)
+          if (id === "saturn") {
+            scaleCtx.strokeStyle = "rgba(245, 230, 180, 0.85)";
+            scaleCtx.lineWidth = 3.5;
+            scaleCtx.beginPath();
+            scaleCtx.ellipse(posX, posY, r * 2.1, r * 0.52, -0.22, 0, Math.PI);
+            scaleCtx.stroke();
+          }
+
+          // Draw Ratio Badge Above
+          scaleCtx.fillStyle = isHovered ? "#80DEEA" : "#919194";
+          scaleCtx.font = `600 ${Math.max(9, Math.round(w * 0.017))}px 'Plus Jakarta Sans', sans-serif`;
+          scaleCtx.textAlign = "center";
+          scaleCtx.fillText(p.ratio, posX, posY - Math.max(r, 12) - 8);
+
+          // Draw Name Label Below
+          scaleCtx.fillStyle = isHovered ? "#FFFFFF" : "#C4C6D0";
+          scaleCtx.font = `${isHovered ? 'bold' : '500'} ${Math.max(10, Math.round(w * 0.019))}px 'Plus Jakarta Sans', sans-serif`;
+          scaleCtx.fillText(p.name, posX, posY + Math.max(r, 12) + 16);
+        });
+
+      } else {
+        // ==========================================
+        // MODE 2: SKALA NYATA 1:1 DENGAN BUSUR MATAHARI
+        // ==========================================
+        // True physical ratio where Sun is 109.3x Earth diameter
+        const baseEarthR = Math.max(2.5, 4.0 * scaleZoom);
+        const sunRadius = 109.3 * baseEarthR; // e.g. 437px
+
+        // Position Sun's center so only its curving limb/arc enters on the left
+        const sunApexX = scalePanOffset + 75;
+        const sunCenterX = sunApexX - sunRadius;
+        const sunCenterY = baselineY;
+
+        // Draw Sun's majestic curved boundary
+        const sunGrad = scaleCtx.createRadialGradient(sunCenterX, sunCenterY, sunRadius * 0.85, sunCenterX, sunCenterY, sunRadius);
+        sunGrad.addColorStop(0, "#FF8F00");
+        sunGrad.addColorStop(0.7, "#FF6F00");
+        sunGrad.addColorStop(0.95, "#FFD54F");
+        sunGrad.addColorStop(1, "rgba(255, 213, 79, 0)");
+
+        scaleCtx.fillStyle = sunGrad;
+        scaleCtx.shadowColor = "#FFB300";
+        scaleCtx.shadowBlur = 18;
         scaleCtx.beginPath();
-        scaleCtx.arc(currentX + r, baselineY, r, 0, Math.PI * 2);
+        scaleCtx.arc(sunCenterX, sunCenterY, sunRadius, 0, Math.PI * 2);
         scaleCtx.fill();
+        scaleCtx.shadowBlur = 0;
 
-        if (id === "saturn") {
-          scaleCtx.strokeStyle = "rgba(255, 249, 196, 0.4)";
-          scaleCtx.lineWidth = 3;
+        // Sun Edge Contour
+        scaleCtx.strokeStyle = "#FFE082";
+        scaleCtx.lineWidth = 2.5;
+        scaleCtx.beginPath();
+        scaleCtx.arc(sunCenterX, sunCenterY, sunRadius, -0.6, 0.6);
+        scaleCtx.stroke();
+
+        // Sun Label on the Limb
+        scaleCtx.fillStyle = "#FFD54F";
+        scaleCtx.font = "bold 11px 'Plus Jakarta Sans', sans-serif";
+        scaleCtx.textAlign = "right";
+        scaleCtx.fillText("Busur Matahari (109.3× Bumi)", sunApexX - 8, baselineY - 14);
+
+        renderedScaleObjects.push({
+          id: "sun",
+          name: "Matahari",
+          x: sunApexX - 25,
+          y: baselineY,
+          r: 30,
+          color: "#FFA500",
+          dKm: 1392700,
+          ratio: "109.3×",
+          sizeStr: `${((1392700 * k) / 100).toFixed(1)} m`,
+          analogy: getObjectAnalogy(1392700 * k)
+        });
+
+        // Planets placed to the right of Sun's apex
+        let currentX = sunApexX + 65;
+        const planetSpacing = Math.max(55, 78 * scaleZoom);
+
+        const truePlanets = [
+          { id: "mercury", ratioD: 0.38 },
+          { id: "venus", ratioD: 0.95 },
+          { id: "earth", ratioD: 1.00 },
+          { id: "moon", ratioD: 0.27 },
+          { id: "mars", ratioD: 0.53 },
+          { id: "jupiter", ratioD: 10.97 },
+          { id: "saturn", ratioD: 9.14 },
+          { id: "uranus", ratioD: 3.98 },
+          { id: "neptune", ratioD: 3.86 }
+        ];
+
+        truePlanets.forEach((item) => {
+          const p = REAL_DATA[item.id];
+          const r = Math.max(1.5, item.ratioD * baseEarthR);
+          const posX = currentX;
+          const posY = baselineY;
+
+          const sizeCm = p.dKm * k;
+          const sizeStr = sizeCm >= 100 ? `${(sizeCm/100).toFixed(2)} m` : `${sizeCm.toFixed(2)} cm`;
+          const analogy = getObjectAnalogy(sizeCm);
+
+          renderedScaleObjects.push({
+            id: item.id, name: p.name, x: posX, y: posY, r, color: p.color, dKm: p.dKm, ratio: p.ratio, sizeStr, analogy
+          });
+
+          const isHovered = hoveredScaleObject && hoveredScaleObject.id === item.id;
+
+          if (isHovered) {
+            scaleCtx.strokeStyle = "#80DEEA";
+            scaleCtx.lineWidth = 1.8;
+            scaleCtx.beginPath();
+            scaleCtx.arc(posX, posY, Math.max(r + 6, 12), 0, Math.PI * 2);
+            scaleCtx.stroke();
+          }
+
+          if (item.id === "saturn") {
+            scaleCtx.strokeStyle = "rgba(245, 230, 180, 0.45)";
+            scaleCtx.lineWidth = Math.max(1.5, 2.5 * scaleZoom);
+            scaleCtx.beginPath();
+            scaleCtx.ellipse(posX, posY, r * 2.1, r * 0.5, -0.2, Math.PI, Math.PI * 2);
+            scaleCtx.stroke();
+          }
+
+          scaleCtx.fillStyle = p.color;
           scaleCtx.beginPath();
-          scaleCtx.ellipse(currentX + r, baselineY, r * 2.2, r * 0.5, -0.2, 0, Math.PI * 2);
-          scaleCtx.stroke();
-        }
+          scaleCtx.arc(posX, posY, r, 0, Math.PI * 2);
+          scaleCtx.fill();
 
-        scaleCtx.fillStyle = "#C4C6D0";
-        scaleCtx.font = "11px 'Plus Jakarta Sans', sans-serif";
-        scaleCtx.textAlign = "center";
-        scaleCtx.fillText(p.name, currentX + r, baselineY + 20);
+          if (item.id === "saturn") {
+            scaleCtx.strokeStyle = "rgba(245, 230, 180, 0.85)";
+            scaleCtx.lineWidth = Math.max(1.5, 2.5 * scaleZoom);
+            scaleCtx.beginPath();
+            scaleCtx.ellipse(posX, posY, r * 2.1, r * 0.5, -0.2, 0, Math.PI);
+            scaleCtx.stroke();
+          }
 
-        currentX += (r * 2) + 40;
-      });
+          // Labels
+          scaleCtx.fillStyle = isHovered ? "#80DEEA" : "#919194";
+          scaleCtx.font = "600 9px 'Plus Jakarta Sans', sans-serif";
+          scaleCtx.textAlign = "center";
+          scaleCtx.fillText(p.ratio, posX, posY - Math.max(r, 10) - 8);
 
-      scaleCtx.restore();
+          scaleCtx.fillStyle = isHovered ? "#FFFFFF" : "#C4C6D0";
+          scaleCtx.font = "500 10px 'Plus Jakarta Sans', sans-serif";
+          scaleCtx.fillText(p.name, posX, posY + Math.max(r, 10) + 16);
+
+          currentX += planetSpacing + (r * 1.2);
+        });
+
+        // Mini drag instruction
+        scaleCtx.fillStyle = "#8AB4F8";
+        scaleCtx.font = "10px 'Plus Jakarta Sans', sans-serif";
+        scaleCtx.textAlign = "left";
+        scaleCtx.fillText("⇄ Geser kanvas ke kiri / kanan untuk melihat seluruh planet", 15, 20);
+      }
     }
 
     // ==========================================
