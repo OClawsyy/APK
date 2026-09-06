@@ -2,11 +2,40 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Planetarium Mini - Tata Surya Interaktif</title>
+  <meta name="description" content="Simulasi tata surya interaktif 3D dengan data astronomi akurat NASA/ESA, mode perbandingan planet, kalkulator berat badan gravitasi, dan eksplorasi kosmik edukatif.">
+  <!-- Open Graph & Twitter Cards -->
+  <meta property="og:title" content="Planetarium Mini - Tata Surya Interaktif">
+  <meta property="og:description" content="Simulasi tata surya interaktif 3D dengan data astronomi akurat NASA/ESA, mode perbandingan planet, kalkulator gravitasi, dan eksplorasi kosmik.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Planetarium Mini - Tata Surya Interaktif">
+  <meta name="twitter:description" content="Eksplorasi tata surya interaktif dengan data ilmiah NASA/ESA.">
+
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   <style>
+    /* Robust Material Symbols guarantee */
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined' !important;
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+      vertical-align: middle;
+    }
     body {
       margin: 0;
       overflow: hidden;
@@ -36,6 +65,16 @@
       opacity: 1;
       transform: scale(1);
       transition: opacity 300ms ease, transform 300ms ease;
+    }
+    /* Skeleton loader shimmer */
+    @keyframes skeleton-shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .skeleton-box {
+      background: linear-gradient(90deg, rgba(28, 32, 43, 0.8) 25%, rgba(45, 51, 66, 0.8) 50%, rgba(28, 32, 43, 0.8) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-shimmer 1.5s infinite;
     }
   </style>
 </head>
@@ -79,33 +118,57 @@
         <p class="text-[11px] md:text-xs text-[#919194]">Tata Surya Interaktif &bull; Ketuk planet untuk visual layar penuh</p>
       </div>
 
-      <!-- Controls: Speed, Pause, Scale, Quiz, Ambient Sound -->
+      <!-- Controls: Compare, Gravity Calculator, Orbit Scale, Scale, Quiz, Ambient Sound, Speed, Pause -->
       <div class="flex items-center gap-1.5 md:gap-2 pointer-events-auto flex-wrap justify-end">
+        <!-- Compare Mode Button -->
+        <button onclick="openCompareModal()" title="Bandingkan 2 Planet Berdampingan" aria-label="Buka mode perbandingan planet berdampingan" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#E2E2E6] hover:text-white hover:border-[#4F86F7] text-xs font-semibold cursor-pointer transition-all shadow-md">
+          <span class="material-symbols-outlined text-[16px] text-[#4F86F7]">compare_arrows</span>
+          <span class="hidden sm:inline">Bandingkan</span>
+        </button>
+
+        <!-- Gravity Weight Calculator Button -->
+        <button onclick="openGravityModal()" title="Hitung Berat Badanmu di Planet Lain" aria-label="Buka kalkulator berat badan gravitasi planet" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#E2E2E6] hover:text-white hover:border-[#80DEEA] text-xs font-semibold cursor-pointer transition-all shadow-md">
+          <span class="material-symbols-outlined text-[16px] text-[#80DEEA]">fitness_center</span>
+          <span class="hidden sm:inline">Kalkulator Berat</span>
+        </button>
+
+        <!-- Orbit Scale Toggle Button (Visual vs Realistic AU Distance) -->
+        <button id="orbitScaleToggleBtn" onclick="toggleOrbitScale()" title="Ganti Skala Jarak Orbit: Visual vs AU Nyata" aria-label="Ganti mode skala jarak orbit tata surya" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#E2E2E6] hover:text-white hover:border-[#80DEEA] text-xs font-semibold cursor-pointer transition-all shadow-md">
+          <span class="material-symbols-outlined text-[16px] text-[#80DEEA]">hub</span>
+          <span id="orbitScaleLabel" class="hidden sm:inline">Skala: Visual</span>
+        </button>
+
         <!-- Scale Comparison Feature Button -->
-        <button onclick="openScaleModal()" title="Bandingkan Skala Ukuran Nyata" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#E2E2E6] hover:text-white hover:border-[#4F86F7] text-xs font-semibold cursor-pointer transition-all shadow-md">
+        <button onclick="openScaleModal()" title="Bandingkan Skala Ukuran Nyata" aria-label="Buka simulasi perbandingan skala ukuran planet" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#E2E2E6] hover:text-white hover:border-[#4F86F7] text-xs font-semibold cursor-pointer transition-all shadow-md">
           <span class="material-symbols-outlined text-[16px] text-[#4F86F7]">straighten</span>
-          <span class="hidden sm:inline">Skala Relatif</span>
+          <span class="hidden sm:inline">Skala Ukuran</span>
         </button>
 
         <!-- Quiz / Trivia Feature Button -->
-        <button onclick="openQuizModal()" title="Uji Wawasan Antariksa (5 Soal)" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#E2E2E6] hover:text-white hover:border-[#FFD600] text-xs font-semibold cursor-pointer transition-all shadow-md">
+        <button onclick="openQuizModal()" title="Uji Wawasan Antariksa (5 Soal)" aria-label="Buka kuis wawasan antariksa tata surya" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#E2E2E6] hover:text-white hover:border-[#FFD600] text-xs font-semibold cursor-pointer transition-all shadow-md">
           <span class="material-symbols-outlined text-[16px] text-[#FFD600]">quiz</span>
           <span class="hidden sm:inline">Kuis Antariksa</span>
         </button>
 
-        <!-- Ambient Sound Toggle -->
-        <button id="ambientSoundBtn" onclick="toggleAmbientSound()" title="Musik Ambient Luar Angkasa" class="w-9 h-9 rounded-full bg-[#161B26] border border-[#2B3240] flex items-center justify-center text-[#A8C7FA] hover:border-[#4F86F7] transition-colors cursor-pointer shadow-md">
+        <!-- Scientific Credits & Sources Button -->
+        <button onclick="openCreditsModal()" title="Sumber Data Ilmiah NASA & ESA" aria-label="Buka sumber data ilmiah dan kredit" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#E2E2E6] hover:text-white hover:border-[#B388FF] text-xs font-semibold cursor-pointer transition-all shadow-md">
+          <span class="material-symbols-outlined text-[16px] text-[#B388FF]">menu_book</span>
+          <span class="hidden md:inline">Kredit Data</span>
+        </button>
+
+        <!-- Ambient Sound Toggle (PERSIS SESUAI INSTRUKSI: JANGAN DIUBAH) -->
+        <button id="ambientSoundBtn" onclick="toggleAmbientSound()" title="Musik Ambient Luar Angkasa" aria-label="Putar atau matikan musik ambient luar angkasa" class="w-9 h-9 rounded-full bg-[#161B26] border border-[#2B3240] flex items-center justify-center text-[#A8C7FA] hover:border-[#4F86F7] transition-colors cursor-pointer shadow-md">
           <span id="soundIcon" class="material-symbols-outlined text-[18px]">volume_off</span>
         </button>
 
         <!-- Speed Toggle -->
-        <button id="speedBtn" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#A8C7FA] text-xs font-semibold hover:border-[#4F86F7] transition-colors cursor-pointer">
+        <button id="speedBtn" title="Ubah Kecepatan Simulasi Orbit" aria-label="Ubah kecepatan simulasi orbit" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#A8C7FA] text-xs font-semibold hover:border-[#4F86F7] transition-colors cursor-pointer">
           <span class="material-symbols-outlined text-[15px]">speed</span>
           <span id="speedLabel">1.0x</span>
         </button>
 
         <!-- Pause / Play Toggle -->
-        <button id="pauseBtn" class="w-9 h-9 rounded-full bg-[#161B26] border border-[#2B3240] flex items-center justify-center text-[#A8C7FA] hover:border-[#4F86F7] transition-colors cursor-pointer">
+        <button id="pauseBtn" title="Jeda atau Lanjutkan Orbit" aria-label="Jeda atau lanjutkan simulasi orbit" class="w-9 h-9 rounded-full bg-[#161B26] border border-[#2B3240] flex items-center justify-center text-[#A8C7FA] hover:border-[#4F86F7] transition-colors cursor-pointer">
           <span id="pauseIcon" class="material-symbols-outlined text-[18px]">pause</span>
         </button>
       </div>
@@ -386,9 +449,9 @@
           </div>
 
           <div class="pt-2 border-t border-[#7C4DFF]/25 flex items-start gap-2 text-[#D1C4E9]">
-            <span class="material-symbols-outlined text-[#FFD600] text-[16px] flex-shrink-0 mt-0.5">verified</span>
+            <span class="material-symbols-outlined text-[#80DEEA] text-[16px] flex-shrink-0 mt-0.5">info</span>
             <p class="text-[11px] leading-relaxed">
-              <strong>Sertifikat Terdaftar:</strong> Penduduk Bumi resmi terdata di Koperasi Desa Merah Putih galaksi Bima Sakti.
+              <strong class="text-[#80DEEA]">Fakta Astronomi:</strong> Tata Surya mengorbit pusat galaksi Bima Sakti dengan kecepatan ~828.000 km/jam, membutuhkan waktu sekitar 230 juta tahun untuk menyelesaikan satu putaran galaksi penuh (Tahun Kosmik / Galactic Year).
             </p>
           </div>
         </div>
@@ -592,7 +655,7 @@
           <div class="w-full max-w-sm bg-[#181D29] p-3.5 rounded-2xl border border-white/10 text-left">
             <label class="block text-[11px] text-[#8AB4F8] font-semibold uppercase tracking-wider mb-1.5">Nama Penjelajah untuk Sertifikat:</label>
             <div class="flex gap-2">
-              <input type="text" id="certNameInput" placeholder="Masukkan Nama Anda..." value="Muhammad Zakhwan" class="flex-1 px-3 py-2 rounded-xl bg-[#0F131D] border border-white/15 text-white text-xs focus:outline-none focus:border-[#4F86F7]">
+              <input type="text" id="certNameInput" placeholder="Masukkan Nama Anda..." value="Penjelajah Astronomi" class="flex-1 px-3 py-2 rounded-xl bg-[#0F131D] border border-white/15 text-white text-xs focus:outline-none focus:border-[#4F86F7]">
               <button onclick="updateCertificateName()" class="px-3 py-2 rounded-xl bg-[#4F86F7] hover:bg-[#3D74E6] text-white text-xs font-semibold cursor-pointer">
                 Terapkan
               </button>
@@ -616,7 +679,7 @@
 
               <div class="my-auto py-1">
                 <p class="text-[10px] text-[#919194]">Diberikan secara resmi kepada:</p>
-                <h3 id="certDisplayName" class="text-base md:text-xl font-extrabold text-[#FFD54F] tracking-wide my-1">Muhammad Zakhwan</h3>
+                <h3 id="certDisplayName" class="text-base md:text-xl font-extrabold text-[#FFD54F] tracking-wide my-1">Penjelajah Astronomi</h3>
                 <p class="text-[10px] text-[#C4C6D0] max-w-xs mx-auto leading-tight">
                   Telah berhasil menyelesaikan ekspedisi astrofisika tata surya dan membuktikan penguasaan ilmiah kosmik.
                 </p>
@@ -628,7 +691,7 @@
               <div class="w-full flex justify-between items-end border-t border-white/10 pt-2 text-[9px] text-[#919194]">
                 <div class="text-left">
                   <p>Tanggal: <span id="certDateText" class="text-white font-medium">06 Sep 2026</span></p>
-                  <p>Status: <span class="text-emerald-400 font-medium">Terverifikasi Sah</span></p>
+                  <p>Status: <span class="text-emerald-400 font-medium">Lulus Evaluasi Astronomi</span></p>
                 </div>
                 <div class="flex items-center gap-1.5 text-[#FFD600]">
                   <span class="material-symbols-outlined text-[20px]">workspace_premium</span>
@@ -709,6 +772,230 @@
     </div>
   </div>
 
+  <!-- ========================================================================= -->
+  <!-- 5. MODAL PERBANDINGAN BERDAMPINGAN DUA PLANET (COMPARE MODE)              -->
+  <!-- ========================================================================= -->
+  <div id="compareModal" class="fixed inset-0 z-50 bg-[#06080E]/95 backdrop-blur-xl hidden flex flex-col items-center justify-center p-3 md:p-6 overflow-y-auto select-none">
+    <div class="bg-[#121622] border border-[#2B3245] rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Modal Header -->
+      <div class="p-4 md:p-6 border-b border-white/10 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-2xl bg-[#4F86F7]/20 border border-[#4F86F7]/40 flex items-center justify-center text-[#8AB4F8]">
+            <span class="material-symbols-outlined text-[20px]">compare_arrows</span>
+          </div>
+          <div>
+            <h3 class="text-lg md:text-xl font-bold text-white">Mode Perbandingan Planet Berdampingan</h3>
+            <p class="text-xs text-[#919194]">Analisis perbandingan komprehensif data ilmiah dua objek tata surya</p>
+          </div>
+        </div>
+
+        <button onclick="closeCompareModal()" aria-label="Tutup jendela perbandingan" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center cursor-pointer transition-colors">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <!-- Selector Bar -->
+      <div class="p-4 bg-[#161B26] border-b border-white/10 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex-1 min-w-[140px]">
+          <label class="text-[10px] uppercase font-bold text-[#8AB4F8] tracking-wider block mb-1">Pilih Planet A:</label>
+          <select id="compareSelectA" onchange="updateCompareUI()" class="w-full bg-[#0F131D] text-white text-xs md:text-sm font-semibold p-2.5 rounded-xl border border-white/15 focus:outline-none focus:border-[#4F86F7] cursor-pointer">
+            <!-- Injected via JS -->
+          </select>
+        </div>
+
+        <button onclick="swapComparePlanets()" title="Tukar Posisi" class="w-9 h-9 rounded-full bg-white/10 hover:bg-[#4F86F7] text-white flex items-center justify-center cursor-pointer transition-all self-end mb-0.5 shadow-md">
+          <span class="material-symbols-outlined text-[18px]">swap_horiz</span>
+        </button>
+
+        <div class="flex-1 min-w-[140px]">
+          <label class="text-[10px] uppercase font-bold text-[#FFD54F] tracking-wider block mb-1">Pilih Planet B:</label>
+          <select id="compareSelectB" onchange="updateCompareUI()" class="w-full bg-[#0F131D] text-white text-xs md:text-sm font-semibold p-2.5 rounded-xl border border-white/15 focus:outline-none focus:border-[#FFD54F] cursor-pointer">
+            <!-- Injected via JS -->
+          </select>
+        </div>
+      </div>
+
+      <!-- Comparison Dynamic Body -->
+      <div class="p-4 md:p-6 overflow-y-auto no-scrollbar space-y-5 flex-1" id="compareContent">
+        <!-- Rendered dynamically via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 6. MODAL KALKULATOR BERAT BADAN DI PLANET LAIN (GRAVITY CALCULATOR)        -->
+  <!-- ========================================================================= -->
+  <div id="gravityModal" class="fixed inset-0 z-50 bg-[#06080E]/95 backdrop-blur-xl hidden flex flex-col items-center justify-center p-3 md:p-6 overflow-y-auto select-none">
+    <div class="bg-[#121622] border border-[#2B3245] rounded-3xl w-full max-w-3xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Modal Header -->
+      <div class="p-4 md:p-6 border-b border-white/10 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-2xl bg-[#80DEEA]/20 border border-[#80DEEA]/40 flex items-center justify-center text-[#80DEEA]">
+            <span class="material-symbols-outlined text-[20px]">fitness_center</span>
+          </div>
+          <div>
+            <h3 class="text-lg md:text-xl font-bold text-white">Kalkulator Berat di Planet Lain</h3>
+            <p class="text-xs text-[#919194]">Lihat seberapa berat tubuhmu jika menginjakkan kaki di dunia lain</p>
+          </div>
+        </div>
+
+        <button onclick="closeGravityModal()" aria-label="Tutup kalkulator berat badan" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center cursor-pointer transition-colors">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <!-- Input Weight Section -->
+      <div class="p-4 md:p-6 bg-[#161B26] border-b border-white/10 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <label class="text-xs text-white font-semibold block">Masukkan Berat Badanmu di Bumi (kg):</label>
+            <p class="text-[10px] text-[#919194]">Gunakan slider atau ketik langsung angka berat badan</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <input type="number" id="earthWeightInput" min="5" max="250" value="60" oninput="onWeightInputChange(this.value)" class="w-24 text-center font-bold text-base py-1.5 px-2 bg-[#0F131D] text-[#80DEEA] border border-[#80DEEA]/40 rounded-xl focus:outline-none">
+            <span class="text-xs font-bold text-white">kg</span>
+          </div>
+        </div>
+
+        <input type="range" id="earthWeightSlider" min="10" max="150" step="1" value="60" oninput="onWeightSliderChange(this.value)" class="w-full accent-[#80DEEA] cursor-pointer">
+
+        <!-- Fast Presets -->
+        <div class="flex flex-wrap items-center gap-1.5 pt-1">
+          <span class="text-[10px] text-[#919194] mr-1 font-semibold">Preset Cepat:</span>
+          <button onclick="setWeightPreset(35)" class="px-2.5 py-1 rounded-lg bg-[#0F131D] hover:bg-white/10 text-xs text-[#C4C6D0] border border-white/10 cursor-pointer">35 kg</button>
+          <button onclick="setWeightPreset(50)" class="px-2.5 py-1 rounded-lg bg-[#0F131D] hover:bg-white/10 text-xs text-[#C4C6D0] border border-white/10 cursor-pointer">50 kg</button>
+          <button onclick="setWeightPreset(60)" class="px-2.5 py-1 rounded-lg bg-[#0F131D] hover:bg-white/10 text-xs text-[#C4C6D0] border border-white/10 cursor-pointer">60 kg</button>
+          <button onclick="setWeightPreset(70)" class="px-2.5 py-1 rounded-lg bg-[#0F131D] hover:bg-white/10 text-xs text-[#C4C6D0] border border-white/10 cursor-pointer">70 kg</button>
+          <button onclick="setWeightPreset(85)" class="px-2.5 py-1 rounded-lg bg-[#0F131D] hover:bg-white/10 text-xs text-[#C4C6D0] border border-white/10 cursor-pointer">85 kg</button>
+          <button onclick="setWeightPreset(100)" class="px-2.5 py-1 rounded-lg bg-[#0F131D] hover:bg-white/10 text-xs text-[#C4C6D0] border border-white/10 cursor-pointer">100 kg</button>
+        </div>
+      </div>
+
+      <!-- Calculation Results Grid -->
+      <div class="p-4 md:p-6 overflow-y-auto no-scrollbar space-y-4 flex-1">
+        <div id="gravityCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <!-- Educational Physics Fact -->
+        <div class="p-4 rounded-2xl bg-[#0F172A] border border-[#38BDF8]/30 flex items-start gap-3">
+          <span class="material-symbols-outlined text-[#38BDF8] text-[22px] flex-shrink-0 mt-0.5">school</span>
+          <div>
+            <h4 class="text-xs text-[#7DD3FC] font-bold mb-1">Mengapa Beratmu Berubah tapi Tubuhmu Tidak?</h4>
+            <p class="text-xs text-[#BAE6FD] leading-relaxed">
+              <strong>Massa tubuhmu (m)</strong> adalah jumlah materi fisik di dalam sel dan tulangmu, nilainya tetap sama persis di seluruh penjuru alam semesta. Namun <strong>berat (W)</strong> adalah gaya gravitasi yang menarik massa tersebut ke bawah (<span class="font-mono font-bold">W = m &times; g</span>). Karena setiap planet memiliki massa dan radius berbeda, gaya tariknya pun berbeda!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 7. MODAL SUMBER DATA ILMIAH & KREDIT ASTRONOMI (CREDITS MODAL)            -->
+  <!-- ========================================================================= -->
+  <div id="creditsModal" class="fixed inset-0 z-50 bg-[#06080E]/95 backdrop-blur-xl hidden flex flex-col items-center justify-center p-3 md:p-6 overflow-y-auto select-none">
+    <div class="bg-[#121622] border border-[#2B3245] rounded-3xl w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Modal Header -->
+      <div class="p-4 md:p-6 border-b border-white/10 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-2xl bg-[#B388FF]/20 border border-[#B388FF]/40 flex items-center justify-center text-[#B388FF]">
+            <span class="material-symbols-outlined text-[20px]">menu_book</span>
+          </div>
+          <div>
+            <h3 class="text-lg md:text-xl font-bold text-white">Sumber Data Ilmiah & Akreditasi</h3>
+            <p class="text-xs text-[#919194]">Data astronomi resmi standar internasional NASA, ESA, dan IAU</p>
+          </div>
+        </div>
+
+        <button onclick="closeCreditsModal()" aria-label="Tutup jendela kredit" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center cursor-pointer transition-colors">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <!-- Credits Body -->
+      <div class="p-4 md:p-6 overflow-y-auto no-scrollbar space-y-4 text-xs flex-1">
+        <div class="p-3.5 rounded-2xl bg-[#181D29] border border-white/10 space-y-1.5">
+          <div class="flex items-center gap-2 text-[#8AB4F8] font-bold">
+            <span class="material-symbols-outlined text-[18px]">rocket_launch</span>
+            <span>NASA Planetary Fact Sheet</span>
+          </div>
+          <p class="text-[#C4C6D0] leading-relaxed">
+            Data diameter, massa, jarak sumbu semi-mayor (AU), gravitasi permukaan, periode orbit, eksentrisitas, dan temperatur planet dirujuk langsung dari arsip resmi <em>Dr. David R. Williams</em>, NASA Goddard Space Flight Center (GSFC).
+          </p>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-[#181D29] border border-white/10 space-y-1.5">
+          <div class="flex items-center gap-2 text-[#FFD54F] font-bold">
+            <span class="material-symbols-outlined text-[18px]">satellite_alt</span>
+            <span>NASA Jet Propulsion Laboratory (JPL) & Horizons System</span>
+          </div>
+          <p class="text-[#C4C6D0] leading-relaxed">
+            Perhitungan orbital efemeris, kecepatan revolusi rata-rata, dan posisi relatif benda langit tata surya bersumber dari kalkulasi mekanika orbital JPL Solar System Dynamics Group.
+          </p>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-[#181D29] border border-white/10 space-y-1.5">
+          <div class="flex items-center gap-2 text-[#80DEEA] font-bold">
+            <span class="material-symbols-outlined text-[18px]">public</span>
+            <span>European Space Agency (ESA) & JAXA</span>
+          </div>
+          <p class="text-[#C4C6D0] leading-relaxed">
+            Misi antariksa BepiColombo (Merkurius), Venus Express, Mars Express, JUICE (Jupiter Icy Moons Explorer), serta teleskop luar angkasa James Webb (JWST) dan Hubble (NASA/ESA).
+          </p>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-[#181D29] border border-white/10 space-y-1.5">
+          <div class="flex items-center gap-2 text-[#E1BEE7] font-bold">
+            <span class="material-symbols-outlined text-[18px]">graphic_eq</span>
+            <span>NASA Space Audio Sonification</span>
+          </div>
+          <p class="text-[#C4C6D0] leading-relaxed">
+            Data gelombang plasma dan medan magnetik planet yang dikonversi ke frekuensi suara audio (sonifikasi) berasal dari instrumen Radio and Plasma Wave Science (RPWS) wahana Cassini (Saturnus), Juno Waves (Jupiter), EMFISIS Van Allen Probes (Bumi), dan Voyager 1 & 2 Plasma Wave System.
+          </p>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-[#181D29] border border-white/10 space-y-1.5">
+          <div class="flex items-center gap-2 text-emerald-400 font-bold">
+            <span class="material-symbols-outlined text-[18px]">verified</span>
+            <span>International Astronomical Union (IAU)</span>
+          </div>
+          <p class="text-[#C4C6D0] leading-relaxed">
+            Klasifikasi 8 planet utama, planet kerdil (Ceres, Pluto), nomenklatur satelit alami resmi, serta tata nama fitur permukaan geologi tata surya.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 8. MODAL INFO SABUK ASTEROID & SABUK KUIPER                                -->
+  <!-- ========================================================================= -->
+  <div id="beltInfoModal" class="fixed inset-0 z-50 bg-[#06080E]/95 backdrop-blur-xl hidden flex flex-col items-center justify-center p-3 md:p-6 overflow-y-auto select-none">
+    <div class="bg-[#121622] border border-[#2B3245] rounded-3xl w-full max-w-xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-4 md:p-6 border-b border-white/10 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div id="beltModalIconBg" class="w-9 h-9 rounded-2xl bg-[#FFB74D]/20 border border-[#FFB74D]/40 flex items-center justify-center text-[#FFB74D]">
+            <span class="material-symbols-outlined text-[20px]" id="beltModalIcon">grain</span>
+          </div>
+          <div>
+            <h3 class="text-lg md:text-xl font-bold text-white" id="beltModalTitle">Sabuk Asteroid Utama</h3>
+            <p class="text-xs text-[#919194]" id="beltModalSubtitle">Wilayah konsentrasi benda kecil tata surya</p>
+          </div>
+        </div>
+
+        <button onclick="closeBeltInfoModal()" aria-label="Tutup jendela info sabuk" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center cursor-pointer transition-colors">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <div class="p-4 md:p-6 overflow-y-auto no-scrollbar space-y-4 text-xs leading-relaxed flex-1 text-[#C4C6D0]" id="beltModalBody">
+        <!-- Injected dynamically via JS -->
+      </div>
+    </div>
+  </div>
+
   <!-- FLOATING TOAST NOTIFICATION -->
   <div id="toastNotification" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[110] px-4 py-2.5 rounded-full bg-[#161B26]/95 border border-[#4F86F7]/50 text-white text-xs font-semibold shadow-2xl backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 flex items-center gap-2">
     <span class="material-symbols-outlined text-[#4F86F7] text-[18px]">info</span>
@@ -717,29 +1004,29 @@
 
   <!-- JAVASCRIPT LOGIC -->
   <script>
-    // Celestial Planetary Dataset with comprehensive scientific metrics
+    // Celestial Planetary Dataset with comprehensive scientific metrics from NASA & ESA
     const PLANETS = [
       {
         id: "sun",
         name: "Matahari",
-        tagline: "Bintang Induk Tata Surya",
-        category: "Bintang Tipe-G",
+        tagline: "Bintang Induk & Pusat Gravitasi Tata Surya",
+        category: "Bintang Deret Utama (Tipe Spektrum G2V)",
         r: 0,
         size: 38,
         color: "#FFA500",
         secColor: "#FFD600",
         dur: 0,
-        period: "Pusat Massa",
-        diameter: "1.392.700 km",
-        temp: "5.500°C (permukaan) / 15 juta°C (inti)",
-        dist: "0 km (Pusat)",
-        rotation: "25-35 hari Bumi",
-        moons: "8 planet utama",
-        gravity: "274 m/s² (28x Bumi)",
-        missions: "Parker Solar Probe, SOHO, Solar Orbiter",
-        funFact: "Menampung 99,86% total massa seluruh tata surya dan sanggup menampung 1,3 juta planet Bumi di dalamnya.",
-        comp: "73% Hidrogen, 25% Helium, dan plasma panas bersuhu 5.500°C di fotosfer.",
-        desc: "Bintang induk di pusat tata surya kita. Menampung 99,8% massa seluruh tata surya dan memancarkan radiasi energi yang menghidupi Bumi.",
+        period: "Pusat Massa (230 juta tahun mengorbit Bima Sakti)",
+        diameter: "1.392.700 km (109,3× Bumi)",
+        temp: "5.500°C (fotosfer permukaan) / 15.000.000°C (inti fusi)",
+        dist: "0 km (0,000 AU - Pusat Acuan Orbit)",
+        rotation: "25 hari (ekuator) s.d. 35 hari (kutub) [Rotasi Diferensial]",
+        moons: "8 planet utama, 5 planet kerdil resmi, ratusan ribu asteroid",
+        gravity: "274,0 m/s² (27,93× Bumi)",
+        missions: "Parker Solar Probe (NASA 2018), Solar Orbiter (ESA 2020), SOHO (NASA/ESA 1995), SDO (NASA 2010), Aditya-L1 (ISRO 2023)",
+        funFact: "1) Menampung 99,86% dari seluruh massa tata surya dan sanggup memuat 1,3 juta bola sebesar planet Bumi di dalamnya.\n2) Setiap detik, reaksi fusi termonuklir di intinya membakar 600 juta ton hidrogen menjadi helium.\n3) Foton cahaya yang lahir di inti Matahari butuh waktu ~100.000 tahun untuk merambat ke permukaan, namun hanya butuh 8 menit 20 detik untuk sampai ke Bumi.",
+        comp: "Plasma terionisasi: 73,46% Hidrogen, 24,85% Helium, 0,77% Oksigen, 0,29% Karbon, 0,16% Besi, 0,12% Neon; inti fusi termonuklir, zona radiasi, dan zona konveksi.",
+        desc: "Bintang katai kuning (G2V) di pusat tata surya kita. Gravitasinya mengikat seluruh planet, asteroid, dan komet. Menghasilkan energi radiasi elektromagnetik yang menopang seluruh kehidupan di biosfer Bumi.",
         isSun: true,
         soundMission: "SOHO / MDI & Parker Solar Probe (Helioseismologi NASA)",
         soundPhenomenon: "Getaran akustik resonansi gelombang tekanan di dalam inti & fotosfer plasma matahari (drone berosilasi 40-120 Hz).",
@@ -748,24 +1035,24 @@
       {
         id: "mercury",
         name: "Merkurius",
-        tagline: "Planet Logam Terdekat",
-        category: "Planet Kebumian",
+        tagline: "Planet Batuan Logam Terdekat ke Sang Surya",
+        category: "Planet Kebumian (Terestrial)",
         r: 38,
         size: 9,
         color: "#9E9E9E",
         secColor: "#BCAAA4",
         dur: 4.8,
-        period: "88 Hari",
-        diameter: "4.879 km",
-        temp: "-180°C (malam) hingga 430°C (siang)",
-        dist: "57,9 juta km",
-        rotation: "58,6 hari Bumi",
-        moons: "0 (Tanpa satelit)",
-        gravity: "3,7 m/s² (0,38x Bumi)",
-        missions: "Mariner 10, MESSENGER, BepiColombo",
-        funFact: "Merkurius menyusut perlahan seiring pendinginan inti besinya yang masif selama miliaran tahun.",
-        comp: "Inti logam besi padat (70%), mantel silikat, kerak batuan.",
-        desc: "Planet terkecil dan paling dekat dengan Matahari. Karena hampir tidak memiliki atmosfer pelindung, fluktuasi suhunya sangat ekstrem antara siang dan malam.",
+        period: "87,97 Hari Bumi (0,24 Tahun)",
+        diameter: "4.879 km (0,38× Bumi)",
+        temp: "-180°C (malam beku) s.d. 430°C (siang membara) [Rata-rata 167°C]",
+        dist: "57,91 juta km (0,387 AU)",
+        rotation: "58,65 hari Bumi (1.407,6 jam) [Resonansi Spin-Orbit 3:2]",
+        moons: "0 (Tanpa satelit alami)",
+        gravity: "3,70 m/s² (0,38× Bumi)",
+        missions: "Mariner 10 (NASA 1974), MESSENGER (NASA 2011–2015), BepiColombo (ESA/JAXA 2018–2025)",
+        funFact: "1) Merkurius terus menyusut perlahan sebesar ~7 km seiring pendinginan inti besinya yang masif selama miliaran tahun, menghasilkan tebing kerut patahan raksasa.\n2) Akibat resonansi 3:2, satu hari matahari penuh (dari matahari terbit hingga terbit berikutnya) memakan waktu 176 hari Bumi—dua kali lebih lama dari masa revolusi tahunannya!\n3) Cekungan Caloris berdiameter 1.550 km adalah salah satu kawah tabrakan meteorit terbesar dan terkuat di tata surya.",
+        comp: "Inti besi padat & cair super-besar (~85% radius planet), mantel silikat tipis (~400 km), kerak batuan padat, dan eksosfer tipis (oksigen, natrium, hidrogen, kalium).",
+        desc: "Planet terkecil di tata surya dan paling dekat dengan Matahari. Karena hampir tidak memiliki atmosfer pelindung, fluktuasi suhunya sangat ekstrem antara siang dan malam.",
         soundMission: "NASA MESSENGER & ESA BepiColombo (Magnetospheric Waves)",
         soundPhenomenon: "Gelombang plasma whistler-mode frekuensi tinggi dan desis rekoneksi magnetik akibat terpaan badai matahari ekstrem.",
         soundType: "mercury"
@@ -773,24 +1060,24 @@
       {
         id: "venus",
         name: "Venus",
-        tagline: "Bintang Kejora Berkabut Asam",
-        category: "Planet Kebumian",
+        tagline: "Dunia Vulkanik Tertutup Kabut Asam Sulfat",
+        category: "Planet Kebumian (Terestrial)",
         r: 62,
         size: 14,
         color: "#FFD54F",
         secColor: "#FFE082",
         dur: 7.2,
-        period: "224.7 Hari",
-        diameter: "12.104 km",
-        temp: "465°C rata-rata konstan",
-        dist: "108,2 juta km",
-        rotation: "243 hari Bumi (Retrograde)",
-        moons: "0 (Tanpa satelit)",
-        gravity: "8,87 m/s² (0,9x Bumi)",
-        missions: "Venera 7-14, Magellan, Akatsuki, DAVINCI",
-        funFact: "Satu hari di Venus lebih panjang dari satu tahunnya, dan Matahari terbit dari barat karena rotasi terbalik.",
-        comp: "Atmosfer 96% karbon dioksida, awan asam sulfat pekat, batuan vulkanik.",
-        desc: "Planet terpanas di tata surya akibat efek rumah kaca tak terkendali. Lapisan awan tebalnya memantulkan cahaya dengan kuat ke antariksa.",
+        period: "224,70 Hari Bumi (0,615 Tahun)",
+        diameter: "12.104 km (0,95× Bumi)",
+        temp: "464°C rata-rata permukaan [Suhu konstan siang & malam akibat efek rumah kaca]",
+        dist: "108,20 juta km (0,723 AU)",
+        rotation: "243,02 hari Bumi (5.832 jam) [Rotasi Retrograde Terbalik]",
+        moons: "0 (Tanpa satelit alami)",
+        gravity: "8,87 m/s² (0,90× Bumi)",
+        missions: "Venera 7–14 (USSR 1970–1981), Magellan (NASA 1989), Venus Express (ESA 2005), Akatsuki (JAXA 2015), DAVINCI & VERITAS (NASA)",
+        funFact: "1) Satu hari di Venus (243 hari Bumi) lebih panjang daripada satu tahunnya (224,7 hari Bumi).\n2) Karena rotasi retrograde yang terbalik, Matahari terbit dari barat dan terbenam di timur setiap 117 hari Bumi.\n3) Atmosfernya 92 kali lipat lebih bertekanan daripada Bumi—setara dengan berada di kedalaman 900 meter di bawah laut Bumi.",
+        comp: "Atmosfer super-tebal 96,5% Karbon Dioksida dan 3,5% Nitrogen dengan awan asam sulfat pekat (H₂SO₄); kerak basal vulkanik, mantel konveksi silikat, dan inti besi-nikel.",
+        desc: "Planet terpanas di tata surya akibat efek rumah kaca tak terkendali. Lapisan awan asam sulfat tebalnya memantulkan cahaya matahari dengan kuat, menjadikannya objek alami paling terang di langit malam setelah Bulan.",
         soundMission: "JAXA Akatsuki & Pioneer Venus (Ionospheric Wave Sensors)",
         soundPhenomenon: "Deru turbulensi atmosfer super-kritis (tekanan 92 atm) dipadu letupan gelombang kilat listrik awan asam sulfat pekat.",
         soundType: "venus"
@@ -798,24 +1085,24 @@
       {
         id: "earth",
         name: "Bumi",
-        tagline: "Dunia Biosfer Berpenghuni",
-        category: "Planet Kebumian",
+        tagline: "Oase Kehidupan & Dunia Biosfer Berair Cair",
+        category: "Planet Kebumian (Terestrial)",
         r: 88,
         size: 15,
         color: "#4F86F7",
         secColor: "#80DEEA",
         dur: 10.0,
-        period: "365.25 Hari",
-        diameter: "12.742 km",
-        temp: "15°C rata-rata permukaan",
-        dist: "149,6 juta km (1 AU)",
-        rotation: "23 jam 56 menit (1 hari)",
-        moons: "1 (Bulan / Luna)",
-        gravity: "9,807 m/s² (1,0 G)",
-        missions: "Apollo, Stasiun Luar Angkasa ISS, Landsat, Hubble",
-        funFact: "Satu-satunya objek kosmik yang terkonfirmasi memiliki lempeng tektonik aktif dan siklus air cair terbuka.",
-        comp: "Atmosfer 78% nitrogen dan 21% oksigen, kerak silikat, 71% permukaan berupa air laut.",
-        desc: "Satu-satunya planet yang terbukti menopang kehidupan. Memiliki hidrosfer air cair yang stabil, atmosfer kaya oksigen, dan medan magnet protektif.",
+        period: "365,256 Hari (1,000 Tahun Bumi)",
+        diameter: "12.742 km (1,00× Bumi - Standar Acuan)",
+        temp: "15°C rata-rata (-89,2°C di Antartika s.d. 56,7°C di Death Valley)",
+        dist: "149,60 juta km (1,000 AU)",
+        rotation: "23 jam 56 menit 4 detik (1 Hari Sideris / 24 Jam Hari Matahari)",
+        moons: "1 (Bulan / Luna - diameter 3.474 km)",
+        gravity: "9,807 m/s² (1,00 G - Standar Acuan)",
+        missions: "Apollo 11–17 (NASA 1969–1972), Stasiun Luar Angkasa ISS (Internasional), Teleskop Luar Angkasa Hubble & JWST, Armada Satelit Sentinel & Landsat",
+        funFact: "1) Satu-satunya planet di alam semesta yang terbukti menampung kehidupan organik dan lempeng tektonik aktif pendaur ulang karbon.\n2) Memiliki pelindung magnetosfer dinamo inti besi cair yang menangkis radiasi badai angin matahari berkecepatan 1,6 juta km/jam.\n3) Bumi tidak bulat sempurna, melainkan elipsoid pepat (oblate spheroid) dengan tonjolan ekuator setinggi 43 km akibat gaya sentrifugal rotasi.",
+        comp: "Atmosfer: 78,08% Nitrogen, 20,95% Oksigen, 0,93% Argon, 0,04% CO₂; kerak silikat padat (5–70 km), mantel berbatu semi-padat (2.900 km), inti luar besi-nikel cair, dan inti dalam besi padat setinggi suhu fotosfer matahari.",
+        desc: "Rumah bagi miliaran spesies makhluk hidup. Memiliki air cair di 71% permukaannya, atmosfer pelindung kaya oksigen, dan medan geomagnetik kuat yang memungkinkan evolusi kehidupan biologis.",
         isEarth: true,
         soundMission: "NASA Van Allen Probes EMFISIS (Earthsong / Dawn Chorus)",
         soundPhenomenon: "Gelombang chorus elektromagnetik di sabuk radiasi Van Allen yang meliuk merdu menyerupai kicauan burung fajar di atmosfer atas.",
@@ -824,24 +1111,24 @@
       {
         id: "mars",
         name: "Mars",
-        tagline: "Dunia Merah Oksida Besi",
-        category: "Planet Kebumian",
+        tagline: "Planet Merah Kaya Mineral Oksida Besi",
+        category: "Planet Kebumian (Terestrial)",
         r: 114,
         size: 11,
         color: "#FF5722",
         secColor: "#FF8A65",
         dur: 14.5,
-        period: "687 Hari",
-        diameter: "6.779 km",
-        temp: "-62°C rata-rata (-140°C hingga 20°C)",
-        dist: "227,9 juta km",
-        rotation: "24 jam 37 menit (1 Sol)",
-        moons: "2 (Phobos & Deimos)",
-        gravity: "3,72 m/s² (0,38x Bumi)",
-        missions: "Viking, Curiosity, Perseverance, Ingenuity, Hope",
-        funFact: "Memiliki gunung berapi terbesar di tata surya (Olympus Mons, setinggi 22 km atau hampir 3x Gunung Everest).",
-        comp: "Debu besi oksida (karat), batuan basal vulkanik, atmosfer tipis karbon dioksida.",
-        desc: "Planet merah yang permukaannya dipenuhi debu besi oksida. Memiliki ngarai Valles Marineris dan gunung berapi terbesar di tata surya, Olympus Mons.",
+        period: "686,98 Hari Bumi (1,88 Tahun Bumi)",
+        diameter: "6.779 km (0,53× Bumi)",
+        temp: "-63°C rata-rata (-140°C kutub musim dingin s.d. 20°C ekuator musim panas)",
+        dist: "227,94 juta km (1,524 AU)",
+        rotation: "24 jam 37 menit 22 detik (1 Sol Mars)",
+        moons: "2 (Phobos [22,2 km] & Deimos [12,4 km])",
+        gravity: "3,72 m/s² (0,38× Bumi)",
+        missions: "Viking 1 & 2 (NASA 1976), Mars Pathfinder & Sojourner (NASA 1997), Spirit & Opportunity (NASA 2004), Curiosity (NASA 2012), Perseverance & Ingenuity (NASA 2020), Tianwen-1 (CNSA 2020), Hope (UAE 2020)",
+        funFact: "1) Menampung Olympus Mons, gunung berapi perisai tertinggi di tata surya setinggi 21,9 km (hampir 3 kali lipat tinggi Gunung Everest).\n2) Ngarai raksasa Valles Marineris membentang sepanjang 4.000 km, selebar 200 km, dan sedalam 7 km (10 kali lipat ukuran Grand Canyon).\n3) Phobos, bulan Mars, ditarik gravitasi mendekat ke Mars sejauh 1,8 meter per abad dan diprediksi akan hancur menjadi cincin dalam 50 juta tahun ke depan.",
+        comp: "Debu besi(III) oksida karat dan batuan basal vulkanik; atmosfer tipis 95,3% CO₂, 2,6% N₂, 1,9% Ar (tekanan 0,6% Bumi); mantel silikat padat, inti besi-nikel-belerang padat.",
+        desc: "Planet batuan merah yang permukaannya dipenuhi oksida besi. Bukti geologis dari rover NASA membuktikan Mars purba pernah dialiri sungai air cair tawar dan memiliki danau-danau luas miliaran tahun lalu.",
         soundMission: "NASA Perseverance SuperCam Microphone & InSight SEIS",
         soundPhenomenon: "Rekaman mikrofon fisik nyata desau angin kawah Jezero berfrekuensi variabel & resonansi seismik lempeng batuan Mars.",
         soundType: "mars"
@@ -849,24 +1136,24 @@
       {
         id: "jupiter",
         name: "Jupiter",
-        tagline: "Raksasa Gas Pengendali Gravitasi",
-        category: "Raksasa Gas",
+        tagline: "Raksasa Gas Terbesar & Pelindung Gravitasi Tata Surya",
+        category: "Raksasa Gas (Gas Giant)",
         r: 146,
         size: 26,
         color: "#FFA726",
         secColor: "#FFE082",
         dur: 22.0,
-        period: "11.86 Tahun",
-        diameter: "139.820 km",
-        temp: "-110°C di puncak awan",
-        dist: "778,5 juta km",
-        rotation: "9 jam 55 menit (tercepat)",
-        moons: "95 satelit (Io, Europa, Ganymede, Callisto)",
-        gravity: "24,79 m/s² (2,53x Bumi)",
-        missions: "Voyager 1 & 2, Galileo, Juno, Juice",
-        funFact: "Ganymede, salah satu bulan Jupiter, berukuran lebih besar daripada planet Merkurius.",
-        comp: "Gas hidrogen (90%), helium (10%), amonia, dan inti batuan terkompresi.",
-        desc: "Planet terbesar di tata surya kita. Badai antisiklon raksasa Great Red Spot telah berputar ratusan tahun. Gravitasinya bertindak sebagai perisai pelindung planet dalam.",
+        period: "11,86 Tahun Bumi (4.333 Hari Bumi)",
+        diameter: "139.820 km (10,97× Bumi)",
+        temp: "-110°C di puncak awan / 24.000°C di inti dalam",
+        dist: "778,55 juta km (5,204 AU)",
+        rotation: "9 jam 55 menit 30 detik (Rotasi tercepat di seluruh tata surya)",
+        moons: "95 satelit alami resmi IAU (4 Satelit Galilea: Ganymede, Callisto, Io, Europa)",
+        gravity: "24,79 m/s² (2,53× Bumi)",
+        missions: "Pioneer 10 & 11 (NASA 1973), Voyager 1 & 2 (NASA 1979), Galileo Orbiter (NASA 1995–2003), New Horizons (NASA 2007 flyby), Juno (NASA 2016–kini), JUICE (ESA 2023), Europa Clipper (NASA 2024)",
+        funFact: "1) Ganymede, bulan terbesar Jupiter berdiameter 5.268 km, berukuran lebih besar dari planet Merkurius dan memiliki medan magnetik sendiri.\n2) Badai Great Red Spot (Bintik Merah Raksasa) adalah badai antisiklon raksasa yang telah berputar tanpa henti lebih dari 350 tahun dan mampu menelan seluruh planet Bumi.\n3) Gravitasi raksasa Jupiter bertindak sebagai 'pembersih vakum kosmik' tata surya yang menyedot atau membelokkan komet mematikan agar tidak menghantam planet-planet dalam.",
+        comp: "89,8% Hidrogen, 10,2% Helium, jejak metana, amonia pekat; lapisan mantel hidrogen logam cair bersuhu ekstrem, dan inti batuan-es terkompresi bertekanan jutaan atmosfer.",
+        desc: "Planet terbesar di tata surya dengan massa 2,5 kali lebih besar dari gabungan semua planet lainnya. Memiliki 95 bulan dan medan radiasi magnetik terkuat di tata surya.",
         soundMission: "NASA Juno Waves Instrument & Voyager 1 PWS (Bow Shock)",
         soundPhenomenon: "Auman gemuruh gelombang busur kejut plasma raksasa & modulasi frekuensi magnetik masif saat menembus medan magnetik terkuat tata surya.",
         soundType: "jupiter"
@@ -874,24 +1161,24 @@
       {
         id: "saturn",
         name: "Saturnus",
-        tagline: "Sistem Cincin Es Megah",
-        category: "Raksasa Gas",
+        tagline: "Permata Tata Surya dengan Sistem Cincin Es Termegah",
+        category: "Raksasa Gas (Gas Giant)",
         r: 178,
         size: 22,
         color: "#E3BB76",
         secColor: "#FFF9C4",
         dur: 28.0,
-        period: "29.45 Tahun",
-        diameter: "116.460 km",
-        temp: "-140°C di puncak awan",
-        dist: "1,43 miliar km",
-        rotation: "10 jam 33 menit",
-        moons: "146 satelit resmi (Titan, Enceladus, Mimas)",
-        gravity: "10,44 m/s² (1,06x Bumi)",
-        missions: "Pioneer 11, Voyager, Cassini-Huygens",
-        funFact: "Saturnus memiliki massa jenis lebih rendah daripada air; jika ada wadah air raksasa, Saturnus akan mengapung.",
-        comp: "Gas hidrogen, helium, es air, dan cincin partikel es kristal reflektif.",
-        desc: "Terkenal dengan cincin konsentris memukau yang tersusun dari miliaran bongkahan es dan debu angkasa. Kerapatan jenisnya lebih ringan dari air.",
+        period: "29,45 Tahun Bumi (10.759 Hari Bumi)",
+        diameter: "116.460 km (9,14× Bumi tanpa cincin; bentang cincin 282.000 km)",
+        temp: "-140°C di puncak atmosfer luar",
+        dist: "1,434 miliar km (9,537 AU)",
+        rotation: "10 jam 33 menit 38 detik",
+        moons: "146 satelit alami resmi IAU (Bulan utama: Titan [5.149 km], Enceladus [504 km], Mimas, Rhea, Iapetus)",
+        gravity: "10,44 m/s² (1,06× Bumi)",
+        missions: "Pioneer 11 (NASA 1979), Voyager 1 & 2 (NASA 1980/81), Cassini-Huygens (NASA/ESA/ASI 1997–2017, pendaratan probe Huygens di Titan)",
+        funFact: "1) Saturnus memiliki kerapatan jenis lebih rendah daripada air (0,687 g/cm³)—jika ada lautan kosmik raksasa, Saturnus akan mengapung di atas air!\n2) Meskipun bentangan sistem cincinnya mencapai 282.000 km, ketebalan rata-ratanya hanya berkisar antara 10 hingga 100 meter saja.\n3) Titan, bulan terbesarnya, adalah satu-satunya bulan yang memiliki atmosfer padat dan danau metana-etana cair dengan siklus cuaca hidrokarbon aktif.",
+        comp: "96,3% Hidrogen molekuler, 3,25% Helium; mantel hidrogen logam cair; cincin tersusun dari 99% partikel es air murni berkilau seukuran kerikil hingga bongkahan rumah.",
+        desc: "Raksasa gas spektakuler yang dihiasi sistem cincin es paling megah di tata surya. Memiliki 146 bulan resmi yang diakui IAU, terbanyak di antara semua planet.",
         hasRings: true,
         soundMission: "NASA Cassini RPWS (Saturn Kilometric Radiation - SKR)",
         soundPhenomenon: "Siulan sirene meliuk misterius (eerie gliding sirens) dari emisi gelombang radio partikel plasma yang berputar di kutub aurora Saturnus.",
@@ -900,24 +1187,24 @@
       {
         id: "uranus",
         name: "Uranus",
-        tagline: "Raksasa Es Sumbu Miring",
-        category: "Raksasa Es",
+        tagline: "Raksasa Es Misterius dengan Kemiringan Sumbu Ekstrem",
+        category: "Raksasa Es (Ice Giant)",
         r: 206,
         size: 17,
         color: "#80DEEA",
         secColor: "#E0F2F1",
         dur: 36.0,
-        period: "84 Tahun",
-        diameter: "50.724 km",
-        temp: "-195°C hingga -224°C (terdingin)",
-        dist: "2,87 miliar km",
-        rotation: "17 jam 14 menit (Retrograde)",
-        moons: "28 satelit alami (Titania, Oberon, Miranda)",
-        gravity: "8,69 m/s² (0,89x Bumi)",
-        missions: "Voyager 2 (1986)",
-        funFact: "Kemiringan sumbu putar mencapai 97,8°, membuat kutub-kutubnya menghadap langsung ke Matahari selama puluhan tahun.",
-        comp: "Fluida es air, metana, amonia, dengan atmosfer kaya hidrogen dan helium.",
-        desc: "Raksasa es unik dengan kemiringan sumbu rotasi 98 derajat, sehingga tampak menggelinding di bidang orbitnya. Memiliki atmosfer terdingin di tata surya.",
+        period: "84,01 Tahun Bumi (30.687 Hari Bumi)",
+        diameter: "50.724 km (3,98× Bumi)",
+        temp: "-195°C rata-rata s.d. -224°C [Atmosfer planet terdingin di seluruh tata surya]",
+        dist: "2,871 miliar km (19,191 AU)",
+        rotation: "17 jam 14 menit 24 detik [Rotasi Retrograde & Kemiringan Sumbu 97,77°]",
+        moons: "28 satelit alami resmi IAU (5 Satelit utama: Titania, Oberon, Umbriel, Ariel, Miranda)",
+        gravity: "8,69 m/s² (0,89× Bumi)",
+        missions: "Voyager 2 (NASA flyby bersejarah 24 Januari 1986)",
+        funFact: "1) Kemiringan sumbu rotasi Uranus mencapai 97,8 derajat—hampir rebah horizontal terhadap bidang orbitnya—sehingga planet ini tampak menggelinding seperti bola boling di orbitnya.\n2) Akibat kemiringan ekstrem ini, kutub-kutubnya mengalami malam dingin abadi tanpa cahaya matahari selama 42 tahun berturut-turut, diikuti 42 tahun siang hari.\n3) Miranda, salah satu bulannya, memiliki ngarai tebing es Verona Rupes setinggi 20 km—tebing terdalam dan tertinggi yang diketahui di tata surya.",
+        comp: "Mantel 'es fluida super-kritis' tebal berupa air, amonia, dan metana bertekanan tinggi; atmosfer: 82,5% Hidrogen, 15,2% Helium, 2,3% Metana (pemberi warna sian biru es); inti silikat berbatu.",
+        desc: "Raksasa es unik berwarna biru kehijauan pucat. Planet ini berputar miring hampir 98 derajat, menggelinding di jalur orbitnya mengitari Matahari setiap 84 tahun.",
         soundMission: "NASA Voyager 2 Plasma Wave System (1986 Planetary Flyby)",
         soundPhenomenon: "Dentingan kristal dingin etereal & resonansi asimetris dari medan magnetik Uranus yang miring eksentrik 59 derajat.",
         soundType: "uranus"
@@ -925,29 +1212,51 @@
       {
         id: "neptune",
         name: "Neptunus",
-        tagline: "Dunia Badai Supersonik Terluar",
-        category: "Raksasa Es",
+        tagline: "Dunia Biru Abisal & Penguasa Badai Supersonik",
+        category: "Raksasa Es (Ice Giant)",
         r: 232,
         size: 16,
         color: "#29B6F6",
         secColor: "#0288D1",
         dur: 44.0,
-        period: "164.8 Tahun",
-        diameter: "49.244 km",
-        temp: "-201°C rata-rata",
-        dist: "4,50 miliar km",
-        rotation: "16 jam 6 menit",
-        moons: "16 satelit alami (Triton, Proteus, Nereid)",
-        gravity: "11,15 m/s² (1,14x Bumi)",
-        missions: "Voyager 2 (1989)",
-        funFact: "Bulan terbesarnya, Triton, mengorbit terbalik (retrograde) dan memiliki geyser nitrogen aktif yang menyembur ke angkasa.",
-        comp: "Mantel es air, amonia, metana tebal, dan badai gas atmosferik cepat.",
-        desc: "Planet terluar berwarna biru pekat akibat metana atmosferik. Dikenal memiliki hembusan angin badai supersonik tercepat di tata surya mencapai lebih dari 2.100 km/jam.",
+        period: "164,79 Tahun Bumi (60.190 Hari Bumi)",
+        diameter: "49.244 km (3,86× Bumi)",
+        temp: "-201°C rata-rata di puncak awan luar",
+        dist: "4,495 miliar km (30,069 AU)",
+        rotation: "16 jam 6 menit 36 detik",
+        moons: "16 satelit alami resmi IAU (Satelit raksasa es: Triton [2.707 km], Proteus, Nereid, Larissa)",
+        gravity: "11,15 m/s² (1,14× Bumi)",
+        missions: "Voyager 2 (NASA flyby bersejarah 25 Agustus 1989)",
+        funFact: "1) Neptunus memiliki hembusan angin badai supersonik tercepat di tata surya, mencapai kecepatan mengerikan lebih dari 2.160 km/jam (1,7 kali kecepatan suara).\n2) Triton, bulan terbesarnya, adalah satu-satunya bulan masif di tata surya yang mengorbit secara terbalik (retrograde orbit) dan memiliki geyser aktif yang menyemburkan nitrogen beku setinggi 8 km.\n3) Neptunus adalah satu-satunya planet yang keberadaannya pertama kali diprediksi secara teoretis melalui perhitungan matematis (oleh Le Verrier & Adams) sebelum teramati lewat teleskop pada 1846.",
+        comp: "Mantel es fluida tebal air, amonia, dan metana bertekanan super-tinggi; atmosfer: 80% Hidrogen, 19% Helium, 1,5% Metana (pemberi warna biru kobalt pekat); inti besi, nikel, dan batuan padat seberat ~1,2 massa Bumi.",
+        desc: "Planet terjauh di tata surya dengan warna biru kobalt cerah. Dikenal memiliki cuaca badai paling ekstrem di tata surya dengan angin kencang supersonik dan suhu luar yang sangat beku.",
         soundMission: "NASA Voyager 2 Plasma Wave Subsystem (1989 Heliosphere Boundary)",
         soundPhenomenon: "Deru angin supersonik abisal (>2.100 km/jam) dipadu getaran plasma batas terluar pengaruh tata surya.",
         soundType: "neptune"
       }
     ];
+
+    // Dataset Benda Tambahan: Bulan (Moon / Luna) untuk Kalkulator Gravitasi & Perbandingan
+    const CELESTIAL_EXTRAS = {
+      moon: {
+        id: "moon",
+        name: "Bulan (Luna)",
+        tagline: "Satelit Alami Bumi & Saksi Sejarah Kosmik",
+        category: "Satelit Alami Utama",
+        diameter: "3.474,8 km (0,27× Bumi)",
+        temp: "-130°C (malam) s.d. 120°C (siang) [Rata-rata -20°C]",
+        dist: "384.400 km dari Bumi (1,000 AU dari Matahari)",
+        rotation: "27,32 hari Bumi (Terkunci Pasang-Surut / Tidal Lock)",
+        period: "27,32 hari mengorbit Bumi",
+        gravity: "1,62 m/s² (0,166× Bumi / 1/6 G)",
+        moons: "Mengorbit planet Bumi",
+        color: "#ECEFF1",
+        secColor: "#B0BEC5",
+        comp: "Kerak regolit kaya silika & anortosit (kedalaman 60 km), mantel litosfer berbatu (olivin & piroksen), inti besi padat kecil (~330 km).",
+        funFact: "1) Berada dalam penguncian gravitasi pasang surut (tidal locking), sehingga sisi yang sama selalu menghadap ke Bumi selamanya.\n2) Setiap tahun, interaksi gravitasi pasang surut mendorong Bulan menjauh dari Bumi sekitar 3,8 cm.\n3) Jejak kaki astronaut Apollo di Bulan tidak akan terhapus selama jutaan tahun karena ketiadaan atmosfer dan angin.",
+        missions: "Luna 2 (USSR 1959 - wahana pertama mendarat), Apollo 11–17 (NASA 1969–1972 - pendaratan 12 manusia), Chang'e 1–6 (CNSA pendaratan sisi jauh & sampel), Chandrayaan 1–3 (ISRO pendaratan kutub selatan 2023), Program Artemis (NASA)"
+      }
+    };
 
     // =========================================================================
     // DEEP-SPACE COSMOS & GALAXIES ENGINE (BIMA SAKTI, ANDROMEDA, SOMBRERO, DLL)
@@ -995,6 +1304,20 @@
     let fullPanY = 0;
     let isInfoCollapsed = false;
     let showFeaturePins = true; // Educational anatomy pinpoints for students!
+    let isRealisticOrbitScale = false;
+
+    // Semi-realistic AU log/compressed radius mapping for solar system overview
+    const REALISTIC_ORBIT_RADII = {
+      sun: 0,
+      mercury: 32,   // 0.39 AU
+      venus: 54,     // 0.72 AU
+      earth: 76,     // 1.00 AU
+      mars: 108,     // 1.52 AU
+      jupiter: 195,  // 5.20 AU
+      saturn: 255,   // 9.54 AU
+      uranus: 315,   // 19.19 AU
+      neptune: 375   // 30.07 AU
+    };
 
     // Main Space Canvas
     const canvas = document.getElementById("spaceCanvas");
@@ -1139,6 +1462,39 @@
     }
     requestAnimationFrame(animate);
 
+    // Asteroid Belt Particles (160 asteroids between Mars and Jupiter)
+    const ASTEROID_BELT_PARTICLES = [];
+    for (let i = 0; i < 160; i++) {
+      ASTEROID_BELT_PARTICLES.push({
+        relR: 128 + (Math.random() - 0.5) * 18,
+        angle: Math.random() * Math.PI * 2,
+        speed: 0.05 + Math.random() * 0.03,
+        size: Math.random() * 1.6 + 0.6,
+        alpha: Math.random() * 0.45 + 0.3,
+        color: Math.random() > 0.4 ? "#D7CCC8" : (Math.random() > 0.5 ? "#BCAAA4" : "#8D6E63")
+      });
+    }
+
+    // Kuiper Belt Particles (200 icy planetesimals outside Neptune)
+    const KUIPER_BELT_PARTICLES = [];
+    for (let i = 0; i < 200; i++) {
+      KUIPER_BELT_PARTICLES.push({
+        relR: 256 + (Math.random() - 0.5) * 28,
+        angle: Math.random() * Math.PI * 2,
+        speed: 0.018 + Math.random() * 0.012,
+        size: Math.random() * 1.5 + 0.5,
+        alpha: Math.random() * 0.4 + 0.25,
+        color: Math.random() > 0.4 ? "#B2EBF2" : (Math.random() > 0.5 ? "#E0F7FA" : "#90CAF9")
+      });
+    }
+
+    function getPlanetOrbitDistance(planet) {
+      if (isRealisticOrbitScale) {
+        return REALISTIC_ORBIT_RADII[planet.id] || planet.r;
+      }
+      return planet.r;
+    }
+
     // 1. Render Solar System Overview
     function drawSolarSystemOverview() {
       const w = window.innerWidth;
@@ -1151,20 +1507,70 @@
       // Deep space cosmos background with Milky Way & other galaxies!
       drawDeepSpaceCosmos(ctx, w, h, panOffset.x, panOffset.y, false);
 
-      const maxSolarR = 240;
+      const maxSolarR = isRealisticOrbitScale ? 380 : 240;
       const minDimension = Math.min(w, h);
       const effRadiusScale = ((minDimension * 0.44) / maxSolarR) * scale;
       const newPositions = {};
 
-      // Draw Orbit Lines
+      // Draw Planet Orbit Tracks
       PLANETS.slice(1).forEach(planet => {
-        const orbitR = planet.r * effRadiusScale;
+        const orbitR = getPlanetOrbitDistance(planet) * effRadiusScale;
         ctx.beginPath();
         ctx.arc(centerX, centerY, orbitR, 0, Math.PI * 2);
         ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
         ctx.lineWidth = 1;
         ctx.stroke();
       });
+
+      // ============================================
+      // A. MAIN ASTEROID BELT (BETWEEN MARS & JUPITER)
+      // ============================================
+      const astCenterR = (isRealisticOrbitScale ? 150 : 130) * effRadiusScale;
+      // Belt boundary guide
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, astCenterR, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(255, 183, 77, 0.12)";
+      ctx.lineWidth = 12 * effRadiusScale;
+      ctx.stroke();
+
+      // Render orbiting asteroid rocks
+      ASTEROID_BELT_PARTICLES.forEach(ast => {
+        const aAngle = ast.angle + (elapsedTime * ast.speed);
+        const aDist = (isRealisticOrbitScale ? (ast.relR * 1.15) : ast.relR) * effRadiusScale;
+        const ax = centerX + aDist * Math.cos(aAngle);
+        const ay = centerY + aDist * Math.sin(aAngle);
+
+        ctx.beginPath();
+        ctx.arc(ax, ay, ast.size, 0, Math.PI * 2);
+        ctx.fillStyle = ast.color;
+        ctx.globalAlpha = ast.alpha;
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1.0;
+
+      // ============================================
+      // B. KUIPER BELT (OUTSIDE NEPTUNE)
+      // ============================================
+      const kuiperCenterR = (isRealisticOrbitScale ? 410 : 258) * effRadiusScale;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, kuiperCenterR, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(128, 222, 234, 0.10)";
+      ctx.lineWidth = 18 * effRadiusScale;
+      ctx.stroke();
+
+      KUIPER_BELT_PARTICLES.forEach(k => {
+        const kAngle = k.angle + (elapsedTime * k.speed);
+        const kDist = (isRealisticOrbitScale ? (k.relR * 1.58) : k.relR) * effRadiusScale;
+        const kx = centerX + kDist * Math.cos(kAngle);
+        const ky = centerY + kDist * Math.sin(kAngle);
+
+        ctx.beginPath();
+        ctx.arc(kx, ky, k.size, 0, Math.PI * 2);
+        ctx.fillStyle = k.color;
+        ctx.globalAlpha = k.alpha;
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1.0;
 
       // Sun
       const sun = PLANETS[0];
@@ -1192,7 +1598,7 @@
 
       // Planets
       PLANETS.slice(1).forEach(planet => {
-        const orbitR = planet.r * effRadiusScale;
+        const orbitR = getPlanetOrbitDistance(planet) * effRadiusScale;
         const angle = planet.dur > 0 ? ((elapsedTime / planet.dur) * Math.PI * 2) : 0;
         const px = centerX + orbitR * Math.cos(angle);
         const py = centerY + orbitR * Math.sin(angle);
@@ -2520,7 +2926,16 @@
       document.getElementById("fullComp").innerText = planet.comp;
       document.getElementById("fullPillBadge").innerText = planet.isSun ? "BINTANG" : "PLANET";
 
-      // Detailed scientific metrics
+      // Detailed scientific metrics with subtle skeleton shimmer loading effect
+      const metricIds = ["fullDiameter", "fullDist", "fullTemp", "fullRotation", "fullGravity", "fullMoons"];
+      metricIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.classList.add("skeleton-box");
+          setTimeout(() => el.classList.remove("skeleton-box"), 150);
+        }
+      });
+
       document.getElementById("fullDiameter").innerText = planet.diameter || "-";
       document.getElementById("fullDist").innerText = planet.dist || "-";
       document.getElementById("fullTemp").innerText = planet.temp || "-";
@@ -2811,6 +3226,20 @@
         btn.onclick = () => selectPlanet(p);
         chipsContainer.appendChild(btn);
       });
+
+      // Quick chip for Asteroid Belt
+      const astBtn = document.createElement("button");
+      astBtn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap bg-[#161B26] text-[#FFB74D] border border-[#FFB74D]/30 hover:border-[#FFB74D]";
+      astBtn.innerHTML = `<span class="material-symbols-outlined text-[13px]">grain</span> Sabuk Asteroid`;
+      astBtn.onclick = () => openBeltInfoModal('asteroid');
+      chipsContainer.appendChild(astBtn);
+
+      // Quick chip for Kuiper Belt
+      const kuiperBtn = document.createElement("button");
+      kuiperBtn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap bg-[#161B26] text-[#80DEEA] border border-[#80DEEA]/30 hover:border-[#80DEEA]";
+      kuiperBtn.innerHTML = `<span class="material-symbols-outlined text-[13px]">ac_unit</span> Sabuk Kuiper`;
+      kuiperBtn.onclick = () => openBeltInfoModal('kuiper');
+      chipsContainer.appendChild(kuiperBtn);
     }
     function updateChips() {
       renderChips();
@@ -4691,7 +5120,7 @@
 
       ctx.textAlign = "right";
       ctx.fillStyle = "#4ADE80";
-      ctx.fillText("Status: TERVERIFIKASI SAH", 1100, 715);
+      ctx.fillText("Status: LULUS EVALUASI ASTRONOMI", 1100, 715);
       ctx.fillStyle = "#FFD54F";
       ctx.fillText("Tata Surya Interaktif", 1100, 742);
 
@@ -4794,6 +5223,302 @@
         }
         showToast("Label fitur edukasi planet: DISEMBUNYIKAN");
       }
+    }
+
+    // ==========================================
+    // 6. ORBIT SCALE TOGGLE LOGIC
+    // ==========================================
+    function toggleOrbitScale() {
+      isRealisticOrbitScale = !isRealisticOrbitScale;
+      const label = document.getElementById("orbitScaleLabel");
+      const btn = document.getElementById("orbitScaleToggleBtn");
+
+      if (isRealisticOrbitScale) {
+        if (label) label.innerText = "Skala: Jarak AU";
+        if (btn) btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#80DEEA]/20 border border-[#80DEEA] text-[#80DEEA] text-xs font-semibold cursor-pointer transition-all shadow-md";
+        showToast("Mode Skala: Jarak Semi-Realistis AU diaktifkan (Planet dalam lebih rapat, planet luar terbentang luas)");
+      } else {
+        if (label) label.innerText = "Skala: Visual";
+        if (btn) btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#E2E2E6] hover:text-white hover:border-[#80DEEA] text-xs font-semibold cursor-pointer transition-all shadow-md";
+        showToast("Mode Skala: Visual Seimbang diaktifkan");
+      }
+    }
+
+    // ==========================================
+    // 7. COMPARE MODE (PERBANDINGAN 2 PLANET)
+    // ==========================================
+    let comparePlanetA = "earth";
+    let comparePlanetB = "mars";
+
+    function getAllCompareObjects() {
+      return [
+        ...PLANETS,
+        CELESTIAL_EXTRAS.moon
+      ];
+    }
+
+    function openCompareModal(planetAId, planetBId) {
+      if (planetAId) comparePlanetA = planetAId;
+      if (planetBId) comparePlanetB = planetBId;
+      populateCompareSelectors();
+      updateCompareUI();
+      document.getElementById("compareModal").classList.remove("hidden");
+    }
+
+    function closeCompareModal() {
+      document.getElementById("compareModal").classList.add("hidden");
+    }
+
+    function populateCompareSelectors() {
+      const all = getAllCompareObjects();
+      const selA = document.getElementById("compareSelectA");
+      const selB = document.getElementById("compareSelectB");
+      if (!selA || !selB) return;
+
+      selA.innerHTML = all.map(p => `<option value="${p.id}" ${p.id === comparePlanetA ? 'selected' : ''}>${p.isSun ? '☀️' : (p.id === 'moon' ? '🌙' : '🪐')} ${p.name}</option>`).join("");
+      selB.innerHTML = all.map(p => `<option value="${p.id}" ${p.id === comparePlanetB ? 'selected' : ''}>${p.isSun ? '☀️' : (p.id === 'moon' ? '🌙' : '🪐')} ${p.name}</option>`).join("");
+    }
+
+    function swapComparePlanets() {
+      const tmp = comparePlanetA;
+      comparePlanetA = comparePlanetB;
+      comparePlanetB = tmp;
+      populateCompareSelectors();
+      updateCompareUI();
+    }
+
+    function updateCompareUI() {
+      const selA = document.getElementById("compareSelectA");
+      const selB = document.getElementById("compareSelectB");
+      if (selA) comparePlanetA = selA.value;
+      if (selB) comparePlanetB = selB.value;
+
+      const all = getAllCompareObjects();
+      const objA = all.find(p => p.id === comparePlanetA) || PLANETS[3];
+      const objB = all.find(p => p.id === comparePlanetB) || PLANETS[4];
+
+      const container = document.getElementById("compareContent");
+      if (!container) return;
+
+      container.innerHTML = `
+        <!-- Visual Preview Spheres -->
+        <div class="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-[#0F131D] border border-white/10">
+          <div class="flex flex-col items-center text-center p-3">
+            <div class="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center shadow-lg relative my-2" style="background: radial-gradient(circle at 35% 35%, ${objA.secColor || '#fff'}, ${objA.color || '#4F86F7'} 60%, #060913 100%); box-shadow: 0 0 24px ${objA.color}40;"></div>
+            <h4 class="text-sm md:text-base font-extrabold text-white mt-1">${objA.name}</h4>
+            <p class="text-[11px] text-[#8AB4F8]">${objA.category || 'Objek Tata Surya'}</p>
+          </div>
+
+          <div class="flex flex-col items-center text-center p-3">
+            <div class="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center shadow-lg relative my-2" style="background: radial-gradient(circle at 35% 35%, ${objB.secColor || '#fff'}, ${objB.color || '#FF5722'} 60%, #060913 100%); box-shadow: 0 0 24px ${objB.color}40;"></div>
+            <h4 class="text-sm md:text-base font-extrabold text-white mt-1">${objB.name}</h4>
+            <p class="text-[11px] text-[#FFD54F]">${objB.category || 'Objek Tata Surya'}</p>
+          </div>
+        </div>
+
+        <!-- Metric Comparison Rows -->
+        <div class="space-y-2.5">
+          ${renderCompareRow("Diameter Ekuator", objA.diameter, objB.diameter, "straighten")}
+          ${renderCompareRow("Jarak ke Matahari / Orbit", objA.dist, objB.dist, "social_distance")}
+          ${renderCompareRow("Suhu Rata-rata Permukaan", objA.temp, objB.temp, "thermostat")}
+          ${renderCompareRow("Periode Rotasi (Lama Hari)", objA.rotation, objB.rotation, "sync")}
+          ${renderCompareRow("Periode Orbit (Lama Tahun)", objA.period, objB.period, "history")}
+          ${renderCompareRow("Gravitasi Permukaan", objA.gravity, objB.gravity, "fitness_center")}
+          ${renderCompareRow("Satelit Alami", objA.moons, objB.moons, "brightness_medium")}
+          ${renderCompareRow("Komposisi & Atmosfer", objA.comp, objB.comp, "science")}
+          ${renderCompareRow("Misi Eksplorasi Utama", objA.missions, objB.missions, "rocket_launch")}
+        </div>
+      `;
+    }
+
+    function renderCompareRow(label, valA, valB, icon) {
+      return `
+        <div class="p-3.5 rounded-2xl bg-[#161B26] border border-white/10 hover:border-white/20 transition-all">
+          <div class="flex items-center gap-1.5 text-[11px] font-bold text-[#919194] uppercase tracking-wider mb-2">
+            <span class="material-symbols-outlined text-[16px] text-[#8AB4F8]">${icon}</span>
+            <span>${label}</span>
+          </div>
+          <div class="grid grid-cols-2 gap-3 text-xs md:text-sm">
+            <div class="p-2.5 rounded-xl bg-[#0F131D]/80 border border-[#8AB4F8]/20 text-[#D2E3FC] leading-relaxed">
+              ${valA || '-'}
+            </div>
+            <div class="p-2.5 rounded-xl bg-[#0F131D]/80 border border-[#FFD54F]/20 text-[#FFE082] leading-relaxed">
+              ${valB || '-'}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ==========================================
+    // 8. GRAVITY WEIGHT CALCULATOR
+    // ==========================================
+    let userEarthWeight = 60; // kg
+
+    const GRAVITY_TARGETS = [
+      { id: "sun", name: "Matahari", gRatio: 27.93, color: "#FFA500", desc: "Gravitasi ekstrem bintang raksasa (28× lipat)" },
+      { id: "mercury", name: "Merkurius", gRatio: 0.38, color: "#BCAAA4", desc: "Sangat ringan, melompat 2,6× lebih tinggi" },
+      { id: "venus", name: "Venus", gRatio: 0.90, color: "#FFD54F", desc: "Sedikit lebih ringan daripada di Bumi (-10%)" },
+      { id: "moon", name: "Bulan (Luna)", gRatio: 0.166, color: "#ECEFF1", desc: "Hanya 1/6 berat Bumi, melayang seperti astronot Apollo" },
+      { id: "earth", name: "Bumi", gRatio: 1.00, color: "#4F86F7", desc: "Standar acuan normal kehidupan (1,00 G)" },
+      { id: "mars", name: "Mars", gRatio: 0.38, color: "#FF5722", desc: "Ringan, beban tubuh terasa berkurang 62%" },
+      { id: "jupiter", name: "Jupiter", gRatio: 2.53, color: "#FFA726", desc: "2,5× lipat lebih berat, langkah kaki terasa seperti ditarik timah" },
+      { id: "saturn", name: "Saturnus", gRatio: 1.06, color: "#E3BB76", desc: "Massa besar terdistribusi luas, gravitasi hanya +6% dari Bumi" },
+      { id: "uranus", name: "Uranus", gRatio: 0.89, color: "#80DEEA", desc: "Kepadatan rendah, sedikit lebih ringan dari Bumi (-11%)" },
+      { id: "neptune", name: "Neptunus", gRatio: 1.14, color: "#29B6F6", desc: "Raksasa es padat, berat tubuh bertambah +14%" }
+    ];
+
+    function openGravityModal() {
+      document.getElementById("gravityModal").classList.remove("hidden");
+      renderGravityCards();
+    }
+
+    function closeGravityModal() {
+      document.getElementById("gravityModal").classList.add("hidden");
+    }
+
+    function onWeightInputChange(val) {
+      const num = parseFloat(val);
+      if (!isNaN(num) && num > 0) {
+        userEarthWeight = num;
+        const slider = document.getElementById("earthWeightSlider");
+        if (slider) slider.value = Math.min(Math.max(num, 10), 150);
+        renderGravityCards();
+      }
+    }
+
+    function onWeightSliderChange(val) {
+      userEarthWeight = parseFloat(val);
+      const input = document.getElementById("earthWeightInput");
+      if (input) input.value = userEarthWeight;
+      renderGravityCards();
+    }
+
+    function setWeightPreset(kg) {
+      userEarthWeight = kg;
+      const input = document.getElementById("earthWeightInput");
+      const slider = document.getElementById("earthWeightSlider");
+      if (input) input.value = kg;
+      if (slider) slider.value = Math.min(Math.max(kg, 10), 150);
+      renderGravityCards();
+    }
+
+    function renderGravityCards() {
+      const container = document.getElementById("gravityCardsGrid");
+      if (!container) return;
+
+      container.innerHTML = GRAVITY_TARGETS.map(t => {
+        const calcWeight = (userEarthWeight * t.gRatio).toFixed(1);
+        const diff = (calcWeight - userEarthWeight).toFixed(1);
+        const diffText = t.id === 'earth' 
+          ? 'Acuan 100%' 
+          : (diff > 0 ? `+${diff} kg vs Bumi` : `${diff} kg vs Bumi`);
+
+        return `
+          <div class="p-3.5 rounded-2xl bg-[#181D29] border border-white/10 hover:border-[#80DEEA]/50 transition-all flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 shadow-md" style="background: radial-gradient(circle at 35% 35%, #fff, ${t.color} 70%, #000 100%);"></div>
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <h4 class="text-xs md:text-sm font-bold text-white">${t.name}</h4>
+                  <span class="text-[10px] px-1.5 py-0.2 rounded bg-white/10 text-[#C4C6D0] font-mono">${t.gRatio}× g</span>
+                </div>
+                <p class="text-[10px] text-[#919194] leading-tight mt-0.5">${t.desc}</p>
+              </div>
+            </div>
+
+            <div class="text-right flex-shrink-0">
+              <div class="text-base md:text-lg font-black font-mono text-[#80DEEA]">${calcWeight} <span class="text-xs text-white">kg</span></div>
+              <span class="text-[9px] font-semibold text-[#A8C7FA]">${diffText}</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // ==========================================
+    // 9. CREDITS & BELT INFO MODALS
+    // ==========================================
+    function openCreditsModal() {
+      document.getElementById("creditsModal").classList.remove("hidden");
+    }
+
+    function closeCreditsModal() {
+      document.getElementById("creditsModal").classList.add("hidden");
+    }
+
+    function openBeltInfoModal(beltType) {
+      const modal = document.getElementById("beltInfoModal");
+      const title = document.getElementById("beltModalTitle");
+      const subtitle = document.getElementById("beltModalSubtitle");
+      const icon = document.getElementById("beltModalIcon");
+      const iconBg = document.getElementById("beltModalIconBg");
+      const body = document.getElementById("beltModalBody");
+      if (!modal || !body) return;
+
+      if (beltType === 'kuiper') {
+        title.innerText = "Sabuk Kuiper (Kuiper Belt)";
+        subtitle.innerText = "Wilayah beku di tepi luar orbit Neptunus (30 - 55 AU)";
+        icon.innerText = "ac_unit";
+        iconBg.className = "w-9 h-9 rounded-2xl bg-[#80DEEA]/20 border border-[#80DEEA]/40 flex items-center justify-center text-[#80DEEA]";
+        body.innerHTML = `
+          <div class="p-3.5 rounded-2xl bg-[#181D29] border border-white/10 space-y-1.5">
+            <h4 class="font-bold text-white text-xs">Cincin Es Raksasa di Pinggiran Tata Surya</h4>
+            <p>Sabuk Kuiper adalah piringan cincin kosmik berukuran masif di luar orbit Neptunus, terbentang dari jarak 30 hingga 55 Satuan Astronomi (AU) dari Matahari. Wilayah ini dipenuhi oleh jutaan objek sisa pembentukan tata surya purba yang tersusun dari volatil beku seperti metana, amonia, dan es air.</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div class="p-3 rounded-xl bg-[#161B26] border border-white/10">
+              <p class="text-[10px] text-[#919194] uppercase font-bold">Planet Kerdil Terkenal</p>
+              <p class="text-white font-semibold mt-0.5">Pluto, Haumea, Makemake, Arrokoth</p>
+            </div>
+            <div class="p-3 rounded-xl bg-[#161B26] border border-white/10">
+              <p class="text-[10px] text-[#919194] uppercase font-bold">Misi Bersejarah</p>
+              <p class="text-white font-semibold mt-0.5">NASA New Horizons (Flyby 2015 & 2019)</p>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-[#0F172A] border border-[#38BDF8]/30">
+            <p class="text-[11px] text-[#BAE6FD]">
+              <strong>Fakta Menarik:</strong> Wahana NASA New Horizons melintasi objek Sabuk Kuiper paling primitif, Arrokoth (berbentuk manusia salju kontak biner), pada jarak 6,6 miliar kilometer dari Bumi pada 1 Januari 2019.
+            </p>
+          </div>
+        `;
+      } else {
+        title.innerText = "Sabuk Asteroid Utama (Main Asteroid Belt)";
+        subtitle.innerText = "Pemisah planet batuan dalam dan planet raksasa gas luar (2,2 - 3,2 AU)";
+        icon.innerText = "grain";
+        iconBg.className = "w-9 h-9 rounded-2xl bg-[#FFB74D]/20 border border-[#FFB74D]/40 flex items-center justify-center text-[#FFB74D]";
+        body.innerHTML = `
+          <div class="p-3.5 rounded-2xl bg-[#181D29] border border-white/10 space-y-1.5">
+            <h4 class="font-bold text-white text-xs">Jembatan Kosmik Antara Mars dan Jupiter</h4>
+            <p>Sabuk Asteroid Utama adalah konsentrasi jutaan bongkahan batuan dan logam sisa piringan akresi purba tata surya yang gagal menyatu menjadi satu planet utuh akibat gangguan gravitasi pasang surut raksasa dari Jupiter.</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div class="p-3 rounded-xl bg-[#161B26] border border-white/10">
+              <p class="text-[10px] text-[#919194] uppercase font-bold">Objek Terbesar</p>
+              <p class="text-white font-semibold mt-0.5">Ceres (Planet Kerdil, diameter 940 km), Vesta, Pallas</p>
+            </div>
+            <div class="p-3 rounded-xl bg-[#161B26] border border-white/10">
+              <p class="text-[10px] text-[#919194] uppercase font-bold">Misi Utama NASA</p>
+              <p class="text-white font-semibold mt-0.5">Dawn (Ceres & Vesta), Lucy, Psyche (Logam Murni)</p>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-[#2D1B0F] border border-[#FFB74D]/30">
+            <p class="text-[11px] text-[#FFE0B2]">
+              <strong>Mitos Film Sci-Fi:</strong> Di film-film fiksi ilmiah, sabuk asteroid digambarkan sangat padat dan berbahaya bagi pesawat ruang angkasa. Nyatanya, jarak rata-rata antar asteroid adalah sekitar 1 juta kilometer—sangat kosong dan aman dilintasi!
+            </p>
+          </div>
+        `;
+      }
+
+      modal.classList.remove("hidden");
+    }
+
+    function closeBeltInfoModal() {
+      document.getElementById("beltInfoModal").classList.add("hidden");
     }
 
     // URL Hash deep link routing
