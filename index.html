@@ -41,21 +41,66 @@
 </head>
 <body class="h-screen w-screen relative flex flex-col bg-[#070A10]">
 
-  <!-- TOP HEADER (Overview Mode) -->
-  <header id="mainHeader" class="absolute top-0 left-0 right-0 z-20 p-4 md:p-6 flex flex-col gap-3 pointer-events-none transition-opacity duration-300">
-    <div class="flex justify-between items-center w-full">
-      <div>
-        <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-          Planetarium Mini
-        </h1>
-        <p class="text-xs md:text-sm text-[#919194]">Tata Surya Interaktif &bull; Ketuk planet untuk visual layar penuh</p>
+  <!-- ========================================================================= -->
+  <!-- 5. KREATIF SPACE LOADING SCREEN (Wormhole & Starfield Effect)             -->
+  <!-- ========================================================================= -->
+  <div id="spaceLoader" class="fixed inset-0 z-[100] bg-[#04060A] flex flex-col items-center justify-center transition-opacity duration-700 select-none">
+    <canvas id="loaderCanvas" class="absolute inset-0 w-full h-full"></canvas>
+    
+    <div class="relative z-10 flex flex-col items-center text-center px-6 max-w-md">
+      <!-- Pulsing Galactic Core with Orbital Rings -->
+      <div class="relative w-24 h-24 mb-6 flex items-center justify-center">
+        <div class="absolute inset-0 rounded-full border-2 border-[#4F86F7]/30 animate-spin" style="animation-duration: 8s;"></div>
+        <div class="absolute inset-2 rounded-full border border-[#FFD600]/40 animate-spin" style="animation-duration: 5s; animation-direction: reverse;"></div>
+        <div class="absolute inset-4 rounded-full border border-dashed border-[#80DEEA]/50 animate-spin" style="animation-duration: 12s;"></div>
+        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#FF5722] via-[#FFA500] to-[#FFD600] shadow-[0_0_35px_rgba(255,165,0,0.8)] animate-pulse"></div>
       </div>
 
-      <!-- Controls: Speed & Pause -->
-      <div class="flex items-center gap-2 pointer-events-auto">
+      <h2 class="text-2xl md:text-3xl font-extrabold tracking-wider text-white mb-1">PLANETARIUM MINI</h2>
+      <p class="text-xs uppercase tracking-[0.25em] text-[#8AB4F8] mb-6 font-semibold">Tata Surya Interaktif</p>
+
+      <!-- Progress bar -->
+      <div class="w-64 h-1.5 bg-[#161B26] rounded-full overflow-hidden border border-white/10 mb-3 shadow-inner">
+        <div id="loaderBar" class="h-full bg-gradient-to-r from-[#4F86F7] via-[#80DEEA] to-[#FFD600] rounded-full w-0 transition-all duration-200"></div>
+      </div>
+
+      <!-- Live status quote -->
+      <p id="loaderStatus" class="text-xs text-[#919194] h-5 transition-all">Mengkalibrasi orbit 8 planet...</p>
+    </div>
+  </div>
+
+  <!-- TOP HEADER (Overview Mode) -->
+  <header id="mainHeader" class="absolute top-0 left-0 right-0 z-20 p-3 md:p-6 flex flex-col gap-2.5 pointer-events-none transition-opacity duration-300">
+    <div class="flex justify-between items-center w-full gap-2">
+      <div>
+        <h1 class="text-lg md:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+          Planetarium Mini
+        </h1>
+        <p class="text-[11px] md:text-xs text-[#919194]">Tata Surya Interaktif &bull; Ketuk planet untuk visual layar penuh</p>
+      </div>
+
+      <!-- Controls: Speed, Pause, Scale, Quiz, Ambient Sound -->
+      <div class="flex items-center gap-1.5 md:gap-2 pointer-events-auto flex-wrap justify-end">
+        <!-- Scale Comparison Feature Button -->
+        <button onclick="openScaleModal()" title="Bandingkan Skala Ukuran Nyata" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#E2E2E6] hover:text-white hover:border-[#4F86F7] text-xs font-semibold cursor-pointer transition-all shadow-md">
+          <span class="material-symbols-outlined text-[16px] text-[#4F86F7]">straighten</span>
+          <span class="hidden sm:inline">Skala Relatif</span>
+        </button>
+
+        <!-- Quiz / Trivia Feature Button -->
+        <button onclick="openQuizModal()" title="Uji Wawasan Antariksa (5 Soal)" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#E2E2E6] hover:text-white hover:border-[#FFD600] text-xs font-semibold cursor-pointer transition-all shadow-md">
+          <span class="material-symbols-outlined text-[16px] text-[#FFD600]">quiz</span>
+          <span class="hidden sm:inline">Kuis Antariksa</span>
+        </button>
+
+        <!-- Ambient Sound Toggle -->
+        <button id="ambientSoundBtn" onclick="toggleAmbientSound()" title="Musik Ambient Luar Angkasa" class="w-9 h-9 rounded-full bg-[#161B26] border border-[#2B3240] flex items-center justify-center text-[#A8C7FA] hover:border-[#4F86F7] transition-colors cursor-pointer shadow-md">
+          <span id="soundIcon" class="material-symbols-outlined text-[18px]">volume_off</span>
+        </button>
+
         <!-- Speed Toggle -->
-        <button id="speedBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#A8C7FA] text-xs font-semibold hover:border-[#4F86F7] transition-colors cursor-pointer">
-          <span class="material-symbols-outlined text-[16px]">speed</span>
+        <button id="speedBtn" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#A8C7FA] text-xs font-semibold hover:border-[#4F86F7] transition-colors cursor-pointer">
+          <span class="material-symbols-outlined text-[15px]">speed</span>
           <span id="speedLabel">1.0x</span>
         </button>
 
@@ -83,23 +128,39 @@
   <div id="fullPlanetModal" class="fixed inset-0 z-50 bg-[#06080E] hidden flex flex-col overflow-hidden select-none">
     
     <!-- Top Floating Navigation Bar -->
-    <div class="absolute top-0 left-0 right-0 z-30 p-4 md:p-6 flex items-center justify-between pointer-events-none">
-      <button onclick="exitFullScreenPlanet()" class="pointer-events-auto flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#161B26]/90 border border-white/10 text-white hover:bg-[#1E2536] hover:border-[#4F86F7]/50 transition-all cursor-pointer shadow-lg backdrop-blur-md">
+    <div class="absolute top-0 left-0 right-0 z-30 p-3 md:p-6 flex items-center justify-between pointer-events-none gap-2">
+      <button onclick="exitFullScreenPlanet()" class="pointer-events-auto flex items-center gap-2 px-3 py-2 rounded-full bg-[#161B26]/90 border border-white/10 text-white hover:bg-[#1E2536] hover:border-[#4F86F7]/50 transition-all cursor-pointer shadow-lg backdrop-blur-md">
         <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-        <span class="text-xs font-semibold tracking-wide">Kembali ke Tata Surya</span>
+        <span class="text-xs font-semibold tracking-wide hidden sm:inline">Kembali</span>
       </button>
 
-      <!-- Prev / Next Planet Switchers -->
-      <div class="pointer-events-auto flex items-center gap-2">
-        <button onclick="navigatePlanet(-1)" title="Planet Sebelumnya" class="w-9 h-9 rounded-full bg-[#161B26]/90 border border-white/10 text-[#C4C6D0] hover:text-white hover:border-[#4F86F7]/50 flex items-center justify-center transition-all cursor-pointer backdrop-blur-md">
+      <!-- Action Buttons: Share, Scale, Sound, Prev/Next -->
+      <div class="pointer-events-auto flex items-center gap-1.5 md:gap-2">
+        <!-- Share Planet Button -->
+        <button onclick="shareCurrentPlanet()" title="Bagikan Planet Ini" class="w-9 h-9 rounded-full bg-[#161B26]/90 border border-white/10 text-[#C4C6D0] hover:text-white hover:border-[#4F86F7]/50 flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-md">
+          <span class="material-symbols-outlined text-[18px]">share</span>
+        </button>
+
+        <!-- Scale Comparison Button -->
+        <button onclick="openScaleModal(fullPlanet?.id)" title="Bandingkan Skala Ukuran Nyata" class="w-9 h-9 rounded-full bg-[#161B26]/90 border border-white/10 text-[#C4C6D0] hover:text-white hover:border-[#4F86F7]/50 flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-md">
+          <span class="material-symbols-outlined text-[18px]">straighten</span>
+        </button>
+
+        <!-- Ambient Sound Toggle in Modal -->
+        <button id="fullSoundBtn" onclick="toggleAmbientSound()" title="Musik Ambient Luar Angkasa" class="w-9 h-9 rounded-full bg-[#161B26]/90 border border-white/10 text-[#C4C6D0] hover:text-white hover:border-[#4F86F7]/50 flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-md">
+          <span id="fullSoundIcon" class="material-symbols-outlined text-[18px]">volume_off</span>
+        </button>
+
+        <!-- Planet Navigation -->
+        <button onclick="navigatePlanet(-1)" title="Planet Sebelumnya (Geser Kiri)" class="w-9 h-9 rounded-full bg-[#161B26]/90 border border-white/10 text-[#C4C6D0] hover:text-white hover:border-[#4F86F7]/50 flex items-center justify-center transition-all cursor-pointer backdrop-blur-md">
           <span class="material-symbols-outlined text-[18px]">chevron_left</span>
         </button>
 
-        <span id="fullPillBadge" class="px-3.5 py-1 rounded-full bg-[#4F86F7]/20 border border-[#4F86F7]/40 text-[#D2E3FC] text-[11px] font-bold tracking-wider uppercase backdrop-blur-md">
+        <span id="fullPillBadge" class="px-3 py-1 rounded-full bg-[#4F86F7]/20 border border-[#4F86F7]/40 text-[#D2E3FC] text-[11px] font-bold tracking-wider uppercase backdrop-blur-md">
           PLANET
         </span>
 
-        <button onclick="navigatePlanet(1)" title="Planet Berikutnya" class="w-9 h-9 rounded-full bg-[#161B26]/90 border border-white/10 text-[#C4C6D0] hover:text-white hover:border-[#4F86F7]/50 flex items-center justify-center transition-all cursor-pointer backdrop-blur-md">
+        <button onclick="navigatePlanet(1)" title="Planet Berikutnya (Geser Kanan)" class="w-9 h-9 rounded-full bg-[#161B26]/90 border border-white/10 text-[#C4C6D0] hover:text-white hover:border-[#4F86F7]/50 flex items-center justify-center transition-all cursor-pointer backdrop-blur-md">
           <span class="material-symbols-outlined text-[18px]">chevron_right</span>
         </button>
       </div>
@@ -127,7 +188,7 @@
     </div>
 
     <!-- Bottom Information Panel (Collapsible / Slide-up) -->
-    <section id="fullInfoCard" class="absolute bottom-0 left-0 right-0 z-30 bg-[#121620]/96 backdrop-blur-xl border-t border-white/10 rounded-t-[32px] p-6 pb-8 shadow-2xl max-w-2xl mx-auto md:mb-4 md:rounded-[32px] md:border transition-all duration-300 max-h-[82vh] flex flex-col">
+    <section id="fullInfoCard" class="absolute bottom-0 left-0 right-0 z-30 bg-[#121620]/96 backdrop-blur-xl border-t border-white/10 rounded-t-[32px] p-5 md:p-6 pb-8 shadow-2xl max-w-2xl mx-auto md:mb-4 md:rounded-[32px] md:border transition-all duration-300 max-h-[82vh] flex flex-col">
       <!-- Toggle / Drag bar -->
       <div class="w-12 h-1.5 bg-[#3E4249] rounded-full mx-auto mb-3 cursor-pointer hover:bg-[#5A606B] transition-colors" onclick="toggleInfoCollapse()"></div>
 
@@ -140,9 +201,14 @@
           <p id="fullCategory" class="text-[11px] text-[#919194] uppercase tracking-wider mt-0.5">Objek Tata Surya</p>
         </div>
 
-        <button onclick="toggleInfoCollapse()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-[#919194] flex items-center justify-center cursor-pointer transition-colors">
-          <span id="collapseIcon" class="material-symbols-outlined text-[18px]">expand_more</span>
-        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="shareCurrentPlanet()" title="Bagikan Planet Ini" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-[#C4C6D0] flex items-center justify-center cursor-pointer transition-colors">
+            <span class="material-symbols-outlined text-[18px]">share</span>
+          </button>
+          <button onclick="toggleInfoCollapse()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-[#919194] flex items-center justify-center cursor-pointer transition-colors">
+            <span id="collapseIcon" class="material-symbols-outlined text-[18px]">expand_more</span>
+          </button>
+        </div>
       </div>
 
       <!-- Collapsible Body Section -->
@@ -151,6 +217,15 @@
         <p id="fullDesc" class="text-[#C4C6D0] text-xs md:text-sm leading-relaxed">
           Deskripsi edukatif planet.
         </p>
+
+        <!-- Scale comparison quick trigger banner -->
+        <button onclick="openScaleModal(fullPlanet?.id)" class="w-full flex items-center justify-between p-3 rounded-2xl bg-[#161F36] hover:bg-[#1E2B4B] border border-[#4F86F7]/30 text-white text-xs font-semibold cursor-pointer transition-all shadow-sm group">
+          <div class="flex items-center gap-2.5">
+            <span class="material-symbols-outlined text-[18px] text-[#80DEEA] group-hover:scale-110 transition-transform">straighten</span>
+            <span>Perbandingan Ukuran: Jika Bumi Sebesar Bola Tenis...</span>
+          </div>
+          <span class="material-symbols-outlined text-[16px] text-[#80DEEA]">arrow_forward</span>
+        </button>
 
         <!-- Stats Grid 1: Diameter & Jarak Matahari -->
         <div class="grid grid-cols-2 gap-3">
@@ -224,31 +299,331 @@
           <p id="fullComp" class="text-xs md:text-sm text-white leading-relaxed">Atmosfer nitrogen dan oksigen, kerak silikat, dan air laut.</p>
         </div>
 
-        <!-- Earth Special Section: Milky Way & Koperasi Desa Merah Putih -->
-        <div id="fullEarthSpecial" class="hidden bg-[#2D2316] border border-[#5E4424] p-4 rounded-2xl">
-          <div class="flex items-start gap-3">
-            <div class="w-8 h-8 rounded-full bg-[#5E4424] flex items-center justify-center flex-shrink-0 mt-0.5">
-              <span class="material-symbols-outlined text-[#FFD600] text-[18px]">verified</span>
+        <!-- 8. Earth Special Section: ANIMASI POSISI BUMI DI LENGAN ORION BIMA SAKTI -->
+        <div id="fullEarthSpecial" class="hidden bg-[#16131F] border border-[#7C4DFF]/40 p-4 rounded-2xl shadow-xl">
+          <div class="flex justify-between items-center mb-2">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#B388FF] text-[18px]">scatter_plot</span>
+              <p class="text-xs text-[#E1BEE7] font-bold uppercase tracking-wider">Lokasi Galaksi Bima Sakti</p>
             </div>
-            <div class="flex-1">
-              <div class="flex justify-between items-center">
-                <p class="text-xs text-[#FFD600] font-bold">Lokasi Galaksi Bima Sakti</p>
-                <span class="text-[10px] text-[#FFD600]/80 border border-[#FFD600]/30 px-2 py-0.5 rounded-full font-medium">Terverifikasi</span>
-              </div>
-              <p class="text-xs text-[#E3BB76] leading-relaxed mt-1">
-                Bumi terletak di Lengan Orion, sekitar 26.000 tahun cahaya dari pusat galaksi Bima Sakti (Milky Way).
-              </p>
-              <div class="mt-2.5 pt-2 border-t border-[#5E4424]/60 flex items-center gap-2">
-                <span class="material-symbols-outlined text-[#FFD600] text-[15px]">apartment</span>
-                <p class="text-[11px] text-[#FFE082] font-medium">
-                  Sertifikat sah: Penduduk Bumi resmi terdaftar di Koperasi Desa Merah Putih galaksi Bima Sakti.
-                </p>
-              </div>
+            <span class="text-[10px] text-[#B388FF] bg-[#7C4DFF]/20 border border-[#7C4DFF]/50 px-2 py-0.5 rounded-full font-semibold">Lengan Orion</span>
+          </div>
+
+          <p class="text-[11px] text-[#C4C6D0] leading-relaxed mb-3">
+            Bumi dan Tata Surya terletak di <strong class="text-white">Lengan Orion (Orion Spur)</strong>, berjarak sekitar <strong>26.000 tahun cahaya</strong> dari lubang hitam supermasif pusat galaksi (Sagittarius A*).
+          </p>
+
+          <!-- Interactive Animated Canvas for Milky Way Galaxy -->
+          <div class="relative w-full rounded-xl overflow-hidden border border-white/10 bg-[#060810] shadow-inner mb-3">
+            <canvas id="milkyWayCanvas" class="w-full h-48 block"></canvas>
+            <div class="absolute bottom-2 left-2 pointer-events-none px-2 py-1 rounded-md bg-[#000000]/70 backdrop-blur-xs border border-white/10 text-[10px] text-[#80DEEA] font-mono">
+              &bull; Posisi: Lengan Orion (Tata Surya)
             </div>
+            <div class="absolute top-2 right-2 pointer-events-none px-2 py-0.5 rounded bg-white/10 text-[9px] text-white/70">
+              Rotasi Galaksi Aktif
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-[#7C4DFF]/25 flex items-start gap-2 text-[#D1C4E9]">
+            <span class="material-symbols-outlined text-[#FFD600] text-[16px] flex-shrink-0 mt-0.5">verified</span>
+            <p class="text-[11px] leading-relaxed">
+              <strong>Sertifikat Terdaftar:</strong> Penduduk Bumi resmi terdata di Koperasi Desa Merah Putih galaksi Bima Sakti.
+            </p>
           </div>
         </div>
       </div>
     </section>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 2. MODAL PERBANDINGAN SKALA RELATIF                                       -->
+  <!-- ========================================================================= -->
+  <div id="scaleModal" class="fixed inset-0 z-50 bg-[#06080E]/95 backdrop-blur-xl hidden flex flex-col items-center justify-center p-3 md:p-6 overflow-y-auto select-none">
+    <div class="bg-[#121622] border border-[#2B3245] rounded-3xl w-full max-w-3xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Modal Header -->
+      <div class="p-4 md:p-6 border-b border-white/10 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-2xl bg-[#4F86F7]/20 border border-[#4F86F7]/40 flex items-center justify-center text-[#8AB4F8]">
+            <span class="material-symbols-outlined text-[20px]">straighten</span>
+          </div>
+          <div>
+            <h3 class="text-lg md:text-xl font-bold text-white">Perbandingan Skala Tata Surya</h3>
+            <p class="text-xs text-[#919194]">Jika Bumi Sebesar Bola Tenis, Seberapa Besar Matahari?</p>
+          </div>
+        </div>
+
+        <button onclick="closeScaleModal()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center cursor-pointer transition-colors">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-4 md:p-6 overflow-y-auto no-scrollbar space-y-5 flex-1">
+        <!-- Scale Presets Selector -->
+        <div>
+          <label class="text-[11px] font-semibold text-[#8AB4F8] uppercase tracking-wider block mb-2">Pilih Perumpamaan Skala Ukuran Bumi:</label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <button onclick="setScalePreset('tennis')" id="preset-tennis" class="scale-preset-btn p-2.5 rounded-xl border border-[#4F86F7] bg-[#4F86F7]/20 text-white text-xs font-semibold text-center cursor-pointer transition-all">
+              🎾 Bola Tenis (6,7 cm)
+            </button>
+            <button onclick="setScalePreset('marble')" id="preset-marble" class="scale-preset-btn p-2.5 rounded-xl border border-[#2B3240] bg-[#161B26] hover:border-[#4F86F7]/50 text-[#C4C6D0] text-xs font-semibold text-center cursor-pointer transition-all">
+              🔮 Kelereng (1,5 cm)
+            </button>
+            <button onclick="setScalePreset('coin')" id="preset-coin" class="scale-preset-btn p-2.5 rounded-xl border border-[#2B3240] bg-[#161B26] hover:border-[#4F86F7]/50 text-[#C4C6D0] text-xs font-semibold text-center cursor-pointer transition-all">
+              🪙 Koin (2,5 cm)
+            </button>
+            <button onclick="setScalePreset('basketball')" id="preset-basketball" class="scale-preset-btn p-2.5 rounded-xl border border-[#2B3240] bg-[#161B26] hover:border-[#4F86F7]/50 text-[#C4C6D0] text-xs font-semibold text-center cursor-pointer transition-all">
+              🏀 Bola Basket (24 cm)
+            </button>
+          </div>
+        </div>
+
+        <!-- Interactive Slider for custom Earth size -->
+        <div class="bg-[#181D29] p-4 rounded-2xl border border-white/10">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs text-[#C4C6D0] font-medium">Kustomisasi Ukuran Diameter Bumi:</span>
+            <span id="scaleCustomVal" class="text-xs font-bold text-[#8AB4F8] bg-[#4F86F7]/20 px-2.5 py-0.5 rounded-full">6,7 cm</span>
+          </div>
+          <input type="range" id="scaleEarthSlider" min="1" max="25" step="0.5" value="6.7" oninput="onScaleSliderChange(this.value)" class="w-full accent-[#4F86F7] cursor-pointer">
+          <div class="flex justify-between text-[10px] text-[#919194] mt-1">
+            <span>1 cm (Kelereng kecil)</span>
+            <span>6.7 cm (Bola Tenis)</span>
+            <span>25 cm (Bola Basket)</span>
+          </div>
+        </div>
+
+        <!-- Interactive Visual Comparison Canvas (Side by Side true scale) -->
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-semibold text-white">Visualisasi Perbandingan Skala Relatif:</span>
+            <span class="text-[11px] text-[#919194]">Geser horizontal untuk melihat Matahari</span>
+          </div>
+          <div class="relative w-full rounded-2xl overflow-hidden border border-white/10 bg-[#07090F] shadow-inner">
+            <canvas id="scaleComparisonCanvas" class="w-full h-44 block cursor-ew-resize"></canvas>
+            <div class="absolute bottom-2 right-3 pointer-events-none text-[10px] text-[#919194]">
+              Skala visual proporsional matematis
+            </div>
+          </div>
+        </div>
+
+        <!-- The Mind-Blowing Scale Summary Table / Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="scaleCardsGrid">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <!-- Distance Analogy Highlight Box -->
+        <div class="p-4 rounded-2xl bg-[#1E1B2E] border border-[#7C4DFF]/40 flex items-start gap-3">
+          <span class="material-symbols-outlined text-[#B388FF] text-[22px] flex-shrink-0 mt-0.5">explore</span>
+          <div>
+            <p class="text-xs text-[#E1BEE7] font-bold mb-1">Seberapa Jauh Jarak Antara Objek Pada Skala Ini?</p>
+            <p id="scaleDistanceText" class="text-xs text-[#D1C4E9] leading-relaxed">
+              Jika Bumi berukuran sebesar bola tenis (6,7 cm), maka jarak dari Bumi ke Matahari adalah <strong class="text-white">~787 meter</strong> (hampir 8 lapangan sepak bola berjejer), dan Neptunus berada sejauh <strong class="text-white">23,6 kilometer</strong>! Ruang angkasa hampir seluruhnya berupa ruang hampa yang luar biasa luas.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 3. MODAL KUIS ANTARIKSA & SERTIFIKAT PENJELAJAH LUAR ANGKASA              -->
+  <!-- ========================================================================= -->
+  <div id="quizModal" class="fixed inset-0 z-50 bg-[#06080E]/95 backdrop-blur-xl hidden flex flex-col items-center justify-center p-3 md:p-6 overflow-y-auto select-none">
+    <div class="bg-[#121622] border border-[#2B3245] rounded-3xl w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      
+      <!-- Quiz Header -->
+      <div class="p-4 md:p-6 border-b border-white/10 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-2xl bg-[#FFD600]/20 border border-[#FFD600]/40 flex items-center justify-center text-[#FFD600]">
+            <span class="material-symbols-outlined text-[20px]">quiz</span>
+          </div>
+          <div>
+            <h3 class="text-lg md:text-xl font-bold text-white">Kuis Penjelajah Antariksa</h3>
+            <p class="text-xs text-[#919194]" id="quizHeaderSubtitle">Uji pengetahuan tata surya & raih sertifikat resmi</p>
+          </div>
+        </div>
+
+        <button onclick="closeQuizModal()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center cursor-pointer transition-colors">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <!-- Quiz Interactive Body -->
+      <div class="p-4 md:p-6 overflow-y-auto no-scrollbar flex-1 flex flex-col">
+        
+        <!-- STEP 1: ACTIVE QUIZ IN PROGRESS -->
+        <div id="quizActiveView" class="space-y-4 flex-1 flex flex-col">
+          <!-- Progress & Score Header -->
+          <div class="flex justify-between items-center">
+            <span id="quizProgressText" class="text-xs font-bold text-[#8AB4F8] uppercase tracking-wider">Soal 1 dari 5</span>
+            <span id="quizScoreTracker" class="text-xs text-[#FFD600] font-semibold">Skor Sementara: 0</span>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="w-full h-1.5 bg-[#1C202B] rounded-full overflow-hidden border border-white/5">
+            <div id="quizProgressBar" class="h-full bg-[#4F86F7] rounded-full w-1/5 transition-all duration-300"></div>
+          </div>
+
+          <!-- Question Text -->
+          <div class="p-4 rounded-2xl bg-[#181D29] border border-[#2D3342] my-1">
+            <p id="quizQuestionText" class="text-sm md:text-base font-semibold text-white leading-snug">
+              Memuat pertanyaan...
+            </p>
+          </div>
+
+          <!-- Options Container -->
+          <div id="quizOptionsContainer" class="space-y-2.5 flex-1">
+            <!-- Options buttons injected dynamically -->
+          </div>
+
+          <!-- Educational Explanation (Appears after answer) -->
+          <div id="quizFeedbackBox" class="hidden p-3.5 rounded-2xl border transition-all text-xs leading-relaxed">
+            <p id="quizFeedbackText"></p>
+          </div>
+
+          <!-- Next Button -->
+          <div class="pt-2">
+            <button id="quizNextBtn" onclick="onQuizNext()" disabled class="w-full py-3 rounded-xl bg-[#4F86F7] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#3D74E6] text-white font-semibold text-xs tracking-wide transition-all cursor-pointer shadow-lg">
+              Lanjut ke Soal Berikutnya
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 2: QUIZ COMPLETED & SERTIFIKAT PENJELAJAH LUAR ANGKASA -->
+        <div id="quizCompleteView" class="hidden space-y-4 flex-1 flex flex-col items-center text-center">
+          
+          <div class="w-14 h-14 rounded-full bg-[#FFD600]/20 border border-[#FFD600]/40 flex items-center justify-center text-[#FFD600] mb-1">
+            <span class="material-symbols-outlined text-[32px]">military_tech</span>
+          </div>
+
+          <h4 class="text-xl md:text-2xl font-extrabold text-white">Misi Penjelajahan Selesai!</h4>
+          <p class="text-xs text-[#C4C6D0]" id="quizFinalResultText">Kamu berhasil menjawab 5 dari 5 soal dengan benar!</p>
+
+          <!-- Input Name for Certificate -->
+          <div class="w-full max-w-sm bg-[#181D29] p-3.5 rounded-2xl border border-white/10 text-left">
+            <label class="block text-[11px] text-[#8AB4F8] font-semibold uppercase tracking-wider mb-1.5">Nama Penjelajah untuk Sertifikat:</label>
+            <div class="flex gap-2">
+              <input type="text" id="certNameInput" placeholder="Masukkan Nama Anda..." value="Muhammad Zakhwan" class="flex-1 px-3 py-2 rounded-xl bg-[#0F131D] border border-white/15 text-white text-xs focus:outline-none focus:border-[#4F86F7]">
+              <button onclick="updateCertificateName()" class="px-3 py-2 rounded-xl bg-[#4F86F7] hover:bg-[#3D74E6] text-white text-xs font-semibold cursor-pointer">
+                Terapkan
+              </button>
+            </div>
+          </div>
+
+          <!-- Visual Certificate Preview Box -->
+          <div class="w-full overflow-x-auto p-1 no-scrollbar flex justify-center">
+            <div id="certPreviewContainer" class="relative w-full max-w-lg aspect-[1.414/1] bg-gradient-to-br from-[#0B0F19] via-[#141A29] to-[#0B0F19] rounded-2xl border-2 border-[#FFD600]/60 p-4 md:p-6 flex flex-col justify-between items-center text-center shadow-[0_0_40px_rgba(255,214,0,0.15)] select-none">
+              <!-- Golden corner accents -->
+              <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-[#FFD600]"></div>
+              <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-[#FFD600]"></div>
+              <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-[#FFD600]"></div>
+              <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-[#FFD600]"></div>
+
+              <div>
+                <p class="text-[9px] md:text-[10px] tracking-[0.3em] uppercase text-[#FFD600] font-bold">PLANETARIUM MINI &bull; TATA SURYA INTERAKTIF</p>
+                <h5 class="text-sm md:text-lg font-black text-white tracking-wider uppercase mt-0.5">Sertifikat Penjelajah Luar Angkasa</h5>
+                <div class="w-20 h-0.5 bg-[#FFD600]/60 mx-auto mt-1"></div>
+              </div>
+
+              <div class="my-auto py-1">
+                <p class="text-[10px] text-[#919194]">Diberikan secara resmi kepada:</p>
+                <h3 id="certDisplayName" class="text-base md:text-xl font-extrabold text-[#FFD54F] tracking-wide my-1">Muhammad Zakhwan</h3>
+                <p class="text-[10px] text-[#C4C6D0] max-w-xs mx-auto leading-tight">
+                  Telah berhasil menyelesaikan ekspedisi astrofisika tata surya dan membuktikan penguasaan ilmiah kosmik.
+                </p>
+                <div class="inline-block mt-2 px-3 py-0.5 rounded-full bg-[#4F86F7]/20 border border-[#4F86F7]/40 text-[#8AB4F8] text-[10px] font-bold tracking-wider" id="certRankBadge">
+                  PANGKAT: KOMANDAN KOSMIK TATA SURYA
+                </div>
+              </div>
+
+              <div class="w-full flex justify-between items-end border-t border-white/10 pt-2 text-[9px] text-[#919194]">
+                <div class="text-left">
+                  <p>Tanggal: <span id="certDateText" class="text-white font-medium">06 Sep 2026</span></p>
+                  <p>Status: <span class="text-emerald-400 font-medium">Terverifikasi Sah</span></p>
+                </div>
+                <div class="flex items-center gap-1.5 text-[#FFD600]">
+                  <span class="material-symbols-outlined text-[20px]">workspace_premium</span>
+                  <span class="font-bold uppercase tracking-wider text-[8px] md:text-[9px]">Lengan Orion &bull; Bima Sakti</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons: Download PNG & Retake -->
+          <div class="w-full flex flex-col sm:flex-row gap-2.5 pt-2">
+            <button onclick="downloadCertificatePNG()" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-[#FFD600] to-[#FFA000] text-[#06080E] font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg hover:brightness-110 transition-all">
+              <span class="material-symbols-outlined text-[18px]">download</span>
+              <span>Unduh Sertifikat (PNG)</span>
+            </button>
+            <button onclick="restartQuiz()" class="py-3 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white font-semibold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition-colors">
+              <span class="material-symbols-outlined text-[18px]">replay</span>
+              <span>Ulangi Kuis</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 4. MODAL SHARE PLANET FAVORIT                                             -->
+  <!-- ========================================================================= -->
+  <div id="shareModal" class="fixed inset-0 z-50 bg-[#06080E]/90 backdrop-blur-md hidden flex items-center justify-center p-4 select-none">
+    <div class="bg-[#121622] border border-[#2B3245] rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[#4F86F7] text-[20px]">share</span>
+          <h3 class="text-base font-bold text-white">Bagikan Planet Favorit</h3>
+        </div>
+        <button onclick="closeShareModal()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 text-white flex items-center justify-center cursor-pointer transition-colors">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <div class="p-3.5 rounded-2xl bg-[#181D29] border border-white/10 flex items-center gap-3">
+        <div id="sharePlanetDot" class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center shadow-lg text-white font-bold text-xs" style="background: #4F86F7;">
+          🌍
+        </div>
+        <div class="overflow-hidden">
+          <p id="sharePlanetName" class="text-sm font-bold text-white">Bumi</p>
+          <p id="sharePlanetFact" class="text-xs text-[#919194] truncate">Satu-satunya dunia biosfer dengan air cair terbuka.</p>
+        </div>
+      </div>
+
+      <!-- Share Options -->
+      <div class="space-y-2">
+        <button onclick="shareViaWhatsApp()" class="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-[#25D366]/15 border border-[#25D366]/40 text-[#25D366] hover:bg-[#25D366]/25 font-semibold text-xs transition-colors cursor-pointer">
+          <span class="flex items-center gap-2.5">
+            <span class="material-symbols-outlined text-[18px]">chat</span>
+            <span>Bagikan ke WhatsApp</span>
+          </span>
+          <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+        </button>
+
+        <button onclick="shareViaTwitter()" class="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-[#1DA1F2]/15 border border-[#1DA1F2]/40 text-[#1DA1F2] hover:bg-[#1DA1F2]/25 font-semibold text-xs transition-colors cursor-pointer">
+          <span class="flex items-center gap-2.5">
+            <span class="material-symbols-outlined text-[18px]">send</span>
+            <span>Bagikan ke X (Twitter)</span>
+          </span>
+          <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+        </button>
+
+        <button onclick="copyShareLink()" class="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-white/10 border border-white/15 text-white hover:bg-white/15 font-semibold text-xs transition-colors cursor-pointer">
+          <span class="flex items-center gap-2.5">
+            <span class="material-symbols-outlined text-[18px]">content_copy</span>
+            <span id="copyLinkBtnText">Salin Tautan Langsung</span>
+          </span>
+          <span class="material-symbols-outlined text-[16px]">check_circle</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING TOAST NOTIFICATION -->
+  <div id="toastNotification" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[110] px-4 py-2.5 rounded-full bg-[#161B26]/95 border border-[#4F86F7]/50 text-white text-xs font-semibold shadow-2xl backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 flex items-center gap-2">
+    <span class="material-symbols-outlined text-[#4F86F7] text-[18px]">info</span>
+    <span id="toastMessage">Pemberitahuan</span>
   </div>
 
   <!-- JAVASCRIPT LOGIC -->
@@ -1006,13 +1381,25 @@
         factCard.classList.add("hidden");
       }
 
-      // Earth section
+      // Earth section & Animated Milky Way Galaxy
       const earthBox = document.getElementById("fullEarthSpecial");
       if (planet.isEarth) {
         earthBox.classList.remove("hidden");
+        startMilkyWayAnimation();
       } else {
         earthBox.classList.add("hidden");
+        stopMilkyWayAnimation();
       }
+
+      // Deep link hash update without scrolling
+      if (history.replaceState) {
+        history.replaceState(null, null, '#' + planet.id);
+      } else {
+        window.location.hash = '#' + planet.id;
+      }
+
+      // Play subtle cosmic chime if ambient sound active
+      playCosmicChime(planet.isSun ? 330 : (220 + (PLANETS.indexOf(planet) * 45)));
 
       // Show modal
       document.getElementById("fullPlanetModal").classList.remove("hidden");
@@ -1022,6 +1409,10 @@
     function exitFullScreenPlanet() {
       fullPlanet = null;
       selectedPlanet = null;
+      stopMilkyWayAnimation();
+      if (history.replaceState) {
+        history.replaceState(null, null, window.location.pathname);
+      }
       document.getElementById("fullPlanetModal").classList.add("hidden");
       updateChips();
     }
@@ -1144,14 +1535,20 @@
       isFullDragging = false;
     });
 
-    // Touch Pinch & Pan for Full Planet View
+    // Enhanced Touch Gestures for Full Planet View (Swipe navigation & Pinch-to-zoom)
     let initialTouchDist = 0;
     let initialTouchZoom = 1.0;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
 
     fullCanvas.addEventListener("touchstart", (e) => {
       if (e.touches.length === 1) {
         isFullDragging = true;
         fullDragStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        touchStartTime = performance.now();
       } else if (e.touches.length === 2) {
         isFullDragging = false;
         initialTouchDist = Math.hypot(
@@ -1178,7 +1575,23 @@
       }
     }, { passive: true });
 
-    fullCanvas.addEventListener("touchend", () => {
+    fullCanvas.addEventListener("touchend", (e) => {
+      if (isFullDragging && e.changedTouches.length === 1) {
+        const endX = e.changedTouches[0].clientX;
+        const endY = e.changedTouches[0].clientY;
+        const diffX = endX - touchStartX;
+        const diffY = endY - touchStartY;
+        const duration = performance.now() - touchStartTime;
+
+        // Detect horizontal swipe if quick flick (>50px horizontal and mostly horizontal)
+        if (duration < 600 && Math.abs(diffX) > 55 && Math.abs(diffX) > Math.abs(diffY) * 1.35) {
+          if (diffX < 0) {
+            navigatePlanet(1); // Swipe left -> next planet
+          } else {
+            navigatePlanet(-1); // Swipe right -> prev planet
+          }
+        }
+      }
       isFullDragging = false;
       initialTouchDist = 0;
     });
@@ -1228,6 +1641,932 @@
       renderChips();
     }
     renderChips();
+
+    // ==========================================
+    // 8. ANIMATED MILKY WAY GALAXY CANVAS (BIMA SAKTI)
+    // ==========================================
+    const milkyWayCanvas = document.getElementById("milkyWayCanvas");
+    const mwCtx = milkyWayCanvas ? milkyWayCanvas.getContext("2d") : null;
+    let mwAnimId = null;
+    let mwAngle = 0;
+
+    const mwStars = [];
+    for (let i = 0; i < 280; i++) {
+      const arm = Math.floor(Math.random() * 4);
+      const dist = Math.pow(Math.random(), 0.6) * 100;
+      const theta = (dist * 0.05) + (arm * (Math.PI / 2)) + ((Math.random() - 0.5) * 0.5);
+      mwStars.push({
+        r: dist,
+        theta: theta,
+        size: Math.random() * 1.5 + 0.6,
+        alpha: Math.random() * 0.6 + 0.3,
+        color: Math.random() > 0.4 ? "#E0E7FF" : (Math.random() > 0.5 ? "#FED7AA" : "#93C5FD")
+      });
+    }
+
+    function resizeMilkyWayCanvas() {
+      if (!milkyWayCanvas) return;
+      const rect = milkyWayCanvas.getBoundingClientRect();
+      milkyWayCanvas.width = rect.width * (window.devicePixelRatio || 1);
+      milkyWayCanvas.height = rect.height * (window.devicePixelRatio || 1);
+    }
+
+    function drawMilkyWayFrame() {
+      if (!fullPlanet || !fullPlanet.isEarth || !milkyWayCanvas || !mwCtx) return;
+      const w = milkyWayCanvas.width;
+      const h = milkyWayCanvas.height;
+      if (!w || !h) return;
+
+      mwCtx.clearRect(0, 0, w, h);
+      mwAngle += 0.003;
+
+      const cx = w / 2;
+      const cy = h / 2;
+      const scaleR = Math.min(w, h) * 0.42;
+
+      // Distance reference orbits (light-years)
+      mwCtx.save();
+      mwCtx.strokeStyle = "rgba(124, 77, 255, 0.15)";
+      mwCtx.lineWidth = 1;
+      [0.3, 0.55, 0.85].forEach(ratio => {
+        mwCtx.beginPath();
+        mwCtx.arc(cx, cy, scaleR * ratio, 0, Math.PI * 2);
+        mwCtx.stroke();
+      });
+
+      // Spiral Arms / Star clusters
+      mwStars.forEach(s => {
+        const currentAngle = s.theta + mwAngle;
+        const r = (s.r / 100) * scaleR;
+        const x = cx + Math.cos(currentAngle) * r;
+        const y = cy + Math.sin(currentAngle) * r * 0.65;
+
+        mwCtx.fillStyle = s.color;
+        mwCtx.globalAlpha = s.alpha;
+        mwCtx.beginPath();
+        mwCtx.arc(x, y, s.size, 0, Math.PI * 2);
+        mwCtx.fill();
+      });
+      mwCtx.globalAlpha = 1.0;
+
+      // Luminous Galactic Core (Sagittarius A*)
+      const coreGrad = mwCtx.createRadialGradient(cx, cy, 2, cx, cy, scaleR * 0.28);
+      coreGrad.addColorStop(0, "rgba(255, 248, 225, 1)");
+      coreGrad.addColorStop(0.35, "rgba(255, 179, 0, 0.8)");
+      coreGrad.addColorStop(0.75, "rgba(209, 196, 233, 0.2)");
+      coreGrad.addColorStop(1, "rgba(124, 77, 255, 0)");
+      mwCtx.fillStyle = coreGrad;
+      mwCtx.beginPath();
+      mwCtx.arc(cx, cy, scaleR * 0.28, 0, Math.PI * 2);
+      mwCtx.fill();
+
+      // Earth & Solar System Position in Orion Arm (26,000 light years away)
+      const earthRadius = scaleR * 0.55;
+      const earthAngle = mwAngle + 1.25;
+      const ex = cx + Math.cos(earthAngle) * earthRadius;
+      const ey = cy + Math.sin(earthAngle) * earthRadius * 0.65;
+
+      // Radar pulse waves
+      const pulse = (performance.now() % 1600) / 1600;
+      mwCtx.strokeStyle = `rgba(128, 222, 234, ${1 - pulse})`;
+      mwCtx.lineWidth = 1.5;
+      mwCtx.beginPath();
+      mwCtx.arc(ex, ey, 5 + pulse * 18, 0, Math.PI * 2);
+      mwCtx.stroke();
+
+      // Beacon Dot
+      mwCtx.fillStyle = "#80DEEA";
+      mwCtx.shadowColor = "#00E5FF";
+      mwCtx.shadowBlur = 10;
+      mwCtx.beginPath();
+      mwCtx.arc(ex, ey, 4.5, 0, Math.PI * 2);
+      mwCtx.fill();
+      mwCtx.shadowBlur = 0;
+
+      // Beacon Label
+      mwCtx.fillStyle = "#E0F7FA";
+      mwCtx.font = `bold ${Math.max(10, Math.round(w * 0.026))}px 'Plus Jakarta Sans', sans-serif`;
+      mwCtx.fillText("Lengan Orion (Bumi)", ex + 10, ey - 6);
+
+      mwCtx.restore();
+      mwAnimId = requestAnimationFrame(drawMilkyWayFrame);
+    }
+
+    function startMilkyWayAnimation() {
+      if (mwAnimId) cancelAnimationFrame(mwAnimId);
+      resizeMilkyWayCanvas();
+      mwAnimId = requestAnimationFrame(drawMilkyWayFrame);
+    }
+
+    function stopMilkyWayAnimation() {
+      if (mwAnimId) {
+        cancelAnimationFrame(mwAnimId);
+        mwAnimId = null;
+      }
+    }
+
+    // ==========================================
+    // 6. AMBIENT SOUND (WEB AUDIO API SYNTHESIS)
+    // ==========================================
+    let audioCtx = null;
+    let isAudioActive = false;
+    let masterGainNode = null;
+    let oscDrone1 = null;
+    let oscDrone2 = null;
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+
+        masterGainNode = audioCtx.createGain();
+        masterGainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+        masterGainNode.connect(audioCtx.destination);
+
+        // Sub-bass sine drone (55Hz A1)
+        oscDrone1 = audioCtx.createOscillator();
+        oscDrone1.type = "sine";
+        oscDrone1.frequency.setValueAtTime(55, audioCtx.currentTime);
+
+        // Fifth overtone sine (82.4Hz E2)
+        oscDrone2 = audioCtx.createOscillator();
+        oscDrone2.type = "sine";
+        oscDrone2.frequency.setValueAtTime(82.4, audioCtx.currentTime);
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(140, audioCtx.currentTime);
+
+        oscDrone1.connect(filter);
+        oscDrone2.connect(filter);
+        filter.connect(masterGainNode);
+
+        oscDrone1.start();
+        oscDrone2.start();
+      }
+    }
+
+    function toggleAmbientSound() {
+      initAudioContext();
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+
+      isAudioActive = !isAudioActive;
+      const now = audioCtx.currentTime;
+
+      if (isAudioActive) {
+        masterGainNode.gain.cancelScheduledValues(now);
+        masterGainNode.gain.linearRampToValueAtTime(0.18, now + 1.2);
+        showToast("Musik ambient antariksa: AKTIF");
+      } else {
+        masterGainNode.gain.cancelScheduledValues(now);
+        masterGainNode.gain.linearRampToValueAtTime(0, now + 0.8);
+        showToast("Musik ambient antariksa: BISU");
+      }
+
+      const iconName = isAudioActive ? "volume_up" : "volume_off";
+      const mainIcon = document.getElementById("soundIcon");
+      const fullIcon = document.getElementById("fullSoundIcon");
+      if (mainIcon) mainIcon.innerText = iconName;
+      if (fullIcon) fullIcon.innerText = iconName;
+    }
+
+    function playCosmicChime(freq = 440) {
+      if (!isAudioActive || !audioCtx) return;
+      try {
+        const chimeOsc = audioCtx.createOscillator();
+        const chimeGain = audioCtx.createGain();
+        chimeOsc.type = "sine";
+        chimeOsc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+        chimeGain.gain.setValueAtTime(0.07, audioCtx.currentTime);
+        chimeGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.1);
+
+        chimeOsc.connect(chimeGain);
+        chimeGain.connect(audioCtx.destination);
+
+        chimeOsc.start();
+        chimeOsc.stop(audioCtx.currentTime + 1.1);
+      } catch (e) {}
+    }
+
+    // ==========================================
+    // 5. CREATIVE SPACE LOADING SCREEN (WORMHOLE)
+    // ==========================================
+    function initSpaceLoader() {
+      const loaderCanvas = document.getElementById("loaderCanvas");
+      const loaderBar = document.getElementById("loaderBar");
+      const loaderStatus = document.getElementById("loaderStatus");
+      const spaceLoader = document.getElementById("spaceLoader");
+      if (!loaderCanvas || !spaceLoader) return;
+
+      const lCtx = loaderCanvas.getContext("2d");
+      let w = (loaderCanvas.width = window.innerWidth);
+      let h = (loaderCanvas.height = window.innerHeight);
+
+      window.addEventListener("resize", () => {
+        if (!spaceLoader.parentNode) return;
+        w = loaderCanvas.width = window.innerWidth;
+        h = loaderCanvas.height = window.innerHeight;
+      });
+
+      const warpStars = [];
+      for (let i = 0; i < 220; i++) {
+        warpStars.push({
+          x: (Math.random() - 0.5) * w * 2,
+          y: (Math.random() - 0.5) * h * 2,
+          z: Math.random() * 1000 + 10,
+          prevZ: 1000
+        });
+      }
+
+      let progress = 0;
+      const statusTexts = [
+        "Menghitung gravitasi kosmik tata surya...",
+        "Mengkalibrasi orbit 8 planet & revolusi...",
+        "Menghubungkan koordinat Lengan Orion Bima Sakti...",
+        "Menyiapkan visualisasi 3D planetarium...",
+        "Tata surya siap dijelajahi!"
+      ];
+
+      let lastStatusIdx = -1;
+      let animRunning = true;
+
+      function renderWarp() {
+        if (!animRunning) return;
+        lCtx.fillStyle = "rgba(4, 6, 10, 0.38)";
+        lCtx.fillRect(0, 0, w, h);
+
+        const cx = w / 2;
+        const cy = h / 2;
+
+        warpStars.forEach(s => {
+          s.prevZ = s.z;
+          s.z -= 18;
+          if (s.z <= 0) {
+            s.z = 1000;
+            s.prevZ = 1000;
+            s.x = (Math.random() - 0.5) * w * 2;
+            s.y = (Math.random() - 0.5) * h * 2;
+          }
+
+          const k = 400 / s.z;
+          const px = s.x * k + cx;
+          const py = s.y * k + cy;
+
+          const prevK = 400 / s.prevZ;
+          const prevX = s.x * prevK + cx;
+          const prevY = s.y * prevK + cy;
+
+          const alpha = Math.min(1, (1000 - s.z) / 400);
+          lCtx.strokeStyle = `rgba(168, 199, 250, ${alpha})`;
+          lCtx.lineWidth = Math.min(2.5, ((1000 - s.z) / 400) * 2);
+          lCtx.beginPath();
+          lCtx.moveTo(prevX, prevY);
+          lCtx.lineTo(px, py);
+          lCtx.stroke();
+        });
+
+        progress = Math.min(100, progress + 2.2);
+        loaderBar.style.width = `${progress}%`;
+
+        const statusIdx = Math.min(statusTexts.length - 1, Math.floor((progress / 100) * statusTexts.length));
+        if (statusIdx !== lastStatusIdx) {
+          lastStatusIdx = statusIdx;
+          loaderStatus.innerText = statusTexts[statusIdx];
+        }
+
+        if (progress >= 100) {
+          animRunning = false;
+          setTimeout(() => {
+            spaceLoader.style.opacity = "0";
+            spaceLoader.style.pointerEvents = "none";
+            setTimeout(() => spaceLoader.remove(), 600);
+          }, 250);
+          return;
+        }
+
+        requestAnimationFrame(renderWarp);
+      }
+
+      requestAnimationFrame(renderWarp);
+    }
+    initSpaceLoader();
+
+    // ==========================================
+    // 2. FITUR PERBANDINGAN SKALA RELATIF
+    // ==========================================
+    let currentScaleEarthCm = 6.7; // default: bola tenis 6.7 cm
+    let scaleCanvas = null;
+    let scaleCtx = null;
+    let scalePanOffset = 0;
+    let isScaleDragging = false;
+    let scaleDragStartX = 0;
+
+    const REAL_DATA = {
+      sun: { name: "Matahari", dKm: 1392700, color: "#FFA500" },
+      jupiter: { name: "Jupiter", dKm: 139820, color: "#FFA726" },
+      saturn: { name: "Saturnus", dKm: 116460, color: "#E3BB76" },
+      uranus: { name: "Uranus", dKm: 50724, color: "#80DEEA" },
+      neptune: { name: "Neptunus", dKm: 49244, color: "#29B6F6" },
+      earth: { name: "Bumi", dKm: 12742, color: "#4F86F7" },
+      venus: { name: "Venus", dKm: 12104, color: "#FFD54F" },
+      mars: { name: "Mars", dKm: 6779, color: "#FF5722" },
+      mercury: { name: "Merkurius", dKm: 4879, color: "#9E9E9E" },
+      moon: { name: "Bulan", dKm: 3474, color: "#ECEFF1" }
+    };
+
+    function getObjectAnalogy(sizeCm) {
+      if (sizeCm >= 500) return `Bola raksasa setinggi gedung (${(sizeCm/100).toFixed(1)} meter!)`;
+      if (sizeCm >= 100) return `Bola raksasa ${(sizeCm/100).toFixed(1)} meter`;
+      if (sizeCm >= 50) return `Bola yoga besar (${sizeCm.toFixed(1)} cm)`;
+      if (sizeCm >= 20) return `Bola basket / sepak (${sizeCm.toFixed(1)} cm)`;
+      if (sizeCm >= 10) return `Buah melon / semangka (${sizeCm.toFixed(1)} cm)`;
+      if (sizeCm >= 5) return `Bola tenis / buah apel (${sizeCm.toFixed(1)} cm)`;
+      if (sizeCm >= 3) return `Bola golf / telur ayam (${sizeCm.toFixed(1)} cm)`;
+      if (sizeCm >= 1.5) return `Kelereng / bola bekel (${sizeCm.toFixed(1)} cm)`;
+      if (sizeCm >= 0.5) return `Kacang polong (${(sizeCm * 10).toFixed(1)} mm)`;
+      return `Biji wijen / pasir (${(sizeCm * 10).toFixed(1)} mm)`;
+    }
+
+    function openScaleModal(targetPlanetId) {
+      document.getElementById("scaleModal").classList.remove("hidden");
+      renderScaleUI();
+      initScaleCanvas();
+    }
+
+    function closeScaleModal() {
+      document.getElementById("scaleModal").classList.add("hidden");
+    }
+
+    function setScalePreset(preset) {
+      document.querySelectorAll(".scale-preset-btn").forEach(btn => {
+        btn.classList.remove("border-[#4F86F7]", "bg-[#4F86F7]/20", "text-white");
+        btn.classList.add("border-[#2B3240]", "bg-[#161B26]", "text-[#C4C6D0]");
+      });
+      const activeBtn = document.getElementById(`preset-${preset}`);
+      if (activeBtn) {
+        activeBtn.classList.remove("border-[#2B3240]", "bg-[#161B26]", "text-[#C4C6D0]");
+        activeBtn.classList.add("border-[#4F86F7]", "bg-[#4F86F7]/20", "text-white");
+      }
+
+      if (preset === "tennis") currentScaleEarthCm = 6.7;
+      else if (preset === "marble") currentScaleEarthCm = 1.5;
+      else if (preset === "coin") currentScaleEarthCm = 2.5;
+      else if (preset === "basketball") currentScaleEarthCm = 24.0;
+
+      const slider = document.getElementById("scaleEarthSlider");
+      if (slider) slider.value = currentScaleEarthCm;
+      renderScaleUI();
+    }
+
+    function onScaleSliderChange(val) {
+      currentScaleEarthCm = parseFloat(val);
+      renderScaleUI();
+    }
+
+    function renderScaleUI() {
+      const customVal = document.getElementById("scaleCustomVal");
+      if (customVal) customVal.innerText = `${currentScaleEarthCm.toFixed(1)} cm`;
+
+      const k = currentScaleEarthCm / 12742;
+      const sunDiameterCm = 1392700 * k;
+      const distSunEarthMeters = (149600000 * k) / 100;
+      const distSunNeptuneKm = ((4500000000 * k) / 100) / 1000;
+
+      const distText = document.getElementById("scaleDistanceText");
+      if (distText) {
+        distText.innerHTML = `
+          Jika Bumi sebesar <strong>${currentScaleEarthCm.toFixed(1)} cm</strong> (${getObjectAnalogy(currentScaleEarthCm)}):
+          <br>&bull; Matahari adalah bola setinggi <strong>${(sunDiameterCm >= 100 ? (sunDiameterCm/100).toFixed(1) + ' meter' : sunDiameterCm.toFixed(1) + ' cm')}</strong> (${getObjectAnalogy(sunDiameterCm)}).
+          <br>&bull; Jarak Bumi ke Matahari adalah sejauh <strong>${distSunEarthMeters >= 1000 ? (distSunEarthMeters/1000).toFixed(2) + ' km' : Math.round(distSunEarthMeters) + ' meter'}</strong> (${Math.round(distSunEarthMeters / 105)} kali lapangan bola).
+          <br>&bull; Jarak Neptunus adalah sejauh <strong>${distSunNeptuneKm.toFixed(1)} kilometer</strong>!
+        `;
+      }
+
+      const grid = document.getElementById("scaleCardsGrid");
+      if (grid) {
+        grid.innerHTML = "";
+        const order = ["sun", "jupiter", "saturn", "uranus", "neptune", "earth", "venus", "mars", "mercury", "moon"];
+        order.forEach(id => {
+          const item = REAL_DATA[id];
+          const sizeCm = item.dKm * k;
+          const sizeStr = sizeCm >= 100 ? `${(sizeCm/100).toFixed(2)} m` : `${sizeCm.toFixed(2)} cm`;
+          const analogy = getObjectAnalogy(sizeCm);
+
+          const card = document.createElement("div");
+          card.className = "p-3 rounded-xl bg-[#181D29] border border-[#2B3240] flex items-center gap-3";
+          card.innerHTML = `
+            <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background: ${item.color}25; border: 1.5px solid ${item.color};">
+              <div class="w-3 h-3 rounded-full" style="background: ${item.color}"></div>
+            </div>
+            <div class="overflow-hidden flex-1">
+              <div class="flex justify-between items-center">
+                <span class="text-xs font-bold text-white">${item.name}</span>
+                <span class="text-xs font-mono font-semibold text-[#8AB4F8]">${sizeStr}</span>
+              </div>
+              <p class="text-[11px] text-[#919194] truncate mt-0.5">${analogy}</p>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      }
+
+      drawScaleCanvas();
+    }
+
+    function initScaleCanvas() {
+      scaleCanvas = document.getElementById("scaleComparisonCanvas");
+      if (!scaleCanvas) return;
+      scaleCtx = scaleCanvas.getContext("2d");
+
+      const rect = scaleCanvas.getBoundingClientRect();
+      scaleCanvas.width = rect.width * (window.devicePixelRatio || 1);
+      scaleCanvas.height = rect.height * (window.devicePixelRatio || 1);
+
+      scaleCanvas.onmousedown = (e) => {
+        isScaleDragging = true;
+        scaleDragStartX = e.clientX;
+      };
+      window.addEventListener("mousemove", (e) => {
+        if (isScaleDragging) {
+          scalePanOffset += (e.clientX - scaleDragStartX);
+          scaleDragStartX = e.clientX;
+          drawScaleCanvas();
+        }
+      });
+      window.addEventListener("mouseup", () => { isScaleDragging = false; });
+
+      scaleCanvas.ontouchstart = (e) => {
+        if (e.touches.length === 1) {
+          isScaleDragging = true;
+          scaleDragStartX = e.touches[0].clientX;
+        }
+      };
+      scaleCanvas.ontouchmove = (e) => {
+        if (isScaleDragging && e.touches.length === 1) {
+          scalePanOffset += (e.touches[0].clientX - scaleDragStartX);
+          scaleDragStartX = e.touches[0].clientX;
+          drawScaleCanvas();
+        }
+      };
+      scaleCanvas.ontouchend = () => { isScaleDragging = false; };
+
+      drawScaleCanvas();
+    }
+
+    function drawScaleCanvas() {
+      if (!scaleCanvas || !scaleCtx) return;
+      const w = scaleCanvas.width;
+      const h = scaleCanvas.height;
+      scaleCtx.clearRect(0, 0, w, h);
+
+      const baselineY = h * 0.70;
+      const earthPx = Math.max(8, (h * 0.12) * (currentScaleEarthCm / 6.7));
+      const kmToPx = earthPx / 12742;
+
+      scaleCtx.save();
+      scaleCtx.translate(scalePanOffset, 0);
+
+      let currentX = 40;
+
+      // Draw Sun on far left
+      const sunR = (1392700 / 2) * kmToPx;
+      scaleCtx.fillStyle = "#FFA500";
+      scaleCtx.shadowColor = "#FFD600";
+      scaleCtx.shadowBlur = 18;
+      scaleCtx.beginPath();
+      scaleCtx.arc(currentX + sunR, baselineY, sunR, 0, Math.PI * 2);
+      scaleCtx.fill();
+      scaleCtx.shadowBlur = 0;
+
+      scaleCtx.fillStyle = "#FFFFFF";
+      scaleCtx.font = "bold 12px 'Plus Jakarta Sans', sans-serif";
+      scaleCtx.textAlign = "center";
+      scaleCtx.fillText("Matahari", currentX + sunR, baselineY + 22);
+
+      currentX += (sunR * 2) + 50;
+
+      // Draw 8 Planets
+      const planetsList = ["mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune"];
+      planetsList.forEach(id => {
+        const p = REAL_DATA[id];
+        const r = Math.max(2, (p.dKm / 2) * kmToPx);
+
+        scaleCtx.fillStyle = p.color;
+        scaleCtx.beginPath();
+        scaleCtx.arc(currentX + r, baselineY, r, 0, Math.PI * 2);
+        scaleCtx.fill();
+
+        if (id === "saturn") {
+          scaleCtx.strokeStyle = "rgba(255, 249, 196, 0.4)";
+          scaleCtx.lineWidth = 3;
+          scaleCtx.beginPath();
+          scaleCtx.ellipse(currentX + r, baselineY, r * 2.2, r * 0.5, -0.2, 0, Math.PI * 2);
+          scaleCtx.stroke();
+        }
+
+        scaleCtx.fillStyle = "#C4C6D0";
+        scaleCtx.font = "11px 'Plus Jakarta Sans', sans-serif";
+        scaleCtx.textAlign = "center";
+        scaleCtx.fillText(p.name, currentX + r, baselineY + 20);
+
+        currentX += (r * 2) + 40;
+      });
+
+      scaleCtx.restore();
+    }
+
+    // ==========================================
+    // 3. MODE QUIZ / TRIVIA & SERTIFIKAT KOSMIK
+    // ==========================================
+    const QUIZ_BANK = [
+      {
+        q: "Planet manakah yang merupakan planet terpanas di tata surya kita?",
+        options: ["Merkurius", "Venus", "Mars", "Jupiter"],
+        correct: 1,
+        exp: "Venus adalah planet terpanas (465°C) akibat efek rumah kaca tak terkendali dari atmosfer karbon dioksida pekatnya, melebihi Merkurius meski Merkurius lebih dekat ke Matahari."
+      },
+      {
+        q: "Gunung berapi perisai tertinggi di seluruh tata surya bernama Olympus Mons terletak di planet apa?",
+        options: ["Bumi", "Venus", "Mars", "Merkurius"],
+        correct: 2,
+        exp: "Olympus Mons terletak di Mars dan memiliki tinggi sekitar 22 km (hampir 3 kali tinggi Gunung Everest di Bumi)."
+      },
+      {
+        q: "Bintik Merah Raksasa (Great Red Spot) yang telah mengamuk selama ratusan tahun berada di planet apa?",
+        options: ["Jupiter", "Saturnus", "Neptunus", "Matahari"],
+        correct: 0,
+        exp: "Great Red Spot adalah badai antisiklon raksasa di atmosfer Jupiter yang ukurannya lebih besar daripada diameter seluruh planet Bumi."
+      },
+      {
+        q: "Planet manakah yang sumbu rotasinya miring ekstrem (98°) sehingga tampak menggelinding di orbitnya?",
+        options: ["Saturnus", "Neptunus", "Uranus", "Merkurius"],
+        correct: 2,
+        exp: "Uranus memiliki kemiringan sumbu putar unik 97,8 derajat, membuat kutub-kutubnya menghadap ke Matahari secara bergantian selama 42 tahun siang dan 42 tahun malam."
+      },
+      {
+        q: "Sebagian besar cincin megah planet Saturnus tersusun dari material apa?",
+        options: ["Gas helium cair", "Pecahan es air murni dan batuan", "Logam besi panas", "Debu vulkanik"],
+        correct: 1,
+        exp: "Cincin Saturnus tersusun dari 99% pecahan es air murni berukuran mulai dari butiran kecil hingga sebesar bongkahan batu besar, dengan ketebalan hanya sekitar 10 meter."
+      },
+      {
+        q: "Mengapa satu hari di Venus lebih lama daripada satu tahunnya?",
+        options: [
+          "Karena jarak Venus sangat jauh dari Matahari",
+          "Karena rotasinya sangat lambat (243 hari Bumi) sedangkan revolusinya 224,7 hari",
+          "Karena Venus tidak berotasi sama sekali",
+          "Karena gravitasi Matahari menghentikan putaran planet"
+        ],
+        correct: 1,
+        exp: "Venus berotasi sangat lambat membutuhkan 243 hari Bumi, sementara waktu yang dibutuhkan untuk sekali mengitari Matahari hanya 224,7 hari Bumi."
+      },
+      {
+        q: "Planet manakah yang tercatat memiliki kecepatan hembusan angin badai tercepat di tata surya (>2.100 km/jam)?",
+        options: ["Jupiter", "Mars", "Uranus", "Neptunus"],
+        correct: 3,
+        exp: "Neptunus memiliki hembusan angin badai supersonik tercepat di tata surya mencapai lebih dari 2.100 km/jam (1,7 kali kecepatan suara)."
+      },
+      {
+        q: "Bulan terbesar di tata surya, Ganymede (satelit Jupiter), berukuran lebih besar daripada planet apa?",
+        options: ["Mars", "Bumi", "Merkurius", "Venus"],
+        correct: 2,
+        exp: "Ganymede memiliki diameter 5.268 km, menjadikannya lebih besar daripada planet Merkurius (4.879 km) dan planet kerdil Pluto."
+      }
+    ];
+
+    let activeQuestions = [];
+    let currentQuizIdx = 0;
+    let quizScore = 0;
+    let quizAnswered = false;
+
+    function openQuizModal() {
+      document.getElementById("quizModal").classList.remove("hidden");
+      restartQuiz();
+    }
+
+    function closeQuizModal() {
+      document.getElementById("quizModal").classList.add("hidden");
+    }
+
+    function restartQuiz() {
+      activeQuestions = [...QUIZ_BANK].sort(() => Math.random() - 0.5).slice(0, 5);
+      currentQuizIdx = 0;
+      quizScore = 0;
+      quizAnswered = false;
+
+      document.getElementById("quizActiveView").classList.remove("hidden");
+      document.getElementById("quizCompleteView").classList.add("hidden");
+      renderQuizQuestion();
+    }
+
+    function renderQuizQuestion() {
+      quizAnswered = false;
+      const qData = activeQuestions[currentQuizIdx];
+
+      document.getElementById("quizProgressText").innerText = `Soal ${currentQuizIdx + 1} dari ${activeQuestions.length}`;
+      document.getElementById("quizProgressBar").style.width = `${((currentQuizIdx + 1) / activeQuestions.length) * 100}%`;
+      document.getElementById("quizScoreTracker").innerText = `Skor: ${quizScore}`;
+      document.getElementById("quizQuestionText").innerText = qData.q;
+
+      const feedbackBox = document.getElementById("quizFeedbackBox");
+      feedbackBox.classList.add("hidden");
+
+      const nextBtn = document.getElementById("quizNextBtn");
+      nextBtn.disabled = true;
+      nextBtn.innerText = currentQuizIdx === activeQuestions.length - 1 ? "Lihat Hasil & Sertifikat" : "Lanjut ke Soal Berikutnya";
+
+      const optionsContainer = document.getElementById("quizOptionsContainer");
+      optionsContainer.innerHTML = "";
+
+      qData.options.forEach((opt, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "quiz-opt-btn w-full p-3.5 rounded-xl bg-[#181D29] border border-[#2D3342] text-white text-xs font-semibold text-left hover:border-[#4F86F7] hover:bg-[#1E2536] transition-all cursor-pointer flex items-center justify-between";
+        btn.innerHTML = `<span>${String.fromCharCode(65 + idx)}. ${opt}</span><span class="opt-icon material-symbols-outlined text-[16px] opacity-0">check_circle</span>`;
+        btn.onclick = () => selectQuizAnswer(idx);
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function selectQuizAnswer(selectedIndex) {
+      if (quizAnswered) return;
+      quizAnswered = true;
+
+      const qData = activeQuestions[currentQuizIdx];
+      const isCorrect = selectedIndex === qData.correct;
+      if (isCorrect) quizScore++;
+
+      const optButtons = document.querySelectorAll(".quiz-opt-btn");
+      optButtons.forEach((btn, idx) => {
+        btn.onclick = null;
+        const icon = btn.querySelector(".opt-icon");
+        if (idx === qData.correct) {
+          btn.classList.remove("bg-[#181D29]", "border-[#2D3342]");
+          btn.classList.add("bg-emerald-500/20", "border-emerald-500", "text-emerald-300");
+          icon.innerText = "check_circle";
+          icon.classList.remove("opacity-0");
+          icon.classList.add("text-emerald-400");
+        } else if (idx === selectedIndex && !isCorrect) {
+          btn.classList.remove("bg-[#181D29]", "border-[#2D3342]");
+          btn.classList.add("bg-rose-500/20", "border-rose-500", "text-rose-300");
+          icon.innerText = "cancel";
+          icon.classList.remove("opacity-0");
+          icon.classList.add("text-rose-400");
+        } else {
+          btn.classList.add("opacity-50");
+        }
+      });
+
+      const feedbackBox = document.getElementById("quizFeedbackBox");
+      feedbackBox.classList.remove("hidden");
+      if (isCorrect) {
+        feedbackBox.className = "p-3.5 rounded-2xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 text-xs leading-relaxed";
+        feedbackBox.innerHTML = `<strong>Benar!</strong> ${qData.exp}`;
+      } else {
+        feedbackBox.className = "p-3.5 rounded-2xl border border-rose-500/40 bg-rose-500/10 text-rose-200 text-xs leading-relaxed";
+        feedbackBox.innerHTML = `<strong>Kurang tepat.</strong> ${qData.exp}`;
+      }
+
+      document.getElementById("quizScoreTracker").innerText = `Skor: ${quizScore}`;
+      document.getElementById("quizNextBtn").disabled = false;
+    }
+
+    function onQuizNext() {
+      if (currentQuizIdx < activeQuestions.length - 1) {
+        currentQuizIdx++;
+        renderQuizQuestion();
+      } else {
+        showQuizCompletion();
+      }
+    }
+
+    function showQuizCompletion() {
+      document.getElementById("quizActiveView").classList.add("hidden");
+      document.getElementById("quizCompleteView").classList.remove("hidden");
+
+      document.getElementById("quizFinalResultText").innerText = `Kamu berhasil menjawab ${quizScore} dari ${activeQuestions.length} soal dengan benar!`;
+
+      let rank = "PENJELAJAH BINTANG TANGGUH";
+      if (quizScore === 5) rank = "KOMANDAN KOSMIK TATA SURYA";
+      else if (quizScore >= 4) rank = "ASTRONOM AHLI BIMA SAKTI";
+      else if (quizScore >= 3) rank = "PENGAMAT LANGIT MUDA";
+
+      document.getElementById("certRankBadge").innerText = `PANGKAT: ${rank}`;
+
+      const d = new Date();
+      const dateStr = d.toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" });
+      document.getElementById("certDateText").innerText = dateStr;
+    }
+
+    function updateCertificateName() {
+      const nameVal = document.getElementById("certNameInput").value.trim() || "Penjelajah Kosmik";
+      document.getElementById("certDisplayName").innerText = nameVal;
+      showToast("Nama sertifikat diperbarui!");
+    }
+
+    function downloadCertificatePNG() {
+      const name = document.getElementById("certDisplayName").innerText || "Penjelajah Kosmik";
+      const rank = document.getElementById("certRankBadge").innerText;
+      const dateStr = document.getElementById("certDateText").innerText;
+
+      const c = document.createElement("canvas");
+      c.width = 1200;
+      c.height = 850;
+      const ctx = c.getContext("2d");
+
+      // Deep galaxy background gradient
+      const bgGrad = ctx.createLinearGradient(0, 0, 1200, 850);
+      bgGrad.addColorStop(0, "#080B14");
+      bgGrad.addColorStop(0.5, "#10162A");
+      bgGrad.addColorStop(1, "#080B14");
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 1200, 850);
+
+      // Stars
+      for (let i = 0; i < 180; i++) {
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.7 + 0.2})`;
+        ctx.beginPath();
+        ctx.arc(Math.random() * 1200, Math.random() * 850, Math.random() * 1.8 + 0.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Golden outer border
+      ctx.strokeStyle = "#FFD600";
+      ctx.lineWidth = 6;
+      ctx.strokeRect(30, 30, 1140, 790);
+
+      // Inner border
+      ctx.strokeStyle = "rgba(255, 214, 0, 0.4)";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(45, 45, 1110, 760);
+
+      // Corner Ornaments
+      const drawCorner = (x, y, dx, dy) => {
+        ctx.strokeStyle = "#FFD600";
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(x, y + (dy * 35));
+        ctx.lineTo(x, y);
+        ctx.lineTo(x + (dx * 35), y);
+        ctx.stroke();
+      };
+      drawCorner(55, 55, 1, 1);
+      drawCorner(1145, 55, -1, 1);
+      drawCorner(55, 795, 1, -1);
+      drawCorner(1145, 795, -1, -1);
+
+      // Header Title
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#FFD54F";
+      ctx.font = "bold 16px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText("PLANETARIUM MINI • TATA SURYA INTERAKTIF", 600, 110);
+
+      ctx.fillStyle = "#FFFFFF";
+      ctx.font = "900 36px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText("SERTIFIKAT PENJELAJAH LUAR ANGKASA", 600, 165);
+
+      // Divider
+      ctx.fillStyle = "#FFD600";
+      ctx.fillRect(480, 190, 240, 3);
+
+      // Recipient info
+      ctx.fillStyle = "#A8C7FA";
+      ctx.font = "500 18px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText("Diberikan secara resmi dan terverifikasi kepada:", 600, 270);
+
+      ctx.fillStyle = "#FFD54F";
+      ctx.font = "800 46px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText(name, 600, 340);
+
+      ctx.fillStyle = "#E2E2E6";
+      ctx.font = "400 20px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText("Telah membuktikan kecakapan astrofisika kosmik dengan menyelesaikan", 600, 410);
+      ctx.fillText(`misi eksplorasi 8 planet tata surya (Skor: ${quizScore}/5).`, 600, 445);
+
+      // Rank Pill
+      ctx.fillStyle = "rgba(79, 134, 247, 0.2)";
+      ctx.beginPath();
+      ctx.roundRect(360, 495, 480, 50, 25);
+      ctx.fill();
+      ctx.strokeStyle = "#4F86F7";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = "#A8C7FA";
+      ctx.font = "bold 18px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText(rank, 600, 527);
+
+      // Footer
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+      ctx.beginPath();
+      ctx.moveTo(100, 670);
+      ctx.lineTo(1100, 670);
+      ctx.stroke();
+
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#919194";
+      ctx.font = "500 15px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText(`Tanggal: ${dateStr}`, 100, 715);
+      ctx.fillText("Lokasi: Lengan Orion, Bima Sakti", 100, 742);
+
+      ctx.textAlign = "right";
+      ctx.fillStyle = "#4ADE80";
+      ctx.fillText("Status: TERVERIFIKASI SAH", 1100, 715);
+      ctx.fillStyle = "#FFD54F";
+      ctx.fillText("Tata Surya Interaktif", 1100, 742);
+
+      const link = document.createElement("a");
+      link.download = `Sertifikat_Penjelajah_Antariksa_${name.replace(/\s+/g, '_')}.png`;
+      link.href = c.toDataURL("image/png");
+      link.click();
+      showToast("Sertifikat berhasil diunduh (PNG)!");
+    }
+
+    // ==========================================
+    // 4. TOMBOL SHARE & DEEP LINKING
+    // ==========================================
+    let currentSharePlanet = null;
+
+    function shareCurrentPlanet() {
+      currentSharePlanet = fullPlanet || PLANETS.find(p => p.id === "earth");
+      const planetName = currentSharePlanet.name;
+      const funFact = currentSharePlanet.funFact || currentSharePlanet.tagline;
+      const shareUrl = `${window.location.origin}${window.location.pathname}#${currentSharePlanet.id}`;
+      const shareText = `Jelajahi keindahan dan fakta ilmiah ${planetName} di Planetarium Mini! Fakta unik: ${funFact}`;
+
+      if (navigator.share) {
+        navigator.share({
+          title: `Planetarium Mini - ${planetName}`,
+          text: shareText,
+          url: shareUrl
+        }).catch(() => {});
+      } else {
+        document.getElementById("sharePlanetName").innerText = planetName;
+        document.getElementById("sharePlanetFact").innerText = funFact;
+        document.getElementById("sharePlanetDot").style.background = currentSharePlanet.color;
+        document.getElementById("shareModal").classList.remove("hidden");
+      }
+    }
+
+    function closeShareModal() {
+      document.getElementById("shareModal").classList.add("hidden");
+    }
+
+    function shareViaWhatsApp() {
+      if (!currentSharePlanet) return;
+      const text = `Jelajahi ${currentSharePlanet.name} di Planetarium Mini! ${currentSharePlanet.funFact}\n\nKunjungi: ${window.location.origin}${window.location.pathname}#${currentSharePlanet.id}`;
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+    }
+
+    function shareViaTwitter() {
+      if (!currentSharePlanet) return;
+      const text = `Jelajahi ${currentSharePlanet.name} di Planetarium Mini! ${currentSharePlanet.funFact}`;
+      const url = `${window.location.origin}${window.location.pathname}#${currentSharePlanet.id}`;
+      window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank");
+    }
+
+    function copyShareLink() {
+      if (!currentSharePlanet) return;
+      const shareUrl = `${window.location.origin}${window.location.pathname}#${currentSharePlanet.id}`;
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        showToast("Tautan berhasil disalin ke papan klip!");
+        const btnText = document.getElementById("copyLinkBtnText");
+        if (btnText) {
+          btnText.innerText = "Tautan Disalin!";
+          setTimeout(() => btnText.innerText = "Salin Tautan Langsung", 2000);
+        }
+      }).catch(() => {
+        showToast("Gagal menyalin tautan.");
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toastNotification");
+      const toastMsg = document.getElementById("toastMessage");
+      if (!toast || !toastMsg) return;
+      toastMsg.innerText = msg;
+      toast.style.opacity = "1";
+      toast.style.transform = "translate(-50%, -8px)";
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translate(-50%, 0)";
+      }, 2600);
+    }
+
+    // URL Hash deep link routing
+    window.addEventListener("hashchange", checkUrlHash);
+    function checkUrlHash() {
+      const hash = window.location.hash.replace("#", "").toLowerCase();
+      if (!hash) return;
+      const matched = PLANETS.find(p => p.id.toLowerCase() === hash);
+      if (matched) {
+        selectPlanet(matched);
+      }
+    }
+    // Check on startup
+    setTimeout(checkUrlHash, 600);
   </script>
 </body>
 </html>

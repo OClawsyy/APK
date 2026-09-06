@@ -1,6 +1,6 @@
 {
-  "name": "Planetarium Interaktif",
-  "description": "Planetarium edukasi tata surya interaktif visual untuk Gen Z dengan animasi orbit real-time dan eksplorasi planet",
+  "name": "Planetarium Mini",
+  "description": "Simulasi tata surya interaktif dengan data ilmiah akurat, visualisasi perbandingan skala, kuis astronomi dengan sertifikat, pemutar ambient space sound, dan animasi galaksi Bima Sakti.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

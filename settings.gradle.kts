@@ -22,7 +22,7 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "Planetarium"
+rootProject.name = "Planetarium Mini"
 
 
 include(":app")
