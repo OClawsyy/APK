@@ -76,6 +76,47 @@
       background-size: 200% 100%;
       animation: skeleton-shimmer 1.5s infinite;
     }
+
+    /* Gen-Z Compare Smooth Transitions & Animations */
+    @keyframes compareFadeSlide {
+      0% {
+        opacity: 0;
+        transform: translateY(14px) scale(0.98);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .compare-animate-in {
+      animation: compareFadeSlide 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes pulseCorona {
+      0%, 100% {
+        box-shadow: 0 0 25px rgba(255, 165, 0, 0.6), 0 0 60px rgba(255, 87, 34, 0.35);
+        transform: scale(1);
+      }
+      50% {
+        box-shadow: 0 0 50px rgba(255, 165, 0, 0.9), 0 0 90px rgba(255, 87, 34, 0.6);
+        transform: scale(1.03);
+      }
+    }
+    .corona-pulse {
+      animation: pulseCorona 3.5s ease-in-out infinite;
+    }
+
+    .sphere-smooth {
+      transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.6s ease,
+                  background 0.6s ease,
+                  transform 0.6s ease;
+    }
+
+    .meter-fill-smooth {
+      transition: width 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
   </style>
 </head>
 <body class="h-screen w-screen relative flex flex-col bg-[#070A10]">
@@ -813,6 +854,22 @@
             <!-- Injected via JS -->
           </select>
         </div>
+      </div>
+
+      <!-- Gen-Z Interactive Tab Switcher -->
+      <div class="px-4 py-2.5 bg-[#101420] border-b border-white/10 flex items-center justify-center gap-1.5 md:gap-3 flex-wrap">
+        <button id="compareTabBtn-duel" onclick="setCompareTab('duel')" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer bg-gradient-to-r from-[#4F86F7] to-[#80DEEA] text-white shadow-lg shadow-[#4F86F7]/25">
+          <span class="material-symbols-outlined text-[16px]">sports_martial_arts</span>
+          <span>Duel & Bar Visual</span>
+        </button>
+        <button id="compareTabBtn-specs" onclick="setCompareTab('specs')" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer bg-white/5 text-[#C4C6D0] hover:bg-white/10 hover:text-white border border-white/10">
+          <span class="material-symbols-outlined text-[16px]">science</span>
+          <span>Spek Fisika & Orbit</span>
+        </button>
+        <button id="compareTabBtn-survival" onclick="setCompareTab('survival')" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer bg-white/5 text-[#C4C6D0] hover:bg-white/10 hover:text-white border border-white/10">
+          <span class="material-symbols-outlined text-[16px]">rocket_launch</span>
+          <span>Survival & Fakta Gokil</span>
+        </button>
       </div>
 
       <!-- Comparison Dynamic Body -->
@@ -5245,10 +5302,197 @@
     }
 
     // ==========================================
-    // 7. COMPARE MODE (PERBANDINGAN 2 PLANET)
+    // 7. COMPARE MODE (PERBANDINGAN 2 PLANET - GEN Z SMOOTH & PROPORTIONAL)
     // ==========================================
     let comparePlanetA = "earth";
     let comparePlanetB = "mars";
+    let currentCompareTab = "duel"; // 'duel', 'specs', 'survival'
+
+    // Real physical specifications for comparisons and duel meters
+    const CELESTIAL_SPECS = {
+      sun: {
+        name: "Matahari",
+        diameterKm: 1392700,
+        gravityMs2: 274.0,
+        gRatio: 27.93,
+        tempC: 5500,
+        tempMinC: 5500,
+        tempMaxC: 15000000,
+        rotationHours: 600,
+        jumpCm: 1.8,
+        survivalSec: "< 0,001 detik (Langsung lenyap teruapkan)",
+        survivalReason: "Suhu fotosfer 5.500°C membakar seketika sebelum menyentuh partikel gas.",
+        skyVibe: "Cahaya mahadahsyat tanpa langit; seluruh pandangan adalah lautan plasma membara!",
+        genZVerdict: "Pusat pembangkit listrik tata surya bertenaga fusi nuklir 4 juta ton hidrogen per detik!",
+        highlight: "109× diameter Bumi & memuat 1,3 juta bola Bumi di dalamnya!"
+      },
+      mercury: {
+        name: "Merkurius",
+        diameterKm: 4879,
+        gravityMs2: 3.7,
+        gRatio: 0.38,
+        tempC: 167,
+        tempMinC: -180,
+        tempMaxC: 430,
+        rotationHours: 1407.6,
+        jumpCm: 132,
+        survivalSec: "< 90 detik (Panggang atau beku seketika)",
+        survivalReason: "Ketiadaan atmosfer membuat darah mendidih di siang hari (+430°C) atau membeku instan di malam hari (-180°C).",
+        skyVibe: "Langit hitam legam bertabur bintang di siang bolong; Matahari tampak 3× lebih raksasa!",
+        genZVerdict: "Planet paling ngebut keliling orbit (88 hari), tapi muter badannya malas banget (1 hari = 2 bulan Bumi)!",
+        highlight: "Inti besinya mencakup 85% jari-jari planet—seperti bola peluru raksasa!"
+      },
+      venus: {
+        name: "Venus",
+        diameterKm: 12104,
+        gravityMs2: 8.87,
+        gRatio: 0.90,
+        tempC: 465,
+        tempMinC: 460,
+        tempMaxC: 475,
+        rotationHours: 5832,
+        jumpCm: 55,
+        survivalSec: "< 1 detik (Gepeng & terpanggang)",
+        survivalReason: "Tekanan atmosfer 92 atm setara kedalaman 900m bawah laut Bumi; timah langsung meleleh!",
+        skyVibe: "Langit kuning tembaga beracun tertutup kabut asam sulfat; Matahari terbit di barat!",
+        genZVerdict: "Kembaran jahat Bumi dengan efek rumah kaca terparah di seluruh tata surya!",
+        highlight: "Berputar mundur (retrograde) dan 1 harinya lebih panjang dari 1 tahunnya!"
+      },
+      earth: {
+        name: "Bumi",
+        diameterKm: 12742,
+        gravityMs2: 9.81,
+        gRatio: 1.00,
+        tempC: 15,
+        tempMinC: -89,
+        tempMaxC: 57,
+        rotationHours: 23.93,
+        jumpCm: 50,
+        survivalSec: "Seumur hidup (Habitat sempurna)",
+        survivalReason: "Atmosfer 21% Oksigen, tekanan 1 atm seimbang, dan air tawar melimpah.",
+        skyVibe: "Langit biru cerah, awan putih halus, aurora megah, dan pelangi sehabis hujan!",
+        genZVerdict: "Satu-satunya surga kosmik yang punya oksigen sejuk, air cair, internet, dan kopi enak!",
+        highlight: "Dilindungi sabuk radiasi magnetosfer Van Allen dari badai angin matahari berkecepatan tinggi!"
+      },
+      moon: {
+        name: "Bulan (Luna)",
+        diameterKm: 3475,
+        gravityMs2: 1.62,
+        gRatio: 0.166,
+        tempC: -20,
+        tempMinC: -130,
+        tempMaxC: 120,
+        rotationHours: 655.7,
+        jumpCm: 301,
+        survivalSec: "< 15 detik (Ruang hampa udara)",
+        survivalReason: "Paru-paru kolaps karena dekompresi hampa udara seketika dan radiasi kosmik mentah.",
+        skyVibe: "Bumi terbit anggun berwarna biru-putih di atas cakrawala abu-abu berbatu tanpa suara!",
+        genZVerdict: "Taman bermain anti-gravitasi! Sekali hentakan kaki, kamu melompat setinggi atap rumah 3 meter!",
+        highlight: "Jejak kaki astronaut Apollo akan abadi jutaan tahun karena ketiadaan angin dan hujan!"
+      },
+      mars: {
+        name: "Mars",
+        diameterKm: 6779,
+        gravityMs2: 3.72,
+        gRatio: 0.38,
+        tempC: -63,
+        tempMinC: -140,
+        tempMaxC: 20,
+        rotationHours: 24.62,
+        jumpCm: 132,
+        survivalSec: "< 20 detik (Hipoksia & suhu beku)",
+        survivalReason: "Atmosfer 95% CO₂ super tipis (0,6% tekanan Bumi) membuat cairan tubuh mendidih dingin (titik Armstrong).",
+        skyVibe: "Langit siang berwarna mentega oranye kemerahan, tapi saat senja sunset berubah menjadi biru safir magis!",
+        genZVerdict: "Kandidat koloni impian manusia: ada ngarai 10× Grand Canyon & gunung 3× Gunung Everest!",
+        highlight: "Memiliki Olympus Mons setinggi 21,9 km dan endapan es air tebal di bawah kutubnya!"
+      },
+      jupiter: {
+        name: "Jupiter",
+        diameterKm: 139820,
+        gravityMs2: 24.79,
+        gRatio: 2.53,
+        tempC: -110,
+        tempMinC: -145,
+        tempMaxC: 24000,
+        rotationHours: 9.92,
+        jumpCm: 20,
+        survivalSec: "< 0,1 detik (Tergencet gravitasi & tersambar badai petir)",
+        survivalReason: "Tak ada pijakan padat; kamu akan jatuh bebas menembus lapisan gas hidrogen metalik yang meremukkan kapal selam baja.",
+        skyVibe: "Pusaran awan bergaris liar bergerak berlawanan arah dengan sambaran petir ribuan kali lebih dahsyat dari Bumi!",
+        genZVerdict: "Bodyguard raksasa Bumi! Gravitasi monsternya menyedot komet nyasar agar tak menabrak kita!",
+        highlight: "Bintik Merah Raksasa adalah badai antiklon berumur 350+ tahun yang ukurannya lebih lebar dari Bumi!"
+      },
+      saturn: {
+        name: "Saturnus",
+        diameterKm: 116460,
+        gravityMs2: 10.44,
+        gRatio: 1.06,
+        tempC: -140,
+        tempMinC: -178,
+        tempMaxC: 11700,
+        rotationHours: 10.55,
+        jumpCm: 47,
+        survivalSec: "< 0,1 detik (Terhisap ke lautan fluida panas)",
+        survivalReason: "Tanpa daratan padat, tekanan hidrogen mematikan meningkat tajam tiap kilometer ke dalam.",
+        skyVibe: "Cincin es berkilauan selebar 282.000 km melengkung membelah angkasa bagai mahkota permata raksasa!",
+        genZVerdict: "Perhiasan paling fotogenik di tata surya! Saking ringannya densitasnya, Saturnus bisa mengapung di bak mandi raksasa!",
+        highlight: "Cincinnya tersusun dari 99% partikel es air murni mulai seukuran debu hingga sebesar rumah!"
+      },
+      uranus: {
+        name: "Uranus",
+        diameterKm: 50724,
+        gravityMs2: 8.69,
+        gRatio: 0.89,
+        tempC: -195,
+        tempMinC: -224,
+        tempMaxC: 5000,
+        rotationHours: 17.24,
+        jumpCm: 56,
+        survivalSec: "< 0,1 detik (Super beku membeku instan)",
+        survivalReason: "Atmosfer terdingin di seluruh tata surya (-224°C) dengan gas metana dan amonia beracun.",
+        skyVibe: "Kabut cyan es pucat tanpa fitur awan jelas; Matahari tampak redup seperti bintang terang kecil.",
+        genZVerdict: "Planet paling 'santuy' yang mengorbit miring rebahan 98° akibat pernah ditabrak protoplanet purba!",
+        highlight: "Kutub utara dan selatannya bergantian menghadap Matahari selama 42 tahun terus-menerus!"
+      },
+      neptune: {
+        name: "Neptunus",
+        diameterKm: 49244,
+        gravityMs2: 11.15,
+        gRatio: 1.14,
+        tempC: -201,
+        tempMinC: -218,
+        tempMaxC: 7000,
+        rotationHours: 16.11,
+        jumpCm: 44,
+        survivalSec: "< 0,1 detik (Tercabik angin badai supersonik)",
+        survivalReason: "Angin badai supersonik 2.160 km/jam langsung merobek apapun dalam sekejap mata.",
+        skyVibe: "Langit biru kobalt pekat dengan lintasan awan es putih melesat secepat peluru jet supersonik!",
+        genZVerdict: "Raja angin supersonik tercepat di galaksi; para ilmuwan menduga di dalamnya turun hujan berlian berkilau!",
+        highlight: "Planet terjauh di tata surya; butuh lebih dari 164 tahun untuk sekali mengelilingi Matahari!"
+      }
+    };
+
+    function playUiSwoosh() {
+      try {
+        if (!audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioContextClass();
+        }
+        if (audioCtx.state === "suspended") audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.type = "sine";
+        const now = audioCtx.currentTime;
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.exponentialRampToValueAtTime(780, now + 0.12);
+        g.gain.setValueAtTime(0.04, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc.connect(g);
+        g.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.12);
+      } catch (e) {}
+    }
 
     function getAllCompareObjects() {
       return [
@@ -5269,6 +5513,24 @@
       document.getElementById("compareModal").classList.add("hidden");
     }
 
+    function setCompareTab(tab) {
+      currentCompareTab = tab;
+      playUiSwoosh();
+      // Update Tab Buttons UI
+      const tabs = ['duel', 'specs', 'survival'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`compareTabBtn-${t}`);
+        if (btn) {
+          if (t === tab) {
+            btn.className = "flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer bg-gradient-to-r from-[#4F86F7] to-[#80DEEA] text-white shadow-lg shadow-[#4F86F7]/25";
+          } else {
+            btn.className = "flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer bg-white/5 text-[#C4C6D0] hover:bg-white/10 hover:text-white border border-white/10";
+          }
+        }
+      });
+      updateCompareUI();
+    }
+
     function populateCompareSelectors() {
       const all = getAllCompareObjects();
       const selA = document.getElementById("compareSelectA");
@@ -5280,11 +5542,78 @@
     }
 
     function swapComparePlanets() {
+      playUiSwoosh();
       const tmp = comparePlanetA;
       comparePlanetA = comparePlanetB;
       comparePlanetB = tmp;
       populateCompareSelectors();
       updateCompareUI();
+    }
+
+    // Proportional sphere scaling calculation
+    function calculateProportionalSphereSizes(idA, idB) {
+      const specA = CELESTIAL_SPECS[idA] || { diameterKm: 10000 };
+      const specB = CELESTIAL_SPECS[idB] || { diameterKm: 10000 };
+      const kmA = specA.diameterKm;
+      const kmB = specB.diameterKm;
+
+      const ratio = kmA / kmB;
+      let sizeA, sizeB;
+
+      if (idA === "sun" || idB === "sun") {
+        // Sun is enormous (109x Earth), cap visually so container doesn't break
+        if (idA === "sun") {
+          sizeA = 126;
+          sizeB = Math.max(26, Math.min(65, Math.round(126 * Math.pow(kmB / kmA, 0.38))));
+        } else {
+          sizeB = 126;
+          sizeA = Math.max(26, Math.min(65, Math.round(126 * Math.pow(kmA / kmB, 0.38))));
+        }
+      } else {
+        // Planetary scaling: power curve 0.65 provides realistic differentiation:
+        // E.g. Moon (3,475 km) vs Mars (6,779 km) -> ratio 1.95x -> Moon 46px, Mars 86px!
+        // E.g. Earth vs Jupiter -> Earth 30px, Jupiter 120px!
+        const base = 82;
+        if (ratio >= 1) {
+          const visualFactor = Math.min(3.8, Math.pow(ratio, 0.62));
+          sizeA = Math.min(124, Math.round(base * Math.sqrt(visualFactor)));
+          sizeB = Math.max(28, Math.round(sizeA / visualFactor));
+        } else {
+          const visualFactor = Math.min(3.8, Math.pow(1 / ratio, 0.62));
+          sizeB = Math.min(124, Math.round(base * Math.sqrt(visualFactor)));
+          sizeA = Math.max(28, Math.round(sizeB / visualFactor));
+        }
+      }
+
+      return { sizeA, sizeB, ratio, kmA, kmB };
+    }
+
+    function renderSphereDecorations(obj, size) {
+      if (obj.id === "saturn") {
+        const ringW = Math.round(size * 2.1);
+        const ringH = Math.round(size * 0.58);
+        return `
+          <div class="absolute pointer-events-none rounded-full" style="
+            width: ${ringW}px;
+            height: ${ringH}px;
+            border: 5px solid rgba(227, 187, 118, 0.75);
+            border-top: 3px solid rgba(255, 236, 179, 0.9);
+            box-shadow: 0 0 15px rgba(227, 187, 118, 0.45);
+            transform: rotate(-24deg);
+            z-index: 5;
+          "></div>
+        `;
+      }
+      if (obj.id === "sun") {
+        return `<div class="absolute inset-0 rounded-full corona-pulse pointer-events-none"></div>`;
+      }
+      if (obj.id === "earth") {
+        return `<div class="absolute -inset-2 rounded-full pointer-events-none" style="box-shadow: 0 0 18px rgba(79, 134, 247, 0.65);"></div>`;
+      }
+      if (obj.id === "moon") {
+        return `<div class="absolute inset-0 rounded-full opacity-30 pointer-events-none" style="background-image: radial-gradient(circle at 20% 30%, #fff 2px, transparent 3px), radial-gradient(circle at 70% 60%, #455A64 3px, transparent 4px);"></div>`;
+      }
+      return "";
     }
 
     function updateCompareUI() {
@@ -5297,26 +5626,323 @@
       const objA = all.find(p => p.id === comparePlanetA) || PLANETS[3];
       const objB = all.find(p => p.id === comparePlanetB) || PLANETS[4];
 
+      const specA = CELESTIAL_SPECS[objA.id] || { diameterKm: 10000, gRatio: 1, jumpCm: 50, tempC: 15, survivalSec: "N/A" };
+      const specB = CELESTIAL_SPECS[objB.id] || { diameterKm: 10000, gRatio: 1, jumpCm: 50, tempC: 15, survivalSec: "N/A" };
+
+      const { sizeA, sizeB, ratio, kmA, kmB } = calculateProportionalSphereSizes(objA.id, objB.id);
+
+      // Ratio Badge Description
+      let ratioText = "";
+      if (Math.abs(ratio - 1) < 0.08) {
+        ratioText = "⚖️ Ukuran Mirip (~1,0×)";
+      } else if (ratio > 1) {
+        ratioText = `⚡ ${objA.name} ${ratio.toFixed(1)}× Lebih Besar`;
+      } else {
+        ratioText = `⚡ ${objB.name} ${(1 / ratio).toFixed(1)}× Lebih Besar`;
+      }
+
       const container = document.getElementById("compareContent");
       if (!container) return;
 
       container.innerHTML = `
-        <!-- Visual Preview Spheres -->
-        <div class="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-[#0F131D] border border-white/10">
-          <div class="flex flex-col items-center text-center p-3">
-            <div class="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center shadow-lg relative my-2" style="background: radial-gradient(circle at 35% 35%, ${objA.secColor || '#fff'}, ${objA.color || '#4F86F7'} 60%, #060913 100%); box-shadow: 0 0 24px ${objA.color}40;"></div>
-            <h4 class="text-sm md:text-base font-extrabold text-white mt-1">${objA.name}</h4>
-            <p class="text-[11px] text-[#8AB4F8]">${objA.category || 'Objek Tata Surya'}</p>
+        <!-- 1. DYNAMIC PROPORTIONAL SPHERES SHOWDOWN -->
+        <div class="p-4 md:p-5 rounded-3xl bg-gradient-to-b from-[#0F1422] to-[#080B13] border border-white/10 shadow-2xl relative overflow-hidden compare-animate-in">
+          <!-- Subtle cosmic starfield backdrop -->
+          <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(79,134,247,0.12),_transparent_70%)] pointer-events-none"></div>
+
+          <div class="grid grid-cols-2 gap-2 md:gap-4 relative z-10 items-center">
+            
+            <!-- Planet A Column -->
+            <div class="flex flex-col items-center text-center p-2">
+              <div class="h-36 md:h-44 w-full flex items-center justify-center relative">
+                <div class="rounded-full flex items-center justify-center relative sphere-smooth shadow-2xl" 
+                     style="width: ${sizeA}px; height: ${sizeA}px; background: radial-gradient(circle at 35% 35%, ${objA.secColor || '#fff'}, ${objA.color || '#4F86F7'} 60%, #060913 100%); box-shadow: 0 0 ${Math.max(20, Math.round(sizeA * 0.4))}px ${objA.color}50;">
+                  ${renderSphereDecorations(objA, sizeA)}
+                </div>
+              </div>
+
+              <div class="mt-2 space-y-0.5">
+                <div class="flex items-center justify-center gap-1.5">
+                  <h4 class="text-sm md:text-lg font-black text-white">${objA.name}</h4>
+                  <span class="text-[10px] px-2 py-0.5 rounded-full font-mono font-bold bg-[#4F86F7]/20 text-[#8AB4F8] border border-[#4F86F7]/30">
+                    Ø ${kmA.toLocaleString('id-ID')} km
+                  </span>
+                </div>
+                <p class="text-[11px] font-medium text-[#8AB4F8]">${objA.category || 'Objek Tata Surya'}</p>
+              </div>
+            </div>
+
+            <!-- Planet B Column -->
+            <div class="flex flex-col items-center text-center p-2">
+              <div class="h-36 md:h-44 w-full flex items-center justify-center relative">
+                <div class="rounded-full flex items-center justify-center relative sphere-smooth shadow-2xl" 
+                     style="width: ${sizeB}px; height: ${sizeB}px; background: radial-gradient(circle at 35% 35%, ${objB.secColor || '#fff'}, ${objB.color || '#FF5722'} 60%, #060913 100%); box-shadow: 0 0 ${Math.max(20, Math.round(sizeB * 0.4))}px ${objB.color}50;">
+                  ${renderSphereDecorations(objB, sizeB)}
+                </div>
+              </div>
+
+              <div class="mt-2 space-y-0.5">
+                <div class="flex items-center justify-center gap-1.5">
+                  <h4 class="text-sm md:text-lg font-black text-white">${objB.name}</h4>
+                  <span class="text-[10px] px-2 py-0.5 rounded-full font-mono font-bold bg-[#FFD54F]/20 text-[#FFD54F] border border-[#FFD54F]/30">
+                    Ø ${kmB.toLocaleString('id-ID')} km
+                  </span>
+                </div>
+                <p class="text-[11px] font-medium text-[#FFD54F]">${objB.category || 'Objek Tata Surya'}</p>
+              </div>
+            </div>
+
           </div>
 
-          <div class="flex flex-col items-center text-center p-3">
-            <div class="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center shadow-lg relative my-2" style="background: radial-gradient(circle at 35% 35%, ${objB.secColor || '#fff'}, ${objB.color || '#FF5722'} 60%, #060913 100%); box-shadow: 0 0 24px ${objB.color}40;"></div>
-            <h4 class="text-sm md:text-base font-extrabold text-white mt-1">${objB.name}</h4>
-            <p class="text-[11px] text-[#FFD54F]">${objB.category || 'Objek Tata Surya'}</p>
+          <!-- Centered VS & Proportional Badge -->
+          <div class="mt-3 pt-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-full bg-white/10 text-white font-extrabold text-[11px] tracking-wider uppercase">VS HEAD-TO-HEAD</span>
+              <span class="px-3 py-1 rounded-full bg-gradient-to-r from-[#4F86F7]/20 to-[#FFD54F]/20 text-white font-bold border border-white/20 text-[11px] shadow-sm">
+                ${ratioText}
+              </span>
+            </div>
+            <p class="text-[10px] text-[#919194] italic">
+              ${(objA.id === 'sun' || objB.id === 'sun') ? '☀️ Skala visual Matahari dikompresi agar pas di layar' : 'Ukuran bola proporsional dengan skala diameter nyata'}
+            </p>
           </div>
         </div>
 
-        <!-- Metric Comparison Rows -->
+        <!-- 2. DYNAMIC TAB CONTENT -->
+        <div id="compareTabContent" class="compare-animate-in">
+          ${renderCurrentCompareTabContent(objA, objB, specA, specB, kmA, kmB)}
+        </div>
+      `;
+    }
+
+    function renderCurrentCompareTabContent(objA, objB, specA, specB, kmA, kmB) {
+      if (currentCompareTab === 'specs') {
+        return renderSpecsTab(objA, objB);
+      } else if (currentCompareTab === 'survival') {
+        return renderSurvivalTab(objA, objB, specA, specB);
+      } else {
+        return renderDuelTab(objA, objB, specA, specB, kmA, kmB);
+      }
+    }
+
+    // TAB 1: DUEL & VISUAL BARS (Smooth & Engaging Gen Z Mode)
+    function renderDuelTab(objA, objB, specA, specB, kmA, kmB) {
+      // 1. Cosmic Verdict determinations
+      const sizeWinner = kmA >= kmB ? objA.name : objB.name;
+      const sizeWinnerDiff = kmA >= kmB 
+        ? ((kmA / kmB - 1) * 100).toFixed(0) 
+        : ((kmB / kmA - 1) * 100).toFixed(0);
+
+      const jumpWinner = specA.jumpCm >= specB.jumpCm ? objA.name : objB.name;
+      const jumpMaxCm = Math.max(specA.jumpCm, specB.jumpCm);
+
+      // Temperature extremes
+      const tempDiff = Math.abs(specA.tempC - specB.tempC);
+
+      // Relative bar percentages for diameter
+      const maxKm = Math.max(kmA, kmB);
+      const pctDiamA = Math.max(8, Math.round((kmA / maxKm) * 100));
+      const pctDiamB = Math.max(8, Math.round((kmB / maxKm) * 100));
+
+      // Jump bar calculation (standardized to 350cm max)
+      const maxJumpScale = Math.max(120, Math.max(specA.jumpCm, specB.jumpCm) * 1.1);
+      const pctJumpA = Math.max(6, Math.min(100, Math.round((specA.jumpCm / maxJumpScale) * 100)));
+      const pctJumpB = Math.max(6, Math.min(100, Math.round((specB.jumpCm / maxJumpScale) * 100)));
+
+      // Thermal gauge markers (-250C to 500C scale)
+      const minScaleT = -250;
+      const maxScaleT = 500;
+      const calcThermalPos = (t) => {
+        const clamped = Math.max(minScaleT, Math.min(maxScaleT, t));
+        return Math.round(((clamped - minScaleT) / (maxScaleT - minScaleT)) * 100);
+      };
+      const posA = calcThermalPos(specA.tempC);
+      const posB = calcThermalPos(specB.tempC);
+
+      return `
+        <div class="space-y-4">
+          
+          <!-- QUICK COSMIC VERDICT CARDS -->
+          <div class="p-4 rounded-2xl bg-gradient-to-r from-[#141B2D] via-[#101420] to-[#1E1B14] border border-white/10 shadow-lg">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="material-symbols-outlined text-[18px] text-[#FFD54F]">emoji_events</span>
+              <h4 class="text-xs md:text-sm font-extrabold text-white tracking-wide uppercase">Hasil Duel Cepat (TL;DR Cosmic Verdict)</h4>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+              <div class="p-2.5 rounded-xl bg-black/40 border border-[#4F86F7]/30 flex items-start gap-2.5">
+                <span class="text-lg">👑</span>
+                <div>
+                  <div class="font-bold text-white">Raja Ukuran Fisik</div>
+                  <div class="text-[#8AB4F8] font-medium">${sizeWinner} <span class="text-[10px] text-white/70 font-mono">(+${sizeWinnerDiff}%)</span></div>
+                </div>
+              </div>
+
+              <div class="p-2.5 rounded-xl bg-black/40 border border-[#80DEEA]/30 flex items-start gap-2.5">
+                <span class="text-lg">🦘</span>
+                <div>
+                  <div class="font-bold text-white">Juara Melompat Tinggi</div>
+                  <div class="text-[#80DEEA] font-medium">${jumpWinner} <span class="text-[10px] text-white/70 font-mono">(${jumpMaxCm >= 100 ? (jumpMaxCm/100).toFixed(1) + ' m' : jumpMaxCm + ' cm'})</span></div>
+                </div>
+              </div>
+
+              <div class="p-2.5 rounded-xl bg-black/40 border border-[#FFB74D]/30 flex items-start gap-2.5">
+                <span class="text-lg">🌡️</span>
+                <div>
+                  <div class="font-bold text-white">Selisih Suhu Rata-rata</div>
+                  <div class="text-[#FFD54F] font-medium">Beda ${tempDiff}°C <span class="text-[10px] text-white/70 font-mono">(${objA.name}: ${specA.tempC}°C vs ${objB.name}: ${specB.tempC}°C)</span></div>
+                </div>
+              </div>
+
+              <div class="p-2.5 rounded-xl bg-black/40 border border-[#B388FF]/30 flex items-start gap-2.5">
+                <span class="text-lg">🚀</span>
+                <div>
+                  <div class="font-bold text-white">Karakter Khas</div>
+                  <div class="text-[#D1C4E9] font-medium text-[11px] leading-tight line-clamp-1">${specA.genZVerdict}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- VISUAL GAUGE 1: DIAMETER & VOLUME DUEL BAR -->
+          <div class="p-4 rounded-2xl bg-[#141824] border border-white/10 hover:border-white/20 transition-all space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px] text-[#4F86F7]">straighten</span>
+                <span class="text-xs font-bold text-white uppercase tracking-wider">Perbandingan Diameter Ekuator</span>
+              </div>
+              <span class="text-[11px] font-bold text-[#8AB4F8]">${kmA >= kmB ? objA.name : objB.name} Lebih Besar</span>
+            </div>
+
+            <div class="space-y-2">
+              <!-- Planet A Bar -->
+              <div>
+                <div class="flex justify-between text-[11px] font-semibold mb-1 text-[#8AB4F8]">
+                  <span>${objA.name}</span>
+                  <span class="font-mono">${kmA.toLocaleString('id-ID')} km</span>
+                </div>
+                <div class="h-3.5 w-full bg-[#090C14] rounded-full overflow-hidden p-0.5 border border-white/10">
+                  <div class="h-full rounded-full bg-gradient-to-r from-[#4F86F7] to-[#80DEEA] meter-fill-smooth shadow-sm" style="width: ${pctDiamA}%;"></div>
+                </div>
+              </div>
+
+              <!-- Planet B Bar -->
+              <div>
+                <div class="flex justify-between text-[11px] font-semibold mb-1 text-[#FFD54F]">
+                  <span>${objB.name}</span>
+                  <span class="font-mono">${kmB.toLocaleString('id-ID')} km</span>
+                </div>
+                <div class="h-3.5 w-full bg-[#090C14] rounded-full overflow-hidden p-0.5 border border-white/10">
+                  <div class="h-full rounded-full bg-gradient-to-r from-[#FFA000] to-[#FFD54F] meter-fill-smooth shadow-sm" style="width: ${pctDiamB}%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- VISUAL GAUGE 2: ASTRONAUT JUMP SIMULATOR DUEL -->
+          <div class="p-4 rounded-2xl bg-[#141824] border border-white/10 hover:border-white/20 transition-all space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px] text-[#80DEEA]">fitness_center</span>
+                <div>
+                  <span class="text-xs font-bold text-white uppercase tracking-wider block">Simulator Lompatan Astronot</span>
+                  <span class="text-[10px] text-[#919194]">Jika kamu melompat setinggi 50 cm di Bumi:</span>
+                </div>
+              </div>
+              <span class="text-[11px] font-bold text-[#80DEEA]">Gravitasi: ${specA.gRatio}G vs ${specB.gRatio}G</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+              <!-- Jump Planet A -->
+              <div class="p-3 rounded-xl bg-[#0F131E] border border-[#4F86F7]/20 space-y-1.5">
+                <div class="flex items-center justify-between text-xs font-bold">
+                  <span class="text-[#8AB4F8]">${objA.name}</span>
+                  <span class="text-base font-black font-mono text-white">${specA.jumpCm >= 100 ? (specA.jumpCm/100).toFixed(2) + ' m' : specA.jumpCm + ' cm'}</span>
+                </div>
+                <div class="h-2.5 w-full bg-black/50 rounded-full overflow-hidden p-0.5">
+                  <div class="h-full rounded-full bg-[#4F86F7] meter-fill-smooth" style="width: ${pctJumpA}%;"></div>
+                </div>
+                <p class="text-[10px] text-[#C4C6D0]">
+                  ${specA.jumpCm > 150 ? '🚀 Melompat tinggi melayang bagai superhero!' : (specA.jumpCm < 40 ? '🏋️ Langkah sangat berat serasa tertimpa beban timah.' : '🏃‍♂️ Nyaman dan terkontrol mirip Bumi.')}
+                </p>
+              </div>
+
+              <!-- Jump Planet B -->
+              <div class="p-3 rounded-xl bg-[#0F131E] border border-[#FFD54F]/20 space-y-1.5">
+                <div class="flex items-center justify-between text-xs font-bold">
+                  <span class="text-[#FFD54F]">${objB.name}</span>
+                  <span class="text-base font-black font-mono text-white">${specB.jumpCm >= 100 ? (specB.jumpCm/100).toFixed(2) + ' m' : specB.jumpCm + ' cm'}</span>
+                </div>
+                <div class="h-2.5 w-full bg-black/50 rounded-full overflow-hidden p-0.5">
+                  <div class="h-full rounded-full bg-[#FFD54F] meter-fill-smooth" style="width: ${pctJumpB}%;"></div>
+                </div>
+                <p class="text-[10px] text-[#C4C6D0]">
+                  ${specB.jumpCm > 150 ? '🚀 Melompat tinggi melayang bagai superhero!' : (specB.jumpCm < 40 ? '🏋️ Langkah sangat berat serasa tertimpa beban timah.' : '🏃‍♂️ Nyaman dan terkontrol mirip Bumi.')}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- VISUAL GAUGE 3: COSMIC THERMAL SPECTRUM -->
+          <div class="p-4 rounded-2xl bg-[#141824] border border-white/10 hover:border-white/20 transition-all space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px] text-[#FF5722]">thermostat</span>
+                <span class="text-xs font-bold text-white uppercase tracking-wider">Barometer Termal Kosmik</span>
+              </div>
+              <span class="text-[10px] text-[#919194]">Rentang Suhu Rata-rata</span>
+            </div>
+
+            <!-- Gradient Spectrum Bar -->
+            <div class="relative pt-6 pb-2">
+              <div class="h-3 w-full rounded-full bg-gradient-to-r from-[#00E5FF] via-[#4CAF50] via-[#FFEB3B] to-[#D50000] relative">
+                <!-- Pinpoint A -->
+                <div class="absolute -top-6 flex flex-col items-center -translate-x-1/2 transition-all duration-700" style="left: ${posA}%;">
+                  <span class="text-[10px] font-black px-1.5 py-0.2 rounded bg-[#4F86F7] text-white shadow">${objA.name}: ${specA.tempC}°C</span>
+                  <div class="w-2 h-2 rotate-45 bg-[#4F86F7] -mt-1"></div>
+                </div>
+
+                <!-- Pinpoint B -->
+                <div class="absolute -top-6 flex flex-col items-center -translate-x-1/2 transition-all duration-700" style="left: ${posB}%;">
+                  <span class="text-[10px] font-black px-1.5 py-0.2 rounded bg-[#FFD54F] text-black shadow">${objB.name}: ${specB.tempC}°C</span>
+                  <div class="w-2 h-2 rotate-45 bg-[#FFD54F] -mt-1"></div>
+                </div>
+              </div>
+
+              <div class="flex justify-between text-[9px] font-mono text-[#919194] mt-2">
+                <span>❄️ -250°C (Beku Mutlak)</span>
+                <span>💧 0°C</span>
+                <span>🔥 +500°C (Lahar Membara)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- VISUAL GAUGE 4: ROTATION & DAY LENGTH SHOWDOWN -->
+          <div class="p-4 rounded-2xl bg-[#141824] border border-white/10 hover:border-white/20 transition-all">
+            <div class="flex items-center gap-2 mb-2.5">
+              <span class="material-symbols-outlined text-[18px] text-[#B388FF]">sync</span>
+              <span class="text-xs font-bold text-white uppercase tracking-wider">Kecepatan Rotasi & Lama 1 Hari</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div class="p-3 rounded-xl bg-[#0F131E] border border-white/10">
+                <div class="text-[10px] text-[#8AB4F8] font-bold uppercase">${objA.name}</div>
+                <div class="text-sm md:text-base font-extrabold text-white mt-0.5">${objA.rotation}</div>
+              </div>
+              <div class="p-3 rounded-xl bg-[#0F131E] border border-white/10">
+                <div class="text-[10px] text-[#FFD54F] font-bold uppercase">${objB.name}</div>
+                <div class="text-sm md:text-base font-extrabold text-white mt-0.5">${objB.rotation}</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      `;
+    }
+
+    // TAB 2: DETAILED SPECS
+    function renderSpecsTab(objA, objB) {
+      return `
         <div class="space-y-2.5">
           ${renderCompareRow("Diameter Ekuator", objA.diameter, objB.diameter, "straighten")}
           ${renderCompareRow("Jarak ke Matahari / Orbit", objA.dist, objB.dist, "social_distance")}
@@ -5327,6 +5953,84 @@
           ${renderCompareRow("Satelit Alami", objA.moons, objB.moons, "brightness_medium")}
           ${renderCompareRow("Komposisi & Atmosfer", objA.comp, objB.comp, "science")}
           ${renderCompareRow("Misi Eksplorasi Utama", objA.missions, objB.missions, "rocket_launch")}
+        </div>
+      `;
+    }
+
+    // TAB 3: SURVIVAL & FUN GEN Z FACTS
+    function renderSurvivalTab(objA, objB, specA, specB) {
+      return `
+        <div class="space-y-4">
+          
+          <!-- SURVIVAL CARD -->
+          <div class="p-4 md:p-5 rounded-2xl bg-gradient-to-br from-[#1C1215] to-[#141824] border border-[#FF5252]/30 shadow-xl space-y-3">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[20px] text-[#FF5252]">warning</span>
+              <div>
+                <h4 class="text-xs md:text-sm font-extrabold text-white uppercase tracking-wide">Uji Ketahanan: Berapa Lama Manusia Bertahan Tanpa Baju Luar Angkasa?</h4>
+                <p class="text-[11px] text-[#FF8A80]">Skenario astronot mendarat tanpa helm dan pakaian bertekanan khusus</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1 text-xs">
+              <!-- Surv A -->
+              <div class="p-3.5 rounded-xl bg-black/50 border border-[#8AB4F8]/30 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-[#8AB4F8]">${objA.name}</span>
+                  <span class="text-xs font-black font-mono px-2 py-0.5 rounded bg-[#FF5252]/20 text-[#FF8A80] border border-[#FF5252]/40">${specA.survivalSec}</span>
+                </div>
+                <p class="text-[#D2E3FC] leading-relaxed text-[11px]">${specA.survivalReason}</p>
+              </div>
+
+              <!-- Surv B -->
+              <div class="p-3.5 rounded-xl bg-black/50 border border-[#FFD54F]/30 space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-[#FFD54F]">${objB.name}</span>
+                  <span class="text-xs font-black font-mono px-2 py-0.5 rounded bg-[#FF5252]/20 text-[#FF8A80] border border-[#FF5252]/40">${specB.survivalSec}</span>
+                </div>
+                <p class="text-[#FFE082] leading-relaxed text-[11px]">${specB.survivalReason}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- SKY AND VIBE SHOWDOWN -->
+          <div class="p-4 rounded-2xl bg-[#141824] border border-white/10 space-y-3">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px] text-[#80DEEA]">wb_twilight</span>
+              <h4 class="text-xs md:text-sm font-extrabold text-white uppercase tracking-wide">Sensasi Pemandangan Langit & Suasana</h4>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <div class="p-3.5 rounded-xl bg-[#0F131E] border border-white/10 space-y-1">
+                <div class="font-bold text-[#8AB4F8]">${objA.name}</div>
+                <p class="text-[#C4C6D0] leading-relaxed text-[11px]">${specA.skyVibe}</p>
+              </div>
+              <div class="p-3.5 rounded-xl bg-[#0F131E] border border-white/10 space-y-1">
+                <div class="font-bold text-[#FFD54F]">${objB.name}</div>
+                <p class="text-[#C4C6D0] leading-relaxed text-[11px]">${specB.skyVibe}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- MIND-BLOWING SCIENTIFIC HIGHLIGHT -->
+          <div class="p-4 rounded-2xl bg-[#141824] border border-white/10 space-y-3">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px] text-[#FFD54F]">lightbulb</span>
+              <h4 class="text-xs md:text-sm font-extrabold text-white uppercase tracking-wide">Fakta Mindblowing yang Jarang Diketahui</h4>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <div class="p-3.5 rounded-xl bg-[#0F131E] border border-[#4F86F7]/20 space-y-1">
+                <div class="font-bold text-[#8AB4F8]">${objA.name}</div>
+                <p class="text-[#D2E3FC] leading-relaxed text-[11px]">${specA.highlight || objA.funFact.split('\n')[0]}</p>
+              </div>
+              <div class="p-3.5 rounded-xl bg-[#0F131E] border border-[#FFD54F]/20 space-y-1">
+                <div class="font-bold text-[#FFD54F]">${objB.name}</div>
+                <p class="text-[#FFE082] leading-relaxed text-[11px]">${specB.highlight || objB.funFact.split('\n')[0]}</p>
+              </div>
+            </div>
+          </div>
+
         </div>
       `;
     }
