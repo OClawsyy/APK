@@ -1,6 +1,6 @@
 {
   "name": "Planetarium Mini",
-  "description": "Simulasi tata surya interaktif dengan data ilmiah akurat, visualisasi perbandingan skala, kuis astronomi dengan sertifikat, pemutar ambient space sound, dan animasi galaksi Bima Sakti.",
+  "description": "Simulasi tata surya interaktif dengan data ilmiah akurat, visualisasi perbandingan skala, kuis astronomi dengan sertifikat, audio ambient nyata tiap planet, detail pulau Bumi, bentangan megah Bima Sakti & 10+ nebula kuncup bunga kosmik.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

@@ -81,10 +81,10 @@
 
       <!-- Controls: Speed, Pause, Scale, Quiz, Ambient Sound -->
       <div class="flex items-center gap-1.5 md:gap-2 pointer-events-auto flex-wrap justify-end">
-        <!-- Deep Space Galaxies & Milky Way Feature Button -->
-        <button onclick="openGalaxiesModal()" title="Jelajahi Galaksi di Semesta (Bima Sakti, Andromeda, Sombrero, Whirlpool)" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#E2E2E6] hover:text-white hover:border-[#BA68C8] text-xs font-semibold cursor-pointer transition-all shadow-md">
-          <span class="material-symbols-outlined text-[16px] text-[#CE93D8]">auto_awesome</span>
-          <span class="hidden sm:inline">Galaksi Semesta</span>
+        <!-- Deep Space Milky Way & 10+ Flower Bud Nebulae Feature Button -->
+        <button onclick="openGalaxiesModal()" title="Jelajahi Bima Sakti & 10+ Nebula Kuncup Bunga Kosmik" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26] border border-[#2B3240] text-[#E2E2E6] hover:text-white hover:border-[#F06292] text-xs font-semibold cursor-pointer transition-all shadow-md">
+          <span class="material-symbols-outlined text-[16px] text-[#F06292]">local_florist</span>
+          <span class="hidden sm:inline">Bima Sakti & Nebula</span>
         </button>
 
         <!-- Scale Comparison Feature Button -->
@@ -716,22 +716,22 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- 7. MODAL EDUKASI: GALAKSI SEMESTA & BIMA SAKTI (DEEP SPACE OBSERVATORY)   -->
+  <!-- 7. MODAL EDUKASI: BIMA SAKTI & 10+ NEBULA KUNCUP BUNGA KOSMIK              -->
   <!-- ========================================================================= -->
   <div id="galaxiesModal" class="fixed inset-0 z-50 bg-[#06080E]/95 backdrop-blur-xl hidden flex flex-col items-center justify-center p-3 md:p-6 overflow-y-auto select-none">
     <div class="bg-[#121624] border border-[#2B3248] rounded-3xl w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
       <!-- Modal Header -->
       <div class="p-4 md:p-6 border-b border-white/10 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#9C27B0] via-[#E91E63] to-[#FF9800] flex items-center justify-center text-white shadow-lg">
-            <span class="material-symbols-outlined text-[22px]">auto_awesome</span>
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#E91E63] via-[#FF4081] to-[#FF9800] flex items-center justify-center text-white shadow-lg">
+            <span class="material-symbols-outlined text-[22px]">local_florist</span>
           </div>
           <div>
             <h3 class="text-lg md:text-xl font-bold text-white flex items-center gap-2">
-              <span>Galaksi-Galaksi di Alam Semesta</span>
-              <span class="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40">LATAR NYATA</span>
+              <span>Bima Sakti & 10+ Nebula Kuncup Bunga</span>
+              <span class="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/40">10+ KOSMIK FLORAL</span>
             </h3>
-            <p class="text-xs text-[#919194]">Objek galaksi & nebula yang terlihat pada kanvas antariksa Planetarium Mini</p>
+            <p class="text-xs text-[#919194]">Wilayah emisi merah hidrogen terionisasi tempat lahirnya bintang & tata surya baru</p>
           </div>
         </div>
 
@@ -740,83 +740,195 @@
         </button>
       </div>
 
-      <!-- Galaxies List Content -->
-      <div class="p-4 md:p-6 overflow-y-auto no-scrollbar space-y-3.5">
-        <!-- 1. Galaksi Bima Sakti -->
-        <div class="bg-gradient-to-r from-[#1A1A2E] via-[#16213E] to-[#0F3460] p-4 rounded-2xl border border-[#BA68C8]/30 space-y-1.5 shadow-md">
+      <!-- Nebulae List Content -->
+      <div class="p-4 md:p-6 overflow-y-auto no-scrollbar space-y-3">
+        <!-- 0. Pusat Bima Sakti & Great Rift -->
+        <div class="bg-gradient-to-r from-[#20152B] via-[#1A1E36] to-[#102340] p-4 rounded-2xl border border-[#FFD54F]/30 space-y-1.5 shadow-md">
           <div class="flex items-center justify-between">
             <h4 class="text-sm md:text-base font-bold text-white flex items-center gap-2">
               <span class="text-amber-400">🌌</span>
-              <span>Galaksi Bima Sakti (Milky Way)</span>
+              <span>Pusat Galaksi Bima Sakti & Great Rift</span>
             </h4>
-            <span class="text-[10px] font-semibold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/30">Rumah Tata Surya</span>
+            <span class="text-[10px] font-semibold text-amber-300 bg-amber-500/15 px-2 py-0.5 rounded-md border border-amber-500/30">Inti Galaksi</span>
           </div>
           <p class="text-xs text-[#C4C6D0] leading-relaxed">
-            Galaksi spiral berpalang (*barred spiral galaxy*) tempat tinggal Matahari dan Bumi kita. Berdiameter sekitar <strong class="text-white">100.000 tahun cahaya</strong> dan menampung lebih dari <strong class="text-white">100–400 miliar bintang</strong>. Pada latar simulator, Bima Sakti digambarkan sebagai bentangan debu kosmik diagonal dengan pusat galaksi bercahaya emas tempat lubang hitam supermasif <strong class="text-[#FFD54F]">Sagittarius A*</strong> berada.
+            Bentangan pita cahaya megah yang melintasi kanvas simulator dengan inti keemasan tempat bersemayamnya lubang hitam supermasif <strong class="text-[#FFD54F]">Sagittarius A*</strong> (4,3 juta massa Matahari). Terbelah secara alami oleh <strong class="text-white">The Great Rift</strong>, untaian debu kosmik dingin penyerap cahaya yang menghubungkan nebula-nebula pembentuk bintang.
           </p>
         </div>
 
-        <!-- 2. Galaksi Andromeda (M31) -->
-        <div class="bg-[#171B2A] p-4 rounded-2xl border border-white/10 space-y-1.5">
+        <!-- 1. Nebula Kuncup Mawar (Rosette) -->
+        <div class="bg-[#171B2A] p-3.5 rounded-2xl border border-pink-500/20 space-y-1 hover:border-pink-500/50 transition-colors">
           <div class="flex items-center justify-between">
             <h4 class="text-sm font-bold text-white flex items-center gap-2">
-              <span class="text-cyan-400">✨</span>
-              <span>Galaksi Andromeda (Messier 31)</span>
+              <span class="text-rose-400">🌹</span>
+              <span>1. Nebula Kuncup Mawar (Rosette Nebula - NGC 2237)</span>
             </h4>
-            <span class="text-[10px] font-semibold text-cyan-300 bg-cyan-500/10 px-2 py-0.5 rounded-md border border-cyan-500/30">Jarak: 2,5 Juta Tahun Cahaya</span>
+            <span class="text-[10px] font-semibold text-rose-300 bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20">Rasi Monoceros</span>
           </div>
           <p class="text-xs text-[#C4C6D0] leading-relaxed">
-            Galaksi spiral raksasa tetangga terdekat Bima Sakti di Grup Lokal. Berisi sekitar <strong class="text-white">1 triliun bintang</strong> dan sedang bergerak mendekati Bima Sakti dengan kecepatan ~110 km/detik, diprediksi akan bergabung menjadi satu galaksi elips raksasa (*Milkomeda*) dalam 4,5 miliar tahun ke depan.
+            Awan gas raksasa berbentuk kuncup bunga mawar merah yang mekar indah. Kelopak luarnya bersinar merah delima akibat ionisasi gas hidrogen oleh gugus bintang muda panas NGC 2244 di pusatnya. Berdiameter 130 tahun cahaya.
           </p>
         </div>
 
-        <!-- 3. Galaksi Pusaran (Whirlpool Galaxy - M51) -->
-        <div class="bg-[#171B2A] p-4 rounded-2xl border border-white/10 space-y-1.5">
+        <!-- 2. Nebula Kuncup Tulip (Tulip) -->
+        <div class="bg-[#171B2A] p-3.5 rounded-2xl border border-red-500/20 space-y-1 hover:border-red-500/50 transition-colors">
           <div class="flex items-center justify-between">
             <h4 class="text-sm font-bold text-white flex items-center gap-2">
-              <span class="text-pink-400">🌀</span>
-              <span>Galaksi Pusaran (Whirlpool Galaxy - M51)</span>
+              <span class="text-red-400">🌷</span>
+              <span>2. Nebula Kuncup Tulip (Tulip Nebula - Sh2-101)</span>
             </h4>
-            <span class="text-[10px] font-semibold text-pink-300 bg-pink-500/10 px-2 py-0.5 rounded-md border border-pink-500/30">Jarak: 23 Juta Tahun Cahaya</span>
+            <span class="text-[10px] font-semibold text-red-300 bg-red-500/10 px-2 py-0.5 rounded-md border border-red-500/20">Rasi Cygnus</span>
           </div>
           <p class="text-xs text-[#C4C6D0] leading-relaxed">
-            Galaksi spiral klasik berdesain agung (*grand-design spiral*) yang menghadap langsung ke arah kita (*face-on*). Lengan spiralnya yang kaya akan gugus bintang muda biru dan nebula merah jambu terhubung oleh jembatan pasang surut gravitasi ke galaksi kerdil pendampingnya, NGC 5195.
+            Kelopak kuncup bunga tulip yang anggun merona merah rubi di bidang galaksi Bima Sakti. Struktur kelopak bunganya terukir oleh hembusan angin bintang masif dan radiasi mikrokuasar biner terkenal Cygnus X-1.
           </p>
         </div>
 
-        <!-- 4. Galaksi Sombrero (Messier 104) -->
-        <div class="bg-[#171B2A] p-4 rounded-2xl border border-white/10 space-y-1.5">
+        <!-- 3. Nebula Kuncup Teratai (Lotus / Iris Cloud) -->
+        <div class="bg-[#171B2A] p-3.5 rounded-2xl border border-purple-500/20 space-y-1 hover:border-purple-500/50 transition-colors">
           <div class="flex items-center justify-between">
             <h4 class="text-sm font-bold text-white flex items-center gap-2">
-              <span class="text-yellow-400">🪐</span>
-              <span>Galaksi Sombrero (Messier 104)</span>
+              <span class="text-purple-400">🪷</span>
+              <span>3. Nebula Kuncup Teratai (Lotus / Iris Cloud - NGC 7023)</span>
             </h4>
-            <span class="text-[10px] font-semibold text-yellow-300 bg-yellow-500/10 px-2 py-0.5 rounded-md border border-yellow-500/30">Jarak: 29 Juta Tahun Cahaya</span>
+            <span class="text-[10px] font-semibold text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded-md border border-purple-500/20">Rasi Cepheus</span>
           </div>
           <p class="text-xs text-[#C4C6D0] leading-relaxed">
-            Memiliki tonjolan pusat bintang (*bulge*) yang sangat besar dan terang dengan jalur cincin debu gelap pekat melintasi bagian tengahnya, menyerupai topi Sombrero khas Meksiko jika dilihat dari samping (*edge-on*). Menampung lubang hitam seberat 1 miliar kali massa Matahari.
+            Formasi kelopak teratai kosmik berlayer 7 lapis dengan pendaran merah muda dan ungu magenta. Inti bunganya disinari oleh bintang variabel panas HD 200775 yang menerangi filamen debu organik di sekitarnya.
           </p>
         </div>
 
-        <!-- 5. Awan Magellan Besar & Nebula Kosmik -->
-        <div class="bg-[#171B2A] p-4 rounded-2xl border border-white/10 space-y-1.5">
+        <!-- 4. Nebula Kelopak Jantung (Heart Nebula) -->
+        <div class="bg-[#171B2A] p-3.5 rounded-2xl border border-rose-500/20 space-y-1 hover:border-rose-500/50 transition-colors">
           <div class="flex items-center justify-between">
             <h4 class="text-sm font-bold text-white flex items-center gap-2">
-              <span class="text-indigo-400">☁️</span>
-              <span>Awan Magellan Besar (LMC) & Nebula Emisi</span>
+              <span class="text-rose-500">❤️</span>
+              <span>4. Nebula Kelopak Jantung (Heart Nebula - IC 1805)</span>
             </h4>
-            <span class="text-[10px] font-semibold text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded-md border border-indigo-500/30">Galaksi Satelit Kerdil</span>
+            <span class="text-[10px] font-semibold text-rose-300 bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20">Lengan Perseus</span>
           </div>
           <p class="text-xs text-[#C4C6D0] leading-relaxed">
-            Galaksi satelit tak beraturan yang mengorbit Bima Sakti kita pada jarak 163.000 tahun cahaya. LMC menjadi rumah bagi <strong class="text-white">Nebula Tarantula</strong>, wilayah pembentuk bintang paling aktif dan masif di seluruh Grup Lokal galaksi.
+            Dua kelopak kuncup floral menyerupai lambang hati yang menyala dalam spektrum merah membara di Lengan Perseus Bima Sakti kita. Jantung nebula ini dialiri energi oleh sekelompok bintang super-panas Melotte 15.
+          </p>
+        </div>
+
+        <!-- 5. Nebula Kuncup Jiwa (Soul Nebula) -->
+        <div class="bg-[#171B2A] p-3.5 rounded-2xl border border-orange-500/20 space-y-1 hover:border-orange-500/50 transition-colors">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="text-orange-400">💫</span>
+              <span>5. Nebula Kuncup Jiwa (Soul Nebula - IC 1848)</span>
+            </h4>
+            <span class="text-[10px] font-semibold text-orange-300 bg-orange-500/10 px-2 py-0.5 rounded-md border border-orange-500/20">Rasi Cassiopeia</span>
+          </div>
+          <p class="text-xs text-[#C4C6D0] leading-relaxed">
+            Saudara kembar Nebula Jantung yang membentuk kuncup floral memanjang dengan pendaran merah koral dan awan debu molekuler tempat protobintang usia muda memadat di dalam piringan akresi.
+          </p>
+        </div>
+
+        <!-- 6. Nebula Kuncup Laguna (Lagoon Nebula) -->
+        <div class="bg-[#171B2A] p-3.5 rounded-2xl border border-pink-500/20 space-y-1 hover:border-pink-500/50 transition-colors">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="text-pink-400">🌺</span>
+              <span>6. Nebula Kuncup Laguna (Lagoon Nebula - Messier 8)</span>
+            </h4>
+            <span class="text-[10px] font-semibold text-pink-300 bg-pink-500/10 px-2 py-0.5 rounded-md border border-pink-500/20">Lengan Sagitarius</span>
+          </div>
+          <p class="text-xs text-[#C4C6D0] leading-relaxed">
+            Pusaran kelopak kuncup merah fuchsia yang dipisahkan oleh jalur jurang debu gelap berliku (laguna debu). Menjadi salah satu tempat pembibitan bintang paling terang dan spektakuler di langit malam Bima Sakti.
+          </p>
+        </div>
+
+        <!-- 7. Nebula Kuncup Carina (Great Carina Petals) -->
+        <div class="bg-[#171B2A] p-3.5 rounded-2xl border border-red-500/20 space-y-1 hover:border-red-500/50 transition-colors">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="text-red-500">🌸</span>
+              <span>7. Nebula Kuncup Carina (Great Carina Nebula - NGC 3372)</span>
+            </h4>
+            <span class="text-[10px] font-semibold text-red-300 bg-red-500/10 px-2 py-0.5 rounded-md border border-red-500/20">Rasi Carina</span>
+          </div>
+          <p class="text-xs text-[#C4C6D0] leading-relaxed">
+            Kuncup raksasa berukuran 300 tahun cahaya dengan pilar gas merah menyala empat kali lebih besar dari Orion. Rumah bagi bintang monster hiper-raksasa <strong class="text-white">Eta Carinae</strong> yang 5 juta kali lebih terang dari Matahari.
+          </p>
+        </div>
+
+        <!-- 8. Nebula Kuncup Melati Kosmik (Cosmic Jasmine) -->
+        <div class="bg-[#171B2A] p-3.5 rounded-2xl border border-pink-300/20 space-y-1 hover:border-pink-300/50 transition-colors">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="text-pink-200">🌼</span>
+              <span>8. Nebula Kuncup Melati Kosmik (Cosmic Jasmine Nursery)</span>
+            </h4>
+            <span class="text-[10px] font-semibold text-pink-200 bg-pink-400/10 px-2 py-0.5 rounded-md border border-pink-400/20">Awan Molekuler</span>
+          </div>
+          <p class="text-xs text-[#C4C6D0] leading-relaxed">
+            Kelopak lembut bintang lima berkelir putih kemerahan dengan simetri alami. Mengandung awan gas hidrogen dingin dan molekul organik pra-biotik yang melayang damai di jalur luar Bima Sakti.
+          </p>
+        </div>
+
+        <!-- 9. Nebula Kuncup Anggrek Ungu (Purple Orchid) -->
+        <div class="bg-[#171B2A] p-3.5 rounded-2xl border border-fuchsia-500/20 space-y-1 hover:border-fuchsia-500/50 transition-colors">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="text-fuchsia-400">🪻</span>
+              <span>9. Nebula Kuncup Anggrek Ungu (Purple Orchid Cloud)</span>
+            </h4>
+            <span class="text-[10px] font-semibold text-fuchsia-300 bg-fuchsia-500/10 px-2 py-0.5 rounded-md border border-fuchsia-500/20">Perbatasan Ionisasi</span>
+          </div>
+          <p class="text-xs text-[#C4C6D0] leading-relaxed">
+            Bentukan kuncup meliuk dramatis mirip anggrek hutan tropis, tercipta dari percampuran zona gas hidrogen merah H-alfa dan batas ionisasi gas oksigen terionisasi ganda ([O III]) berwarna ungu kebiruan.
+          </p>
+        </div>
+
+        <!-- 10. Nebula Kuncup Bunga Api (Flame Flower) -->
+        <div class="bg-[#171B2A] p-3.5 rounded-2xl border border-amber-500/20 space-y-1 hover:border-amber-500/50 transition-colors">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="text-amber-400">🔥</span>
+              <span>10. Nebula Kuncup Bunga Api (Flame Flower Nebula - NGC 2024)</span>
+            </h4>
+            <span class="text-[10px] font-semibold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">Sabuk Orion</span>
+          </div>
+          <p class="text-xs text-[#C4C6D0] leading-relaxed">
+            Kelopak api merah-jingga yang mekar bergolak tepat di samping bintang Alnitak (bintang timur di sabuk Orion). Jalur debu gelap membelah kuncup gas membara ini laksana kelopak bunga yang sedang merekah.
+          </p>
+        </div>
+
+        <!-- 11. Nebula Kuncup Elang (Eagle Spire Bud - M16) -->
+        <div class="bg-[#171B2A] p-3.5 rounded-2xl border border-rose-400/20 space-y-1 hover:border-rose-400/50 transition-colors">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="text-rose-400">🦅</span>
+              <span>11. Nebula Kuncup Elang / Pilar Penciptaan (Eagle Bud - M16)</span>
+            </h4>
+            <span class="text-[10px] font-semibold text-rose-300 bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20">Rasi Serpens</span>
+          </div>
+          <p class="text-xs text-[#C4C6D0] leading-relaxed">
+            Menara gas dan kuncup debu raksasa setinggi 4-5 tahun cahaya yang dipotret oleh Teleskop Luar Angkasa Hubble & James Webb. Di ujung kelopak kuncup gasnya, embrio tata surya baru sedang aktif terbentuk.
+          </p>
+        </div>
+
+        <!-- 12. Nebula Kuncup Bunga Matahari Kosmik (Solaris Floral Nursery) -->
+        <div class="bg-[#171B2A] p-3.5 rounded-2xl border border-yellow-500/20 space-y-1 hover:border-yellow-500/50 transition-colors">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <span class="text-yellow-400">🌻</span>
+              <span>12. Nebula Kuncup Bunga Matahari Kosmik (Solaris Floral Nursery)</span>
+            </h4>
+            <span class="text-[10px] font-semibold text-yellow-300 bg-yellow-500/10 px-2 py-0.5 rounded-md border border-yellow-500/20">Piringan Bima Sakti</span>
+          </div>
+          <p class="text-xs text-[#C4C6D0] leading-relaxed">
+            Pusaran stardust spiral konsentris yang menyerupai mahkota kuncup bunga matahari muda keemasan dengan semburat merah hangat, menunjukkan kekayaan siklus daur ulang materi kosmik di galaksi kita.
           </p>
         </div>
       </div>
 
       <!-- Footer Button -->
       <div class="p-4 border-t border-white/10 bg-[#0E121B] flex justify-end">
-        <button onclick="closeGalaxiesModal()" class="px-5 py-2.5 rounded-xl bg-[#4F86F7] hover:bg-[#3D74E6] text-white font-semibold text-xs transition-colors cursor-pointer shadow-md">
-          Tutup & Lanjut Eksplorasi
+        <button onclick="closeGalaxiesModal()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#E91E63] to-[#4F86F7] hover:opacity-90 text-white font-semibold text-xs transition-opacity cursor-pointer shadow-md">
+          Tutup & Eksplorasi Bima Sakti
         </button>
       </div>
     </div>
@@ -1135,8 +1247,141 @@
     resizeCanvas();
 
     // =========================================================================
-    // DEEP-SPACE RENDERING: NEBULAE, MILKY WAY, ANDROMEDA, SOMBRERO, WHIRLPOOL
+    // ORGANIC DEEP-SPACE COSMOS: BIMA SAKTI & 10+ NEBULA KUNCUP BUNGA (FLOWER BUDS)
     // =========================================================================
+
+    // Procedural organic emission nebula shaped like floral buds / petals (H II starbirth regions)
+    function drawFlowerBudNebula(tCtx, x, y, size, angle, petals, hueType, intensity, timePulse) {
+      tCtx.save();
+      tCtx.translate(x, y);
+      tCtx.rotate(angle);
+
+      const dynamicScale = 1.0 + 0.04 * Math.sin(timePulse);
+
+      // 1. Broad Outer Ionized Hydrogen-Alpha Glow (Diffuse Halo)
+      const haloGrad = tCtx.createRadialGradient(0, 0, size * 0.15, 0, 0, size * 1.5 * dynamicScale);
+      if (hueType === 'rose') {
+        haloGrad.addColorStop(0, `rgba(240, 98, 146, ${0.28 * intensity})`);
+        haloGrad.addColorStop(0.35, `rgba(216, 27, 96, ${0.18 * intensity})`);
+        haloGrad.addColorStop(0.70, `rgba(136, 14, 79, ${0.08 * intensity})`);
+        haloGrad.addColorStop(1, "transparent");
+      } else if (hueType === 'coral') {
+        haloGrad.addColorStop(0, `rgba(255, 112, 67, ${0.28 * intensity})`);
+        haloGrad.addColorStop(0.35, `rgba(230, 74, 25, ${0.18 * intensity})`);
+        haloGrad.addColorStop(0.70, `rgba(183, 28, 28, ${0.07 * intensity})`);
+        haloGrad.addColorStop(1, "transparent");
+      } else if (hueType === 'magenta') {
+        haloGrad.addColorStop(0, `rgba(225, 80, 200, ${0.26 * intensity})`);
+        haloGrad.addColorStop(0.40, `rgba(156, 39, 176, ${0.16 * intensity})`);
+        haloGrad.addColorStop(0.75, `rgba(74, 20, 140, ${0.06 * intensity})`);
+        haloGrad.addColorStop(1, "transparent");
+      } else { // 'ruby_crimson'
+        haloGrad.addColorStop(0, `rgba(255, 64, 129, ${0.30 * intensity})`);
+        haloGrad.addColorStop(0.35, `rgba(229, 57, 53, ${0.20 * intensity})`);
+        haloGrad.addColorStop(0.70, `rgba(136, 14, 79, ${0.08 * intensity})`);
+        haloGrad.addColorStop(1, "transparent");
+      }
+      tCtx.fillStyle = haloGrad;
+      tCtx.beginPath();
+      tCtx.arc(0, 0, size * 1.5 * dynamicScale, 0, Math.PI * 2);
+      tCtx.fill();
+
+      // 2. Layered Organic Floral Petals (Bentuk Kuncup Bunga Mekar)
+      const numPetals = petals || 5;
+      for (let i = 0; i < numPetals; i++) {
+        const pAngle = (i / numPetals) * Math.PI * 2;
+        const petalLen = size * (0.85 + 0.35 * Math.sin(i * 1.8 + timePulse * 0.5));
+        const petalWidth = size * 0.52;
+
+        tCtx.save();
+        tCtx.rotate(pAngle);
+
+        // Curvilinear Petal Shape using cubic Bezier curves
+        tCtx.beginPath();
+        tCtx.moveTo(0, 0);
+        tCtx.bezierCurveTo(-petalWidth * 0.75, petalLen * 0.35, -petalWidth * 0.55, petalLen * 0.85, 0, petalLen);
+        tCtx.bezierCurveTo(petalWidth * 0.55, petalLen * 0.85, petalWidth * 0.75, petalLen * 0.35, 0, 0);
+        tCtx.closePath();
+
+        // Translucent petal gradient radiating from flower center
+        const petalGrad = tCtx.createRadialGradient(0, petalLen * 0.45, size * 0.05, 0, petalLen * 0.55, petalLen * 0.78);
+        if (hueType === 'rose') {
+          petalGrad.addColorStop(0, `rgba(255, 64, 129, ${0.34 * intensity})`);
+          petalGrad.addColorStop(0.45, `rgba(233, 30, 99, ${0.20 * intensity})`);
+          petalGrad.addColorStop(0.85, `rgba(173, 20, 87, ${0.08 * intensity})`);
+          petalGrad.addColorStop(1, "transparent");
+        } else if (hueType === 'coral') {
+          petalGrad.addColorStop(0, `rgba(255, 138, 101, ${0.35 * intensity})`);
+          petalGrad.addColorStop(0.45, `rgba(244, 81, 30, ${0.22 * intensity})`);
+          petalGrad.addColorStop(0.85, `rgba(191, 54, 12, ${0.08 * intensity})`);
+          petalGrad.addColorStop(1, "transparent");
+        } else if (hueType === 'magenta') {
+          petalGrad.addColorStop(0, `rgba(238, 130, 238, ${0.32 * intensity})`);
+          petalGrad.addColorStop(0.45, `rgba(186, 104, 200, ${0.18 * intensity})`);
+          petalGrad.addColorStop(0.85, `rgba(123, 31, 162, ${0.07 * intensity})`);
+          petalGrad.addColorStop(1, "transparent");
+        } else {
+          petalGrad.addColorStop(0, `rgba(255, 82, 82, ${0.36 * intensity})`);
+          petalGrad.addColorStop(0.45, `rgba(216, 27, 96, ${0.22 * intensity})`);
+          petalGrad.addColorStop(0.85, `rgba(142, 36, 170, ${0.08 * intensity})`);
+          petalGrad.addColorStop(1, "transparent");
+        }
+        tCtx.fillStyle = petalGrad;
+        tCtx.fill();
+
+        // Delicate inner crease highlight (urat kelopak kuncup bunga kosmik)
+        tCtx.strokeStyle = `rgba(255, 235, 238, ${0.18 * intensity})`;
+        tCtx.lineWidth = 1.0;
+        tCtx.beginPath();
+        tCtx.moveTo(0, petalLen * 0.12);
+        tCtx.quadraticCurveTo(-petalWidth * 0.15, petalLen * 0.50, 0, petalLen * 0.88);
+        tCtx.stroke();
+
+        tCtx.restore();
+      }
+
+      // 3. Glowing Inner Floral Heart (Pusat Kuncup Bunga Bersinar)
+      const coreGrad = tCtx.createRadialGradient(0, 0, 2, 0, 0, size * 0.42);
+      coreGrad.addColorStop(0, `rgba(255, 255, 255, ${0.85 * intensity})`);
+      coreGrad.addColorStop(0.20, `rgba(255, 224, 130, ${0.65 * intensity})`);
+      coreGrad.addColorStop(0.55, `rgba(255, 64, 129, ${0.35 * intensity})`);
+      coreGrad.addColorStop(1, "transparent");
+      tCtx.fillStyle = coreGrad;
+      tCtx.beginPath();
+      tCtx.arc(0, 0, size * 0.42, 0, Math.PI * 2);
+      tCtx.fill();
+
+      // 4. Organic Dark Interstellar Absorption Veins (Celah Debu Gelap Pembelah Kelopak)
+      tCtx.strokeStyle = "rgba(4, 6, 14, 0.50)";
+      tCtx.lineWidth = Math.max(1.5, size * 0.04);
+      tCtx.beginPath();
+      tCtx.moveTo(-size * 0.45, -size * 0.20);
+      tCtx.quadraticCurveTo(0, size * 0.12, size * 0.50, -size * 0.18);
+      tCtx.stroke();
+
+      tCtx.beginPath();
+      tCtx.moveTo(-size * 0.20, size * 0.35);
+      tCtx.quadraticCurveTo(size * 0.10, -size * 0.05, size * 0.35, size * 0.30);
+      tCtx.stroke();
+
+      // 5. Embedded Protostar Seed Cluster (Gugus Bintang Muda Bayi)
+      const starSeeds = [
+        { x: -size * 0.14, y: -size * 0.10, r: 1.8, c: "#FFF9C4" },
+        { x: size * 0.12, y: -size * 0.15, r: 1.6, c: "#FFFFFF" },
+        { x: size * 0.06, y: size * 0.14, r: 2.1, c: "#FF80AB" },
+        { x: -size * 0.22, y: size * 0.16, r: 1.4, c: "#FFE082" }
+      ];
+      starSeeds.forEach(s => {
+        tCtx.fillStyle = s.c;
+        tCtx.beginPath();
+        tCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        tCtx.fill();
+      });
+
+      tCtx.restore();
+    }
+
+    // Comprehensive Deep Space Cosmos Renderer
     function drawDeepSpaceCosmos(tCtx, w, h, pX, pY, isFullView) {
       // 1. Deep space cosmic void background
       const baseGrad = tCtx.createRadialGradient(w / 2, h / 2, 40, w / 2, h / 2, Math.max(w, h) * 0.95);
@@ -1146,293 +1391,91 @@
       tCtx.fillStyle = baseGrad;
       tCtx.fillRect(0, 0, w, h);
 
-      // 2. Interstellar Nebulae (Diffuse Glowing Gas Clouds in Jewel Tones)
+      // 2. BENTANGAN GALAKSI BIMA SAKTI (THE MILKY WAY GALAXY CORE & SPINAL BELT)
+      // Sweeping organic diagonal starlight river with warm golden Sagittarius A* core
       tCtx.save();
-      // Nebula 1: Carina / Orion Magenta-Violet H II Region
-      const neb1X = w * 0.24 + pX * 0.025;
-      const neb1Y = h * 0.30 + pY * 0.025;
-      const neb1Grad = tCtx.createRadialGradient(neb1X, neb1Y, 10, neb1X, neb1Y, Math.max(w, h) * 0.35);
-      neb1Grad.addColorStop(0, "rgba(171, 71, 188, 0.16)");
-      neb1Grad.addColorStop(0.4, "rgba(233, 30, 99, 0.09)");
-      neb1Grad.addColorStop(0.7, "rgba(106, 27, 154, 0.05)");
-      neb1Grad.addColorStop(1, "transparent");
-      tCtx.fillStyle = neb1Grad;
-      tCtx.beginPath();
-      tCtx.arc(neb1X, neb1Y, Math.max(w, h) * 0.35, 0, Math.PI * 2);
-      tCtx.fill();
-
-      // Nebula 2: Cygnus Veil Cosmic Cyan-Teal Cloud
-      const neb2X = w * 0.78 + pX * 0.035;
-      const neb2Y = h * 0.70 + pY * 0.035;
-      const neb2Grad = tCtx.createRadialGradient(neb2X, neb2Y, 15, neb2X, neb2Y, Math.max(w, h) * 0.32);
-      neb2Grad.addColorStop(0, "rgba(0, 188, 212, 0.12)");
-      neb2Grad.addColorStop(0.45, "rgba(38, 166, 154, 0.07)");
-      neb2Grad.addColorStop(1, "transparent");
-      tCtx.fillStyle = neb2Grad;
-      tCtx.beginPath();
-      tCtx.arc(neb2X, neb2Y, Math.max(w, h) * 0.32, 0, Math.PI * 2);
-      tCtx.fill();
-
-      // Nebula 3: Deep Royal Indigo Molecular Cloud
-      const neb3X = w * 0.50 + pX * 0.02;
-      const neb3Y = h * 0.88 + pY * 0.02;
-      const neb3Grad = tCtx.createRadialGradient(neb3X, neb3Y, 20, neb3X, neb3Y, Math.max(w, h) * 0.28);
-      neb3Grad.addColorStop(0, "rgba(63, 81, 181, 0.10)");
-      neb3Grad.addColorStop(1, "transparent");
-      tCtx.fillStyle = neb3Grad;
-      tCtx.beginPath();
-      tCtx.arc(neb3X, neb3Y, Math.max(w, h) * 0.28, 0, Math.PI * 2);
-      tCtx.fill();
-      tCtx.restore();
-
-      // 3. GALAKSI BIMA SAKTI (THE MILKY WAY GALAXY CORE & ARC)
-      // Magnificent diagonal band passing through the cosmos with golden Sagittarius A* core
-      tCtx.save();
-      const mwX = w * 0.35 + pX * 0.03;
-      const mwY = h * 0.40 + pY * 0.03;
+      const mwX = w * 0.42 + pX * 0.030;
+      const mwY = h * 0.46 + pY * 0.030;
       tCtx.translate(mwX, mwY);
-      tCtx.rotate((-36 * Math.PI) / 180);
+      tCtx.rotate((-34 * Math.PI) / 180);
 
-      // Sweeping Milky Way outer star band
-      const mwBandGrad = tCtx.createLinearGradient(0, -Math.min(w, h) * 0.22, 0, Math.min(w, h) * 0.22);
+      // Sweeping Milky Way outer stellar river
+      const mwBandGrad = tCtx.createLinearGradient(0, -Math.min(w, h) * 0.28, 0, Math.min(w, h) * 0.28);
       mwBandGrad.addColorStop(0, "transparent");
-      mwBandGrad.addColorStop(0.3, "rgba(186, 104, 200, 0.09)");
-      mwBandGrad.addColorStop(0.5, "rgba(255, 236, 179, 0.18)");
-      mwBandGrad.addColorStop(0.7, "rgba(129, 212, 250, 0.09)");
+      mwBandGrad.addColorStop(0.25, "rgba(216, 27, 96, 0.08)");
+      mwBandGrad.addColorStop(0.42, "rgba(255, 236, 179, 0.22)");
+      mwBandGrad.addColorStop(0.58, "rgba(255, 213, 79, 0.18)");
+      mwBandGrad.addColorStop(0.75, "rgba(186, 104, 200, 0.09)");
       mwBandGrad.addColorStop(1, "transparent");
       tCtx.fillStyle = mwBandGrad;
-      tCtx.fillRect(-Math.max(w, h) * 0.8, -Math.min(w, h) * 0.22, Math.max(w, h) * 1.6, Math.min(w, h) * 0.44);
+      tCtx.fillRect(-Math.max(w, h) * 1.2, -Math.min(w, h) * 0.28, Math.max(w, h) * 2.4, Math.min(w, h) * 0.56);
 
       // Galactic Bulge (Pusat Galaksi Bima Sakti / Sagittarius A*)
-      const mwCoreGrad = tCtx.createRadialGradient(0, 0, 8, 0, 0, 110);
-      mwCoreGrad.addColorStop(0, "rgba(255, 255, 255, 0.75)");
-      mwCoreGrad.addColorStop(0.2, "rgba(255, 213, 79, 0.55)");
-      mwCoreGrad.addColorStop(0.5, "rgba(255, 152, 0, 0.28)");
-      mwCoreGrad.addColorStop(0.8, "rgba(171, 71, 188, 0.12)");
+      const mwCoreGrad = tCtx.createRadialGradient(0, 0, 8, 0, 0, 140);
+      mwCoreGrad.addColorStop(0, "rgba(255, 255, 255, 0.85)");
+      mwCoreGrad.addColorStop(0.20, "rgba(255, 224, 130, 0.65)");
+      mwCoreGrad.addColorStop(0.48, "rgba(255, 152, 0, 0.32)");
+      mwCoreGrad.addColorStop(0.78, "rgba(233, 30, 99, 0.14)");
       mwCoreGrad.addColorStop(1, "transparent");
       tCtx.fillStyle = mwCoreGrad;
       tCtx.beginPath();
-      tCtx.ellipse(0, 0, 120, 52, 0, 0, Math.PI * 2);
+      tCtx.ellipse(0, 0, 150, 62, 0, 0, Math.PI * 2);
       tCtx.fill();
 
-      // Great Rift: Dark interstellar dust absorption lanes slicing the Milky Way
-      tCtx.strokeStyle = "rgba(4, 7, 14, 0.65)";
-      tCtx.lineWidth = 14;
+      // The Great Rift: Natural organic interstellar absorption dust lanes slicing along Bima Sakti
+      tCtx.strokeStyle = "rgba(4, 7, 14, 0.70)";
+      tCtx.lineWidth = 18;
       tCtx.beginPath();
-      tCtx.moveTo(-160, -8);
-      tCtx.quadraticCurveTo(-60, 12, 0, -4);
-      tCtx.quadraticCurveTo(80, -18, 180, 6);
+      tCtx.moveTo(-240, -12);
+      tCtx.quadraticCurveTo(-90, 16, 0, -6);
+      tCtx.quadraticCurveTo(110, -22, 260, 8);
       tCtx.stroke();
 
-      tCtx.lineWidth = 8;
+      tCtx.lineWidth = 10;
       tCtx.beginPath();
-      tCtx.moveTo(-140, 10);
-      tCtx.quadraticCurveTo(-30, -10, 60, 14);
-      tCtx.quadraticCurveTo(120, 20, 210, -8);
+      tCtx.moveTo(-200, 14);
+      tCtx.quadraticCurveTo(-50, -14, 70, 18);
+      tCtx.quadraticCurveTo(160, 26, 290, -10);
       tCtx.stroke();
 
-      // Glowing pink H II starbirth knots along the galactic arms
-      const h2Knots = [
-        { x: -90, y: -15, r: 4, c: "rgba(236, 64, 122, 0.55)" },
-        { x: -45, y: 18, r: 3.5, c: "rgba(240, 98, 146, 0.5)" },
-        { x: 55, y: -22, r: 5, c: "rgba(233, 30, 99, 0.6)" },
-        { x: 110, y: 14, r: 4, c: "rgba(244, 143, 177, 0.5)" }
+      tCtx.restore();
+
+      // 3. 10+ INTERSTELLAR FLOWER BUD NEBULAE (KUNCUP BUNGA KOSMIK MERAH BIMA SAKTI)
+      // 12 distinct organic floral emission nebulae distributed along and around the Milky Way plane
+      const flowerBudNebulae = [
+        // 1. Nebula Kuncup Mawar (Rosette) - 6 petals rose
+        { fx: 0.22, fy: 0.26, size: Math.min(w, h) * 0.095, angle: -0.25, petals: 6, hue: 'rose', depth: 0.028, pulse: elapsedTime * 1.1 },
+        // 2. Nebula Kuncup Tulip (Tulip) - 4 petals ruby
+        { fx: 0.37, fy: 0.19, size: Math.min(w, h) * 0.075, angle: 0.40, petals: 4, hue: 'ruby_crimson', depth: 0.032, pulse: elapsedTime * 0.9 + 1.2 },
+        // 3. Nebula Kuncup Teratai (Lotus / Iris Cloud) - 7 petals magenta
+        { fx: 0.58, fy: 0.15, size: Math.min(w, h) * 0.088, angle: -0.45, petals: 7, hue: 'magenta', depth: 0.026, pulse: elapsedTime * 1.3 + 2.0 },
+        // 4. Nebula Kelopak Jantung (Heart Nebula) - 5 petals ruby
+        { fx: 0.14, fy: 0.56, size: Math.min(w, h) * 0.092, angle: 0.18, petals: 5, hue: 'ruby_crimson', depth: 0.035, pulse: elapsedTime * 0.8 + 0.5 },
+        // 5. Nebula Kuncup Jiwa (Soul Nebula) - 5 petals coral
+        { fx: 0.25, fy: 0.68, size: Math.min(w, h) * 0.082, angle: -0.32, petals: 5, hue: 'coral', depth: 0.033, pulse: elapsedTime * 1.0 + 3.1 },
+        // 6. Nebula Kuncup Laguna (Lagoon Nebula) - 6 petals rose
+        { fx: 0.45, fy: 0.48, size: Math.min(w, h) * 0.105, angle: 0.55, petals: 6, hue: 'rose', depth: 0.030, pulse: elapsedTime * 1.2 + 1.7 },
+        // 7. Nebula Kuncup Carina (Great Carina Petals) - 7 petals ruby
+        { fx: 0.68, fy: 0.40, size: Math.min(w, h) * 0.115, angle: -0.38, petals: 7, hue: 'ruby_crimson', depth: 0.038, pulse: elapsedTime * 0.85 + 2.4 },
+        // 8. Nebula Kuncup Melati Kosmik (Cosmic Jasmine) - 5 petals rose
+        { fx: 0.82, fy: 0.28, size: Math.min(w, h) * 0.072, angle: 0.32, petals: 5, hue: 'rose', depth: 0.025, pulse: elapsedTime * 1.15 + 0.9 },
+        // 9. Nebula Kuncup Anggrek Ungu (Purple Orchid) - 5 petals magenta
+        { fx: 0.77, fy: 0.64, size: Math.min(w, h) * 0.090, angle: 0.75, petals: 5, hue: 'magenta', depth: 0.036, pulse: elapsedTime * 0.95 + 1.4 },
+        // 10. Nebula Kuncup Bunga Api (Flame Flower) - 5 petals coral
+        { fx: 0.88, fy: 0.76, size: Math.min(w, h) * 0.084, angle: -0.55, petals: 5, hue: 'coral', depth: 0.040, pulse: elapsedTime * 1.25 + 2.8 },
+        // 11. Nebula Kuncup Elang (Eagle Spire Bud) - 6 petals ruby
+        { fx: 0.33, fy: 0.82, size: Math.min(w, h) * 0.086, angle: 0.22, petals: 6, hue: 'ruby_crimson', depth: 0.029, pulse: elapsedTime * 1.05 + 0.3 },
+        // 12. Nebula Kuncup Bunga Matahari Kosmik (Solaris Floral) - 7 petals coral
+        { fx: 0.52, fy: 0.86, size: Math.min(w, h) * 0.080, angle: -0.15, petals: 7, hue: 'coral', depth: 0.031, pulse: elapsedTime * 1.10 + 2.1 }
       ];
-      h2Knots.forEach(k => {
-        tCtx.beginPath();
-        tCtx.arc(k.x, k.y, k.r, 0, Math.PI * 2);
-        tCtx.fillStyle = k.c;
-        tCtx.shadowColor = k.c;
-        tCtx.shadowBlur = 8;
-        tCtx.fill();
-        tCtx.shadowBlur = 0;
+
+      flowerBudNebulae.forEach(f => {
+        const nx = ((f.fx * w + pX * f.depth) % w + w) % w;
+        const ny = ((f.fy * h + pY * f.depth) % h + h) % h;
+        drawFlowerBudNebula(tCtx, nx, ny, f.size, f.angle, f.petals, f.hue, 1.0, f.pulse);
       });
 
-      // Subtle Galactic Label in Overview mode
-      if (!isFullView) {
-        tCtx.fillStyle = "rgba(255, 214, 0, 0.55)";
-        tCtx.font = "bold 9px 'Plus Jakarta Sans', sans-serif";
-        tCtx.textAlign = "center";
-        tCtx.fillText("BIMA SAKTI (PUSAT GALAKSI)", 0, 48);
-      }
-      tCtx.restore();
-
-      // 4. GALAKSI ANDROMEDA (MESSIER 31)
-      // Inclined spiral galaxy with luminous core, blue spiral arms, and companion M32
-      tCtx.save();
-      const m31X = w * 0.82 + pX * 0.045;
-      const m31Y = h * 0.22 + pY * 0.045;
-      tCtx.translate(m31X, m31Y);
-      tCtx.rotate((34 * Math.PI) / 180);
-
-      // Outer spiral halo
-      const m31Halo = tCtx.createRadialGradient(0, 0, 6, 0, 0, 58);
-      m31Halo.addColorStop(0, "rgba(255, 253, 231, 0.85)");
-      m31Halo.addColorStop(0.25, "rgba(255, 224, 130, 0.5)");
-      m31Halo.addColorStop(0.6, "rgba(129, 212, 250, 0.24)");
-      m31Halo.addColorStop(0.85, "rgba(179, 157, 219, 0.12)");
-      m31Halo.addColorStop(1, "transparent");
-      tCtx.fillStyle = m31Halo;
-      tCtx.beginPath();
-      tCtx.ellipse(0, 0, 68, 24, 0, 0, Math.PI * 2);
-      tCtx.fill();
-
-      // Andromeda core nucleus
-      tCtx.fillStyle = "#FFFDE7";
-      tCtx.shadowColor = "rgba(255, 255, 255, 0.8)";
-      tCtx.shadowBlur = 10;
-      tCtx.beginPath();
-      tCtx.ellipse(0, 0, 10, 4.5, 0, 0, Math.PI * 2);
-      tCtx.fill();
-      tCtx.shadowBlur = 0;
-
-      // Dark dust ring lane silhouette cutting near edge
-      tCtx.strokeStyle = "rgba(6, 9, 16, 0.55)";
-      tCtx.lineWidth = 2.5;
-      tCtx.beginPath();
-      tCtx.ellipse(0, 5, 46, 12, 0, Math.PI * 0.1, Math.PI * 0.9);
-      tCtx.stroke();
-
-      // Companion galaxy Messier 32 (dwarf elliptical)
-      tCtx.fillStyle = "rgba(255, 248, 225, 0.65)";
-      tCtx.beginPath();
-      tCtx.arc(18, -14, 2.8, 0, Math.PI * 2);
-      tCtx.fill();
-
-      if (!isFullView) {
-        tCtx.fillStyle = "rgba(168, 199, 250, 0.6)";
-        tCtx.font = "bold 8.5px 'Plus Jakarta Sans', sans-serif";
-        tCtx.textAlign = "center";
-        tCtx.fillText("GALAKSI ANDROMEDA (M31)", 0, 28);
-      }
-      tCtx.restore();
-
-      // 5. GALAKSI SOMBRERO (MESSIER 104)
-      // Edge-on spiral with bright spherical bulge and crisp dark equatorial dust lane
-      tCtx.save();
-      const m104X = w * 0.13 + pX * 0.038;
-      const m104Y = h * 0.78 + pY * 0.038;
-      tCtx.translate(m104X, m104Y);
-      tCtx.rotate((-7 * Math.PI) / 180);
-
-      // Huge luminous spherical/elliptical bulge
-      const sBulge = tCtx.createRadialGradient(0, 0, 3, 0, 0, 32);
-      sBulge.addColorStop(0, "rgba(255, 255, 255, 0.8)");
-      sBulge.addColorStop(0.3, "rgba(255, 238, 178, 0.45)");
-      sBulge.addColorStop(0.7, "rgba(255, 204, 128, 0.15)");
-      sBulge.addColorStop(1, "transparent");
-      tCtx.fillStyle = sBulge;
-      tCtx.beginPath();
-      tCtx.ellipse(0, 0, 36, 22, 0, 0, Math.PI * 2);
-      tCtx.fill();
-
-      // Flat disc
-      tCtx.fillStyle = "rgba(255, 243, 224, 0.28)";
-      tCtx.beginPath();
-      tCtx.ellipse(0, 0, 52, 9, 0, 0, Math.PI * 2);
-      tCtx.fill();
-
-      // Prominent jet-black dust lane slicing horizontally across the galaxy
-      tCtx.strokeStyle = "rgba(4, 6, 12, 0.88)";
-      tCtx.lineWidth = 3;
-      tCtx.beginPath();
-      tCtx.moveTo(-46, 0);
-      tCtx.lineTo(46, 0);
-      tCtx.stroke();
-
-      if (!isFullView) {
-        tCtx.fillStyle = "rgba(255, 213, 79, 0.6)";
-        tCtx.font = "bold 8px 'Plus Jakarta Sans', sans-serif";
-        tCtx.textAlign = "center";
-        tCtx.fillText("GALAKSI SOMBRERO (M104)", 0, 22);
-      }
-      tCtx.restore();
-
-      // 6. GALAKSI PUSARAN (WHIRLPOOL GALAXY - M51)
-      // Face-on grand design spiral with logarithmic swirling arms and companion NGC 5195
-      tCtx.save();
-      const m51X = w * 0.86 + pX * 0.04;
-      const m51Y = h * 0.80 + pY * 0.04;
-      tCtx.translate(m51X, m51Y);
-
-      // Core glow
-      const m51Core = tCtx.createRadialGradient(0, 0, 2, 0, 0, 24);
-      m51Core.addColorStop(0, "rgba(255, 255, 255, 0.9)");
-      m51Core.addColorStop(0.35, "rgba(255, 214, 0, 0.5)");
-      m51Core.addColorStop(0.7, "rgba(129, 212, 250, 0.2)");
-      m51Core.addColorStop(1, "transparent");
-      tCtx.fillStyle = m51Core;
-      tCtx.beginPath();
-      tCtx.arc(0, 0, 24, 0, Math.PI * 2);
-      tCtx.fill();
-
-      // Swirling dual spiral arms
-      tCtx.strokeStyle = "rgba(144, 202, 249, 0.4)";
-      tCtx.lineWidth = 2.5;
-      tCtx.beginPath();
-      for (let theta = 0; theta < Math.PI * 3.5; theta += 0.1) {
-        const rad = 3 + theta * 4.2;
-        const ax = Math.cos(theta) * rad;
-        const ay = Math.sin(theta) * rad;
-        if (theta === 0) tCtx.moveTo(ax, ay);
-        else tCtx.lineTo(ax, ay);
-      }
-      tCtx.stroke();
-
-      tCtx.strokeStyle = "rgba(244, 143, 177, 0.35)";
-      tCtx.lineWidth = 2.2;
-      tCtx.beginPath();
-      for (let theta = Math.PI; theta < Math.PI * 4.2; theta += 0.1) {
-        const rad = 3 + (theta - Math.PI) * 4.2;
-        const ax = Math.cos(theta) * rad;
-        const ay = Math.sin(theta) * rad;
-        if (theta === Math.PI) tCtx.moveTo(ax, ay);
-        else tCtx.lineTo(ax, ay);
-      }
-      tCtx.stroke();
-
-      // Tidal bridge & Companion Galaxy NGC 5195
-      tCtx.strokeStyle = "rgba(255, 224, 178, 0.3)";
-      tCtx.lineWidth = 3;
-      tCtx.beginPath();
-      tCtx.moveTo(14, -10);
-      tCtx.lineTo(24, -18);
-      tCtx.stroke();
-
-      tCtx.fillStyle = "rgba(255, 238, 178, 0.7)";
-      tCtx.beginPath();
-      tCtx.arc(26, -20, 4.5, 0, Math.PI * 2);
-      tCtx.fill();
-
-      if (!isFullView) {
-        tCtx.fillStyle = "rgba(244, 143, 177, 0.6)";
-        tCtx.font = "bold 8px 'Plus Jakarta Sans', sans-serif";
-        tCtx.textAlign = "center";
-        tCtx.fillText("GALAKSI PUSARAN (M51)", 0, 26);
-      }
-      tCtx.restore();
-
-      // 7. AWAN MAGELLAN BESAR (LMC)
-      tCtx.save();
-      const lmcX = w * 0.52 + pX * 0.03;
-      const lmcY = h * 0.10 + pY * 0.03;
-      const lmcGrad = tCtx.createRadialGradient(lmcX, lmcY, 4, lmcX, lmcY, 48);
-      lmcGrad.addColorStop(0, "rgba(206, 147, 216, 0.22)");
-      lmcGrad.addColorStop(0.4, "rgba(179, 157, 219, 0.12)");
-      lmcGrad.addColorStop(1, "transparent");
-      tCtx.fillStyle = lmcGrad;
-      tCtx.beginPath();
-      tCtx.arc(lmcX, lmcY, 48, 0, Math.PI * 2);
-      tCtx.fill();
-
-      // Tarantula nebula glowing spot inside LMC
-      tCtx.fillStyle = "rgba(255, 64, 129, 0.45)";
-      tCtx.beginPath();
-      tCtx.arc(lmcX + 6, lmcY - 4, 3.5, 0, Math.PI * 2);
-      tCtx.fill();
-      tCtx.restore();
-
-      // 8. RICH MULTI-SPECTRAL STARFIELD WITH TWINKLE & DIFFRACTION SPIKES
+      // 4. RICH MULTI-SPECTRAL STARFIELD WITH TWINKLE & DIFFRACTION SPIKES
       stars.forEach(s => {
         const px = ((s.x * w + pX * s.depth) % w + w) % w;
         const py = ((s.y * h + pY * s.depth) % h + h) % h;
@@ -5126,6 +5169,9 @@
       const modal = document.getElementById("galaxiesModal");
       if (modal) modal.classList.add("hidden");
     }
+
+    const openMilkyWayModal = openGalaxiesModal;
+    const closeMilkyWayModal = closeGalaxiesModal;
 
     function toggleFeaturePins() {
       showFeaturePins = !showFeaturePins;
