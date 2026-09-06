@@ -1,0 +1,7 @@
+{
+  "name": "Planetarium Interaktif",
+  "description": "Planetarium edukasi tata surya interaktif visual untuk Gen Z dengan animasi orbit real-time dan eksplorasi planet",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
