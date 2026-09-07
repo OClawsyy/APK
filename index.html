@@ -246,6 +246,12 @@
           <span id="featurePinsLabel" class="hidden sm:inline">Label Anatomi</span>
         </button>
 
+        <!-- Toggle Earth Aurora & Magnetic Field Shield (Only on Earth) -->
+        <button id="earthShieldsToggleBtn" onclick="toggleEarthShields()" title="Simulasi Aurora, Medan Magnet & Angin Matahari" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#00E5FF]/15 border border-[#00E5FF]/60 text-[#80DEEA] hover:text-white hover:bg-[#00E5FF]/30 text-xs font-semibold cursor-pointer transition-all shadow-md backdrop-blur-md">
+          <span class="material-symbols-outlined text-[16px] text-[#00E5FF]">shield</span>
+          <span class="hidden sm:inline">Aurora & Magnetosfer</span>
+        </button>
+
         <!-- Share Planet Button -->
         <button onclick="shareCurrentPlanet()" title="Bagikan Planet Ini" class="w-9 h-9 rounded-full bg-[#161B26]/90 border border-white/10 text-[#C4C6D0] hover:text-white hover:border-[#4F86F7]/50 flex items-center justify-center transition-all cursor-pointer backdrop-blur-md shadow-md">
           <span class="material-symbols-outlined text-[18px]">share</span>
@@ -494,6 +500,52 @@
             <p class="text-[11px] leading-relaxed">
               <strong class="text-[#80DEEA]">Fakta Astronomi:</strong> Tata Surya mengorbit pusat galaksi Bima Sakti dengan kecepatan ~828.000 km/jam, membutuhkan waktu sekitar 230 juta tahun untuk menyelesaikan satu putaran galaksi penuh (Tahun Kosmik / Galactic Year).
             </p>
+          </div>
+
+          <!-- PANDUAN EDUKASI SISWA: BAGAIMANA AURORA, MEDAN MAGNET & PANAS MATAHARI TERJADI -->
+          <div class="mt-4 pt-3 border-t border-white/10 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-[#00E5FF] text-[18px]">electric_bolt</span>
+                <p class="text-xs text-white font-bold uppercase tracking-wider">Perisai Kosmik & Fenomena Aurora</p>
+              </div>
+              <span class="text-[10px] text-[#00E5FF] bg-[#00E5FF]/20 border border-[#00E5FF]/40 px-2 py-0.5 rounded-full font-semibold">Simulasi Interaktif</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
+              <!-- 1. Angin & Panas Matahari -->
+              <div class="p-3 rounded-xl bg-[#201512] border border-[#FF7043]/30">
+                <div class="flex items-center gap-1.5 text-[#FFAB91] font-bold mb-1">
+                  <span class="material-symbols-outlined text-[15px] text-[#FF7043]">wb_sunny</span>
+                  1. Angin Matahari
+                </div>
+                <p class="text-[11px] text-[#C4C6D0] leading-relaxed">
+                  Matahari terus menyemburkan badai plasma partikel bermuatan (elektron & proton) berkecepatan 400–800 km/detik dan radiasi termal ke arah Bumi.
+                </p>
+              </div>
+
+              <!-- 2. Magnetosfer & Lapisan Ozon -->
+              <div class="p-3 rounded-xl bg-[#141E28] border border-[#00E5FF]/30">
+                <div class="flex items-center gap-1.5 text-[#80DEEA] font-bold mb-1">
+                  <span class="material-symbols-outlined text-[15px] text-[#00E5FF]">shield</span>
+                  2. Perisai Pelindung
+                </div>
+                <p class="text-[11px] text-[#C4C6D0] leading-relaxed">
+                  <strong>Medan Magnet (Geodinamo)</strong> membelokkan badai radiasi di <em>Bow Shock</em>, sedangkan <strong>Lapisan Ozon (O₃)</strong> menyaring sinar ultraviolet UV-B & UV-C.
+                </p>
+              </div>
+
+              <!-- 3. Terjadinya Aurora -->
+              <div class="p-3 rounded-xl bg-[#0D2418] border border-[#00E676]/30">
+                <div class="flex items-center gap-1.5 text-[#A5D6A7] font-bold mb-1">
+                  <span class="material-symbols-outlined text-[15px] text-[#00E676]">auto_awesome</span>
+                  3. Pendar Aurora
+                </div>
+                <p class="text-[11px] text-[#C4C6D0] leading-relaxed">
+                  Partikel yang tertembus dibimbing garis magnet ke kutub dan bertabrakan dengan atom Oksigen (warna hijau 557 nm) & Nitrogen (warna ungu/merah 630 nm) di ionosfer.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1361,6 +1413,7 @@
     let fullPanY = 0;
     let isInfoCollapsed = false;
     let showFeaturePins = true; // Educational anatomy pinpoints for students!
+    let showEarthShields = true; // Educational Magnetic Field, Solar Wind & Aurora Layers for Earth
     let isRealisticOrbitScale = false;
 
     // Semi-realistic AU log/compressed radius mapping for solar system overview
@@ -1828,6 +1881,13 @@
       drawPlanetOrbiters(p, centerX, centerY, planetRadius, true);
 
       // ============================================
+      // A2. EARTH SPECIAL: Solar Wind & Magnetic Field (Behind Sphere)
+      // ============================================
+      if (p.id === "earth" && showEarthShields) {
+        drawEarthMagnetosphereAndSolarWind(fullCtx, centerX, centerY, planetRadius, true);
+      }
+
+      // ============================================
       // B. Saturn Back Rings (Rendered Behind Sphere)
       // ============================================
       if (p.hasRings) {
@@ -2211,6 +2271,36 @@
             title: "🌀 Pusaran Siklon Tropis",
             desc: "Badai spiral atmosferik dengan mata siklon di samudra",
             color: "#E0E0E0"
+          });
+        }
+
+        // --- Fitur Edukasi Khusus Pelajar: Aurora, Ozon & Medan Magnet ---
+        if (showEarthShields) {
+          // 1. Aurora Borealis Pin (Kutub Utara)
+          const northAuroraPin = { x: centerX, y: centerY - planetRadius * 0.94, visible: true };
+          featurePinsToDraw.push({
+            pos: northAuroraPin,
+            title: "✨ Aurora Borealis (Kutub Utara)",
+            desc: "Pendar cahaya ionosfer saat partikel angin matahari menabrak gas Oksigen & Nitrogen",
+            color: "#00E676"
+          });
+
+          // 2. Lapisan Ozon (Stratosfer 15-35 km)
+          const ozonePin = { x: centerX - planetRadius * 0.98, y: centerY - planetRadius * 0.35, visible: true };
+          featurePinsToDraw.push({
+            pos: ozonePin,
+            title: "🛡️ Lapisan Ozon (O₃)",
+            desc: "Perisai gas stratosfer yang menyerap radiasi ultraviolet berbahaya (UV-B & UV-C)",
+            color: "#00E5FF"
+          });
+
+          // 3. Garis Medan Magnet Dipol (Van Allen Belt)
+          const magnetPin = { x: centerX + planetRadius * 1.5, y: centerY, visible: true };
+          featurePinsToDraw.push({
+            pos: magnetPin,
+            title: "🧲 Sabuk Radiasi Van Allen",
+            desc: "Jebakan partikel bermuatan energi tinggi yang dibelokkan medan magnet dinamo inti cair Bumi",
+            color: "#B388FF"
           });
         }
 
@@ -2744,7 +2834,7 @@
       }
 
       // ============================================
-      // F. Atmosphere Rim Glow (Rayleigh Scattering)
+      // F. Atmosphere Rim Glow (Rayleigh Scattering) & Ozone Layer
       // ============================================
       fullCtx.beginPath();
       fullCtx.arc(centerX, centerY, planetRadius, 0, Math.PI * 2);
@@ -2762,12 +2852,22 @@
         fullCtx.beginPath();
         fullCtx.arc(centerX, centerY, planetRadius * 1.08, 0, Math.PI * 2);
         fullCtx.fill();
+
+        // Lapisan Ozon (Stratosfer 15-35 km) & Aurora Curtains
+        if (showEarthShields) {
+          drawEarthOzoneLayer(fullCtx, centerX, centerY, planetRadius);
+          drawEarthAuroraCurtains(fullCtx, centerX, centerY, planetRadius);
+        }
       }
 
       // ============================================
-      // G. Front-layer orbiting objects (In Front)
+      // G. Front-layer orbiting objects (In Front) & Front Magnetic Lines
       // ============================================
       drawPlanetOrbiters(p, centerX, centerY, planetRadius, false);
+
+      if (p.id === "earth" && showEarthShields) {
+        drawEarthMagnetosphereAndSolarWind(fullCtx, centerX, centerY, planetRadius, false);
+      }
 
       // ============================================
       // H. INTERACTIVE EDUCATIONAL FEATURE PINPOINTS
@@ -2935,6 +3035,294 @@
       }
     }
 
+    // =========================================================================
+    // EARTH SHIELDS SIMULATION: AURORA, MAGNETOSPHERE, SOLAR WIND & OZONE
+    // =========================================================================
+    const solarWindParticles = [];
+    const NUM_SOLAR_PARTICLES = 70;
+    for (let i = 0; i < NUM_SOLAR_PARTICLES; i++) {
+      solarWindParticles.push({
+        x: Math.random(),
+        y: (Math.random() - 0.5) * 2.2, // relative to radius
+        speed: 0.6 + Math.random() * 0.8,
+        size: 1.2 + Math.random() * 2.0,
+        alpha: 0.3 + Math.random() * 0.6,
+        color: Math.random() > 0.4 ? "#FFD54F" : "#FF7043"
+      });
+    }
+
+    function toggleEarthShields() {
+      showEarthShields = !showEarthShields;
+      const btn = document.getElementById("earthShieldsToggleBtn");
+      if (btn) {
+        if (showEarthShields) {
+          btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#00E5FF]/20 border border-[#00E5FF] text-white text-xs font-semibold cursor-pointer transition-all shadow-md backdrop-blur-md";
+        } else {
+          btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#161B26]/90 border border-white/20 text-[#919194] hover:text-white text-xs font-semibold cursor-pointer transition-all shadow-md backdrop-blur-md";
+        }
+      }
+    }
+
+    // 1. Draw Magnetosphere, Bow Shock, Van Allen Belts & Solar Wind Particles
+    function drawEarthMagnetosphereAndSolarWind(ctx, cx, cy, radius, isBehind) {
+      const bowShockDist = radius * 2.25;
+      const sunAngle = -Math.PI; // Solar wind blows from left (-x) to right (+x)
+
+      if (isBehind) {
+        // --- SOLAR WIND STREAM FROM SUN (INCOMING FROM THE LEFT) ---
+        ctx.save();
+        solarWindParticles.forEach(pt => {
+          // Advance particle towards right
+          pt.x += pt.speed * 0.007;
+          if (pt.x > 2.8) {
+            pt.x = -1.2 - Math.random() * 0.5;
+            pt.y = (Math.random() - 0.5) * 2.4;
+          }
+
+          // Compute world coords
+          let px = cx + (pt.x - 1.2) * radius;
+          let py = cy + pt.y * radius;
+
+          // If particle approaches bow shock (x ~ -bowShockDist), deflect along magnetic curvature towards poles
+          const distToEarth = Math.hypot(px - cx, py - cy);
+          if (px < cx && distToEarth < bowShockDist * 1.05 && distToEarth > radius * 0.95) {
+            const deflectDir = py > cy ? 1 : -1;
+            py += deflectDir * (radius * 0.04);
+            // Deflect towards polar cusps
+            if (px > cx - radius * 1.2) {
+              px += radius * 0.02;
+            }
+          }
+
+          // Draw energetic solar particle streak
+          ctx.beginPath();
+          ctx.arc(px, py, pt.size, 0, Math.PI * 2);
+          ctx.fillStyle = pt.color;
+          ctx.globalAlpha = pt.alpha * (px < cx + radius * 1.5 ? 1.0 : Math.max(0, 1 - (px - (cx + radius * 1.5)) / (radius * 1.5)));
+          ctx.fill();
+
+          // Particle tail streak
+          ctx.beginPath();
+          ctx.moveTo(px, py);
+          ctx.lineTo(px - pt.speed * 8, py);
+          ctx.strokeStyle = pt.color;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        });
+        ctx.restore();
+
+        // --- BOW SHOCK (DAY SIDE COMPRESSION SHOCKWAVE) ---
+        const pulse = Math.sin(elapsedTime * 2.5) * 4;
+        const bsX = cx - bowShockDist + pulse;
+        const bowGrad = ctx.createRadialGradient(cx, cy, bowShockDist * 0.8, cx, cy, bowShockDist * 1.25);
+        bowGrad.addColorStop(0, "transparent");
+        bowGrad.addColorStop(0.7, "rgba(255, 167, 38, 0.18)");
+        bowGrad.addColorStop(0.9, "rgba(255, 112, 67, 0.28)");
+        bowGrad.addColorStop(1, "transparent");
+
+        ctx.save();
+        ctx.beginPath();
+        // Hyperbolic bow shock arc
+        ctx.arc(cx, cy, bowShockDist + pulse, Math.PI * 0.55, Math.PI * 1.45, false);
+        ctx.strokeStyle = "rgba(255, 183, 77, 0.55)";
+        ctx.lineWidth = 2.5;
+        ctx.shadowColor = "#FF9800";
+        ctx.shadowBlur = 12;
+        ctx.stroke();
+        ctx.restore();
+
+        // Bow shock luminous wave fill
+        ctx.save();
+        ctx.fillStyle = bowGrad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, bowShockDist * 1.2, Math.PI * 0.5, Math.PI * 1.5, false);
+        ctx.fill();
+        ctx.restore();
+
+        // --- MAGNETOTAIL (STRETCHED NIGHT SIDE TOWARDS RIGHT) ---
+        const tailGrad = ctx.createLinearGradient(cx, cy, cx + radius * 3.8, cy);
+        tailGrad.addColorStop(0, "rgba(124, 77, 255, 0.20)");
+        tailGrad.addColorStop(0.4, "rgba(33, 150, 243, 0.12)");
+        tailGrad.addColorStop(1, "transparent");
+
+        ctx.save();
+        ctx.fillStyle = tailGrad;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - radius * 1.1);
+        ctx.bezierCurveTo(cx + radius * 1.8, cy - radius * 1.4, cx + radius * 3.0, cy - radius * 0.8, cx + radius * 3.8, cy - radius * 0.5);
+        ctx.lineTo(cx + radius * 3.8, cy + radius * 0.5);
+        ctx.bezierCurveTo(cx + radius * 3.0, cy + radius * 0.8, cx + radius * 1.8, cy + radius * 1.4, cx, cy + radius * 1.1);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+
+        // Outer Magnetic Dipole Field Loops (Behind Earth)
+        drawMagneticDipoleLines(ctx, cx, cy, radius, true);
+
+      } else {
+        // --- FRONT LAYER: FOREGROUND MAGNETIC FIELD LINES & POLAR FUNNELS ---
+        drawMagneticDipoleLines(ctx, cx, cy, radius, false);
+
+        // Van Allen Radiation Belt (Luminous toroidal energy trap)
+        const vaGrad = ctx.createRadialGradient(cx, cy, radius * 1.3, cx, cy, radius * 2.0);
+        vaGrad.addColorStop(0, "transparent");
+        vaGrad.addColorStop(0.5, "rgba(179, 136, 255, 0.22)");
+        vaGrad.addColorStop(0.8, "rgba(101, 31, 255, 0.08)");
+        vaGrad.addColorStop(1, "transparent");
+
+        ctx.save();
+        ctx.fillStyle = vaGrad;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, radius * 1.9, radius * 1.1, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    // Helper: Magnetic Dipole Field Lines (Looping from South to North, funneling to poles)
+    function drawMagneticDipoleLines(ctx, cx, cy, radius, isBehind) {
+      ctx.save();
+      const loops = [
+        { spanX: 1.35, spanY: 0.95, alpha: 0.45, width: 1.4 },
+        { spanX: 1.75, spanY: 1.35, alpha: 0.38, width: 1.5 },
+        { spanX: 2.25, spanY: 1.85, alpha: 0.28, width: 1.6 },
+        { spanX: 2.80, spanY: 2.30, alpha: 0.18, width: 1.2 }
+      ];
+
+      // Dynamic flow pulse along the lines
+      const flowOffset = (elapsedTime * 1.5) % 1.0;
+
+      loops.forEach((loop, idx) => {
+        // Compress day side (left), elongate night side (right)
+        const dayCompression = 0.72;
+        const nightExpansion = 1.35;
+
+        // Left Magnetic Loop (Day-side compressed loop)
+        ctx.beginPath();
+        const topPoleY = cy - radius * 0.90;
+        const btmPoleY = cy + radius * 0.90;
+
+        ctx.moveTo(cx, topPoleY);
+        // Curve outwards to left then back to bottom pole
+        ctx.bezierCurveTo(
+          cx - (radius * loop.spanX * dayCompression), cy - (radius * loop.spanY * 0.7),
+          cx - (radius * loop.spanX * dayCompression), cy + (radius * loop.spanY * 0.7),
+          cx, btmPoleY
+        );
+
+        ctx.strokeStyle = `rgba(0, 229, 255, ${loop.alpha * (isBehind ? 0.6 : 1.0)})`;
+        ctx.lineWidth = loop.width;
+        ctx.setLineDash([8, 6]);
+        ctx.lineDashOffset = -flowOffset * 28;
+        ctx.stroke();
+
+        // Right Magnetic Loop (Night-side stretched loop)
+        ctx.beginPath();
+        ctx.moveTo(cx, topPoleY);
+        ctx.bezierCurveTo(
+          cx + (radius * loop.spanX * nightExpansion), cy - (radius * loop.spanY * 0.7),
+          cx + (radius * loop.spanX * nightExpansion), cy + (radius * loop.spanY * 0.7),
+          cx, btmPoleY
+        );
+
+        ctx.strokeStyle = `rgba(179, 136, 255, ${loop.alpha * (isBehind ? 0.6 : 1.0)})`;
+        ctx.lineWidth = loop.width;
+        ctx.stroke();
+      });
+
+      ctx.restore();
+    }
+
+    // 2. Draw Earth Ozone Layer (Perisai Gas O₃ Stratosferik 15-35 km)
+    function drawEarthOzoneLayer(ctx, cx, cy, radius) {
+      ctx.save();
+      const ozR = radius * 1.045; // Just outside troposphere rim
+      const ozThick = Math.max(3.5, radius * 0.038);
+
+      // Subtle breathing shimmer for ozone UV filtration
+      const shimmer = 0.5 + 0.2 * Math.sin(elapsedTime * 3.0);
+
+      // Ozone Stratospheric Halo
+      ctx.beginPath();
+      ctx.arc(cx, cy, ozR, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(0, 229, 255, ${shimmer * 0.8})`;
+      ctx.lineWidth = ozThick;
+      ctx.shadowColor = "#00E5FF";
+      ctx.shadowBlur = 8;
+      ctx.stroke();
+
+      // Outer delicate absorption haze
+      const hazeGrad = ctx.createRadialGradient(cx, cy, radius * 1.01, cx, cy, radius * 1.10);
+      hazeGrad.addColorStop(0, "rgba(0, 229, 255, 0.25)");
+      hazeGrad.addColorStop(0.6, "rgba(0, 176, 255, 0.12)");
+      hazeGrad.addColorStop(1, "transparent");
+
+      ctx.fillStyle = hazeGrad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius * 1.10, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // 3. Draw Dynamic Shifting Aurora Curtains at North & South Poles
+    function drawEarthAuroraCurtains(ctx, cx, cy, radius) {
+      ctx.save();
+
+      // North Pole (Aurora Borealis) & South Pole (Aurora Australis)
+      const poles = [
+        { latSign: -1, yCenter: cy - radius * 0.86, baseColor: "#00E676", secColor: "#E040FB" }, // North
+        { latSign: 1, yCenter: cy + radius * 0.86, baseColor: "#00E676", secColor: "#00E5FF" }   // South
+      ];
+
+      poles.forEach(p => {
+        const ovalW = radius * 0.48;
+        const ovalH = radius * 0.18;
+        const t = elapsedTime * 2.2;
+
+        // Animated wavy curtain streamers (dancing ionospheric emissions)
+        const numStreamers = 24;
+        for (let i = 0; i < numStreamers; i++) {
+          const u = (i / numStreamers) * Math.PI * 2;
+          const waveHeight = (Math.sin(u * 4 + t) + Math.cos(u * 2 - t * 0.8)) * 6.5;
+          const curtainH = (radius * 0.15) + waveHeight;
+
+          const baseX = cx + Math.cos(u) * ovalW;
+          const baseY = p.yCenter + Math.sin(u) * ovalH;
+          const topX = baseX + Math.sin(t + i * 0.4) * 3;
+          const topY = baseY + (p.latSign * curtainH);
+
+          // Ray gradient: Green (atomic Oxygen at 100-300km) to Magenta/Purple (Nitrogen molecules)
+          const rayGrad = ctx.createLinearGradient(baseX, baseY, topX, topY);
+          rayGrad.addColorStop(0, "rgba(0, 230, 118, 0.75)"); // 557.7 nm emerald green
+          rayGrad.addColorStop(0.5, "rgba(0, 229, 255, 0.55)"); // cyan
+          rayGrad.addColorStop(0.85, "rgba(224, 64, 251, 0.45)"); // 630.0 nm nitrogen violet
+          rayGrad.addColorStop(1, "transparent");
+
+          ctx.strokeStyle = rayGrad;
+          ctx.lineWidth = Math.max(2.5, radius * 0.022);
+          ctx.beginPath();
+          ctx.moveTo(baseX, baseY);
+          ctx.lineTo(topX, topY);
+          ctx.stroke();
+        }
+
+        // Aurora Auroral Oval Luminous Ring (diffuse glow)
+        const ovalGrad = ctx.createRadialGradient(cx, p.yCenter, ovalW * 0.4, cx, p.yCenter, ovalW * 1.2);
+        ovalGrad.addColorStop(0, "transparent");
+        ovalGrad.addColorStop(0.6, "rgba(0, 230, 118, 0.35)");
+        ovalGrad.addColorStop(0.9, "rgba(105, 240, 174, 0.15)");
+        ovalGrad.addColorStop(1, "transparent");
+
+        ctx.fillStyle = ovalGrad;
+        ctx.beginPath();
+        ctx.ellipse(cx, p.yCenter, ovalW * 1.15, ovalH * 1.3, 0, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      ctx.restore();
+    }
+
     // Zoom & Pan Functions for Full Planet View
     function adjustFullPlanetZoom(delta) {
       fullPlanetZoom = Math.min(Math.max(fullPlanetZoom + delta, 0.6), 3.0);
@@ -3020,11 +3408,14 @@
 
       // Earth section & Animated Milky Way Galaxy
       const earthBox = document.getElementById("fullEarthSpecial");
+      const shieldsBtn = document.getElementById("earthShieldsToggleBtn");
       if (planet.isEarth) {
         earthBox.classList.remove("hidden");
+        if (shieldsBtn) shieldsBtn.classList.remove("hidden");
         startMilkyWayAnimation();
       } else {
         earthBox.classList.add("hidden");
+        if (shieldsBtn) shieldsBtn.classList.add("hidden");
         stopMilkyWayAnimation();
       }
 
