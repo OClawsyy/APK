@@ -117,6 +117,44 @@
     .meter-fill-smooth {
       transition: width 0.9s cubic-bezier(0.16, 1, 0.3, 1);
     }
+
+    /* Feature #1 & #2: Cinematic modal fade/scale transitions */
+    #fullPlanetModal {
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #fullPlanetModal.modal-opening {
+      opacity: 0;
+      transform: scale(0.92);
+    }
+    #fullPlanetModal.modal-open {
+      opacity: 1;
+      transform: scale(1);
+    }
+    #fullPlanetModal.modal-closing {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+
+    /* Relative visual metric comparison bar */
+    .metric-bar-bg {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+      overflow: hidden;
+      height: 5px;
+      position: relative;
+    }
+    .metric-bar-fill {
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .metric-glow-card {
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .metric-glow-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(79, 134, 247, 0.12);
+    }
   </style>
 </head>
 <body class="h-screen w-screen relative flex flex-col bg-[#070A10]">
@@ -410,38 +448,102 @@
           </div>
         </div>
 
-        <!-- Stats Grid 1: Diameter & Jarak Matahari -->
+        <!-- Stats Grid 1: Diameter & Jarak Matahari (With Earth relative comparison) -->
         <div class="grid grid-cols-2 gap-3">
-          <div class="bg-[#1C202B] p-3 rounded-2xl border border-[#2D3342]">
-            <p class="text-[10px] text-[#919194] uppercase tracking-widest mb-0.5 font-semibold">Diameter</p>
-            <p id="fullDiameter" class="text-sm text-white font-semibold">-</p>
+          <div class="bg-[#1C202B] p-3 rounded-2xl border border-[#2D3342] metric-glow-card flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-0.5">
+                <p class="text-[10px] text-[#919194] uppercase tracking-widest font-semibold flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[13px] text-[#4F86F7]">radio_button_checked</span>
+                  <span>Diameter</span>
+                </p>
+                <span id="fullDiameterRatio" class="text-[10px] font-bold text-[#8AB4F8] bg-[#4F86F7]/15 px-1.5 py-0.2 rounded-md">1.0x Bumi</span>
+              </div>
+              <p id="fullDiameter" class="text-sm md:text-base text-white font-bold tracking-tight">-</p>
+            </div>
+            <div class="mt-2.5">
+              <div class="metric-bar-bg">
+                <div id="fullDiameterBar" class="metric-bar-fill bg-gradient-to-r from-[#4F86F7] to-[#80DEEA]" style="width: 25%;"></div>
+              </div>
+              <p id="fullDiameterCompareText" class="text-[10px] text-[#919194] mt-1 font-medium truncate">Standar Acuan (12.742 km)</p>
+            </div>
           </div>
-          <div class="bg-[#1C202B] p-3 rounded-2xl border border-[#2D3342]">
-            <p class="text-[10px] text-[#919194] uppercase tracking-widest mb-0.5 font-semibold">Jarak dari Matahari</p>
-            <p id="fullDist" class="text-sm text-white font-semibold">-</p>
+
+          <div class="bg-[#1C202B] p-3 rounded-2xl border border-[#2D3342] metric-glow-card flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-0.5">
+                <p class="text-[10px] text-[#919194] uppercase tracking-widest font-semibold flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[13px] text-[#FFD600]">wb_sunny</span>
+                  <span>Jarak Orbit</span>
+                </p>
+                <span id="fullDistRatio" class="text-[10px] font-bold text-[#FFE082] bg-[#FFD600]/15 px-1.5 py-0.2 rounded-md">1.00 AU</span>
+              </div>
+              <p id="fullDist" class="text-sm md:text-base text-white font-bold tracking-tight">-</p>
+            </div>
+            <div class="mt-2.5">
+              <div class="metric-bar-bg">
+                <div id="fullDistBar" class="metric-bar-fill bg-gradient-to-r from-[#FFD600] to-[#FF9800]" style="width: 20%;"></div>
+              </div>
+              <p id="fullDistCompareText" class="text-[10px] text-[#919194] mt-1 font-medium truncate">1,0 AU dari Matahari</p>
+            </div>
           </div>
         </div>
 
-        <!-- Stats Grid 2: Suhu & Rotasi -->
+        <!-- Stats Grid 2: Suhu & Gravitasi (With Earth relative comparison) -->
         <div class="grid grid-cols-2 gap-3">
-          <div class="bg-[#1C202B] p-3 rounded-2xl border border-[#2D3342]">
-            <p class="text-[10px] text-[#919194] uppercase tracking-widest mb-0.5 font-semibold">Suhu Rata-rata</p>
-            <p id="fullTemp" class="text-sm text-white font-semibold">-</p>
+          <div class="bg-[#1C202B] p-3 rounded-2xl border border-[#2D3342] metric-glow-card flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-0.5">
+                <p class="text-[10px] text-[#919194] uppercase tracking-widest font-semibold flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[13px] text-[#FF5722]">thermostat</span>
+                  <span>Suhu Rata-rata</span>
+                </p>
+                <span id="fullTempRatio" class="text-[10px] font-bold text-[#FFAB91] bg-[#FF5722]/15 px-1.5 py-0.2 rounded-md">15°C</span>
+              </div>
+              <p id="fullTemp" class="text-sm md:text-base text-white font-bold tracking-tight">-</p>
+            </div>
+            <div class="mt-2.5">
+              <div class="metric-bar-bg">
+                <div id="fullTempBar" class="metric-bar-fill bg-gradient-to-r from-[#29B6F6] via-[#FFD600] to-[#FF5722]" style="width: 45%;"></div>
+              </div>
+              <p id="fullTempCompareText" class="text-[10px] text-[#919194] mt-1 font-medium truncate">Suhu layak huni Bumi</p>
+            </div>
           </div>
-          <div class="bg-[#1C202B] p-3 rounded-2xl border border-[#2D3342]">
-            <p class="text-[10px] text-[#919194] uppercase tracking-widest mb-0.5 font-semibold">Periode Rotasi</p>
+
+          <div class="bg-[#1C202B] p-3 rounded-2xl border border-[#2D3342] metric-glow-card flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-0.5">
+                <p class="text-[10px] text-[#919194] uppercase tracking-widest font-semibold flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[13px] text-[#00E676]">fitness_center</span>
+                  <span>Gravitasi</span>
+                </p>
+                <span id="fullGravityRatio" class="text-[10px] font-bold text-[#A5D6A7] bg-[#00E676]/15 px-1.5 py-0.2 rounded-md">1.00 G</span>
+              </div>
+              <p id="fullGravity" class="text-sm md:text-base text-white font-bold tracking-tight">-</p>
+            </div>
+            <div class="mt-2.5">
+              <div class="metric-bar-bg">
+                <div id="fullGravityBar" class="metric-bar-fill bg-gradient-to-r from-[#00E676] to-[#00E5FF]" style="width: 35%;"></div>
+              </div>
+              <p id="fullGravityCompareText" class="text-[10px] text-[#919194] mt-1 font-medium truncate">Standar Acuan (9,8 m/s²)</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Grid 3: Periode Rotasi & Satelit Alami -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-[#1C202B] p-3 rounded-2xl border border-[#2D3342] metric-glow-card">
+            <p class="text-[10px] text-[#919194] uppercase tracking-widest mb-0.5 font-semibold flex items-center gap-1">
+              <span class="material-symbols-outlined text-[13px] text-[#B388FF]">sync</span>
+              <span>Periode Rotasi</span>
+            </p>
             <p id="fullRotation" class="text-sm text-white font-semibold">-</p>
           </div>
-        </div>
-
-        <!-- Stats Grid 3: Gravitasi & Satelit Alami -->
-        <div class="grid grid-cols-2 gap-3">
-          <div class="bg-[#1C202B] p-3 rounded-2xl border border-[#2D3342]">
-            <p class="text-[10px] text-[#919194] uppercase tracking-widest mb-0.5 font-semibold">Gravitasi</p>
-            <p id="fullGravity" class="text-sm text-white font-semibold">-</p>
-          </div>
-          <div class="bg-[#1C202B] p-3 rounded-2xl border border-[#2D3342]">
-            <p class="text-[10px] text-[#919194] uppercase tracking-widest mb-0.5 font-semibold">Satelit Alami</p>
+          <div class="bg-[#1C202B] p-3 rounded-2xl border border-[#2D3342] metric-glow-card">
+            <p class="text-[10px] text-[#919194] uppercase tracking-widest mb-0.5 font-semibold flex items-center gap-1">
+              <span class="material-symbols-outlined text-[13px] text-[#80DEEA]">nights_stay</span>
+              <span>Satelit Alami</span>
+            </p>
             <p id="fullMoons" class="text-sm text-white font-semibold">-</p>
           </div>
         </div>
@@ -1448,6 +1550,172 @@
       }
     ];
 
+    // Rich structured metrics for Count-Up Statistics & Visual Earth Comparisons
+    const PLANET_STATS_DATA = {
+      sun: {
+        diameterKm: 1392700,
+        diameterRatio: "109.3x",
+        diameterBarPct: 100,
+        diameterNote: "109× ukuran diameter Bumi",
+        distAu: 0.0,
+        distBarPct: 2,
+        distRatio: "0.00 AU",
+        distNote: "Pusat tata surya (0 AU)",
+        tempC: 5500,
+        tempRatio: "5.500°C",
+        tempBarPct: 100,
+        tempNote: "Sangat panas (fotosfer bintang)",
+        gravityG: 27.9,
+        gravityRatio: "27.9 G",
+        gravityBarPct: 100,
+        gravityNote: "274 m/s² (28× gravitasi Bumi)"
+      },
+      mercury: {
+        diameterKm: 4879,
+        diameterRatio: "0.38x",
+        diameterBarPct: 15,
+        diameterNote: "38% dari ukuran Bumi",
+        distAu: 0.39,
+        distBarPct: 12,
+        distRatio: "0.39 AU",
+        distNote: "57,9 juta km dari Matahari",
+        tempC: 167,
+        tempRatio: "167°C",
+        tempBarPct: 62,
+        tempNote: "Ekstrem: -180°C malam, 430°C siang",
+        gravityG: 0.38,
+        gravityRatio: "0.38 G",
+        gravityBarPct: 22,
+        gravityNote: "3,7 m/s² (hanya 38% gravitasi Bumi)"
+      },
+      venus: {
+        diameterKm: 12104,
+        diameterRatio: "0.95x",
+        diameterBarPct: 28,
+        diameterNote: "95% ukuran Bumi ('Kembaran Bumi')",
+        distAu: 0.72,
+        distBarPct: 18,
+        distRatio: "0.72 AU",
+        distNote: "108,2 juta km dari Matahari",
+        tempC: 464,
+        tempRatio: "464°C",
+        tempBarPct: 92,
+        tempNote: "Planet terpanas karena efek rumah kaca",
+        gravityG: 0.90,
+        gravityRatio: "0.90 G",
+        gravityBarPct: 40,
+        gravityNote: "8,87 m/s² (90% gravitasi Bumi)"
+      },
+      earth: {
+        diameterKm: 12742,
+        diameterRatio: "1.00x",
+        diameterBarPct: 30,
+        diameterNote: "Standar Acuan (12.742 km)",
+        distAu: 1.00,
+        distBarPct: 22,
+        distRatio: "1.00 AU",
+        distNote: "149,6 juta km (1,00 AU)",
+        tempC: 15,
+        tempRatio: "15°C",
+        tempBarPct: 45,
+        tempNote: "Zona layak huni ideal biosfer",
+        gravityG: 1.00,
+        gravityRatio: "1.00 G",
+        gravityBarPct: 45,
+        gravityNote: "Standar 1G (9,807 m/s²)"
+      },
+      mars: {
+        diameterKm: 6779,
+        diameterRatio: "0.53x",
+        diameterBarPct: 19,
+        diameterNote: "53% dari ukuran Bumi",
+        distAu: 1.52,
+        distBarPct: 28,
+        distRatio: "1.52 AU",
+        distNote: "227,9 juta km dari Matahari",
+        tempC: -65,
+        tempRatio: "-65°C",
+        tempBarPct: 32,
+        tempNote: "Gersang & dingin beku",
+        gravityG: 0.38,
+        gravityRatio: "0.38 G",
+        gravityBarPct: 22,
+        gravityNote: "3,72 m/s² (lompatan 2,6× lebih tinggi)"
+      },
+      jupiter: {
+        diameterKm: 139820,
+        diameterRatio: "11.0x",
+        diameterBarPct: 75,
+        diameterNote: "11× lebih besar dari Bumi",
+        distAu: 5.20,
+        distBarPct: 48,
+        distRatio: "5.20 AU",
+        distNote: "778,5 juta km dari Matahari",
+        tempC: -110,
+        tempRatio: "-110°C",
+        tempBarPct: 26,
+        tempNote: "Puncak awan atmosfer luar yang dingin",
+        gravityG: 2.53,
+        gravityRatio: "2.53 G",
+        gravityBarPct: 78,
+        gravityNote: "24,79 m/s² (2,5× gravitasi Bumi)"
+      },
+      saturn: {
+        diameterKm: 116460,
+        diameterRatio: "9.1x",
+        diameterBarPct: 68,
+        diameterNote: "9,1× ukuran Bumi (tanpa cincin)",
+        distAu: 9.54,
+        distBarPct: 62,
+        distRatio: "9.54 AU",
+        distNote: "1,43 miliar km dari Matahari",
+        tempC: -140,
+        tempRatio: "-140°C",
+        tempBarPct: 22,
+        tempNote: "Sangat dingin di luar atmosfer gas",
+        gravityG: 1.06,
+        gravityRatio: "1.06 G",
+        gravityBarPct: 48,
+        gravityNote: "10,44 m/s² (hampir sama seperti Bumi)"
+      },
+      uranus: {
+        diameterKm: 50724,
+        diameterRatio: "4.0x",
+        diameterBarPct: 46,
+        diameterNote: "4,0× diameter Bumi",
+        distAu: 19.19,
+        distBarPct: 80,
+        distRatio: "19.2 AU",
+        distNote: "2,87 miliar km dari Matahari",
+        tempC: -195,
+        tempRatio: "-195°C",
+        tempBarPct: 15,
+        tempNote: "Atmosfer planet terdingin (-224°C)",
+        gravityG: 0.89,
+        gravityRatio: "0.89 G",
+        gravityBarPct: 38,
+        gravityNote: "8,69 m/s² (89% gravitasi Bumi)"
+      },
+      neptune: {
+        diameterKm: 49244,
+        diameterRatio: "3.9x",
+        diameterBarPct: 45,
+        diameterNote: "3,9× diameter Bumi",
+        distAu: 30.07,
+        distBarPct: 98,
+        distRatio: "30.1 AU",
+        distNote: "4,50 miliar km (tepi tata surya)",
+        tempC: -201,
+        tempRatio: "-201°C",
+        tempBarPct: 12,
+        tempNote: "Badai beku supersonik ekstrem",
+        gravityG: 1.14,
+        gravityRatio: "1.14 G",
+        gravityBarPct: 52,
+        gravityNote: "11,15 m/s² (1,14× gravitasi Bumi)"
+      }
+    };
+
     // Dataset Benda Tambahan: Bulan (Moon / Luna) untuk Kalkulator Gravitasi & Perbandingan
     const CELESTIAL_EXTRAS = {
       moon: {
@@ -1508,6 +1776,46 @@
     let panOffset = { x: 0, y: 0 };
     let isDragging = false;
     let dragStart = { x: 0, y: 0 };
+
+    // Smooth Camera Transition State (Priority #1: Zoom/Pan interpolation into planet)
+    let cameraFly = {
+      active: false,
+      startTime: 0,
+      duration: 750, // ms
+      startPan: { x: 0, y: 0 },
+      targetPan: { x: 0, y: 0 },
+      startScale: 1.0,
+      targetScale: 2.4,
+      targetPlanet: null,
+      onComplete: null
+    };
+
+    function startCameraFlyToPlanet(planet, callback) {
+      const posInfo = currentPositions[planet.id];
+      const startP = { x: panOffset.x, y: panOffset.y };
+      const startS = scale;
+
+      let targetP = { x: 0, y: 0 };
+      if (posInfo) {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        // Invert to bring target to center
+        targetP = {
+          x: (w / 2) - (posInfo.pos.x - panOffset.x),
+          y: (h / 2) - (posInfo.pos.y - panOffset.y)
+        };
+      }
+
+      cameraFly.active = true;
+      cameraFly.startTime = performance.now();
+      cameraFly.duration = 680;
+      cameraFly.startPan = startP;
+      cameraFly.targetPan = targetP;
+      cameraFly.startScale = startS;
+      cameraFly.targetScale = Math.min(startS * 2.5, 3.2);
+      cameraFly.targetPlanet = planet;
+      cameraFly.onComplete = callback;
+    }
 
     // Full screen planet state & smooth zoom controls
     let fullPlanet = null;
@@ -1658,6 +1966,27 @@
     function animate(currentTime) {
       const dt = Math.min((currentTime - lastTime) / 1000, 0.1);
       lastTime = currentTime;
+
+      // Handle Priority #1: Smooth Camera Fly Transition to target planet
+      if (cameraFly.active) {
+        const flyElapsed = currentTime - cameraFly.startTime;
+        const progress = Math.min(flyElapsed / cameraFly.duration, 1.0);
+        // Cinematic cubic-bezier easing: easeInOutCubic (3*p^2 - 2*p^3 or t < .5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1)
+        const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+        panOffset.x = cameraFly.startPan.x + (cameraFly.targetPan.x - cameraFly.startPan.x) * ease;
+        panOffset.y = cameraFly.startPan.y + (cameraFly.targetPan.y - cameraFly.startPan.y) * ease;
+        scale = cameraFly.startScale + (cameraFly.targetScale - cameraFly.startScale) * ease;
+
+        if (progress >= 1.0) {
+          cameraFly.active = false;
+          if (cameraFly.onComplete) {
+            const cb = cameraFly.onComplete;
+            cameraFly.onComplete = null;
+            cb();
+          }
+        }
+      }
 
       if (!isPaused) {
         elapsedTime += dt * speedMultiplier;
@@ -1894,6 +2223,33 @@
           ctx.fill();
           ctx.restore();
         }
+
+        // Educational Clean Planet Label with soft glow pill on hover
+        ctx.save();
+        ctx.font = isHov ? "bold 12px 'Plus Jakarta Sans', sans-serif" : "500 11px 'Plus Jakarta Sans', sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        const labelY = py + pRadius + (planet.hasRings ? 14 : 10);
+
+        if (isHov) {
+          const txtMetrics = ctx.measureText(planet.name);
+          const bgW = txtMetrics.width + 16;
+          const bgH = 20;
+          ctx.fillStyle = "rgba(18, 22, 32, 0.88)";
+          ctx.strokeStyle = "rgba(79, 134, 247, 0.7)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.roundRect(px - bgW / 2, labelY - bgH / 2, bgW, bgH, 10);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = "#8AB4F8";
+          ctx.fillText(planet.name, px, labelY);
+        } else {
+          ctx.fillStyle = "rgba(196, 198, 208, 0.75)";
+          ctx.fillText(planet.name, px, labelY);
+        }
+        ctx.restore();
       });
 
       currentPositions = newPositions;
@@ -3484,9 +3840,51 @@
       }
     }
 
-    // Select Planet & Open Full Screen Modal
+    // Helper: Animated Count-up for Numbers
+    function animateCountUp(elementId, targetValue, duration = 800, prefix = "", suffix = "", isFloat = false) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      const start = 0;
+      const startTime = performance.now();
+
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1.0);
+        // easeOutCubic
+        const ease = 1 - Math.pow(1 - progress, 3);
+        const current = start + (targetValue - start) * ease;
+
+        if (isFloat) {
+          el.innerText = `${prefix}${current.toFixed(2)}${suffix}`;
+        } else {
+          el.innerText = `${prefix}${Math.round(current).toLocaleString('id-ID')}${suffix}`;
+        }
+
+        if (progress < 1.0) {
+          requestAnimationFrame(update);
+        }
+      }
+      requestAnimationFrame(update);
+    }
+
+    // Select Planet & Open Full Screen Modal (Smooth Camera Fly & Count-up Animation)
     function selectPlanet(planet) {
       selectedPlanet = planet;
+
+      // Check if already in full view (e.g. prev/next navigation)
+      const isAlreadyInFull = fullPlanet !== null;
+
+      if (!isAlreadyInFull) {
+        // Feature #1: Trigger camera fly zoom-in transition on overview canvas first!
+        startCameraFlyToPlanet(planet, () => {
+          openFullPlanetUI(planet);
+        });
+      } else {
+        openFullPlanetUI(planet);
+      }
+    }
+
+    function openFullPlanetUI(planet) {
       fullPlanet = planet;
       resetFullPlanetZoom();
 
@@ -3500,21 +3898,66 @@
       document.getElementById("fullComp").innerText = planet.comp;
       document.getElementById("fullPillBadge").innerText = planet.isSun ? "BINTANG" : "PLANET";
 
-      // Detailed scientific metrics with subtle skeleton shimmer loading effect
-      const metricIds = ["fullDiameter", "fullDist", "fullTemp", "fullRotation", "fullGravity", "fullMoons"];
-      metricIds.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.classList.add("skeleton-box");
-          setTimeout(() => el.classList.remove("skeleton-box"), 150);
-        }
-      });
+      // Feature #2: Count-up statistics & Visual Earth Comparisons
+      const stats = PLANET_STATS_DATA[planet.id];
 
-      document.getElementById("fullDiameter").innerText = planet.diameter || "-";
-      document.getElementById("fullDist").innerText = planet.dist || "-";
-      document.getElementById("fullTemp").innerText = planet.temp || "-";
+      if (stats) {
+        // 1. Diameter Count-up & Bar
+        animateCountUp("fullDiameter", stats.diameterKm, 850, "", " km");
+        const diamRatio = document.getElementById("fullDiameterRatio");
+        if (diamRatio) diamRatio.innerText = `${stats.diameterRatio} Bumi`;
+        const diamBar = document.getElementById("fullDiameterBar");
+        if (diamBar) diamBar.style.width = `${stats.diameterBarPct}%`;
+        const diamText = document.getElementById("fullDiameterCompareText");
+        if (diamText) diamText.innerText = stats.diameterNote;
+
+        // 2. Jarak Orbit Count-up & Bar
+        animateCountUp("fullDist", stats.distAu, 750, "", " AU", true);
+        const distRatio = document.getElementById("fullDistRatio");
+        if (distRatio) distRatio.innerText = stats.distRatio;
+        const distBar = document.getElementById("fullDistBar");
+        if (distBar) distBar.style.width = `${stats.distBarPct}%`;
+        const distText = document.getElementById("fullDistCompareText");
+        if (distText) distText.innerText = stats.distNote;
+
+        // 3. Suhu Rata-rata Count-up & Bar
+        const tempEl = document.getElementById("fullTemp");
+        if (tempEl) {
+          const tempVal = stats.tempC;
+          const startTime = performance.now();
+          function updateTemp(now) {
+            const p = Math.min((now - startTime) / 800, 1.0);
+            const ease = 1 - Math.pow(1 - p, 3);
+            const cur = Math.round(tempVal * ease);
+            tempEl.innerText = `${cur > 0 ? '+' : ''}${cur}°C`;
+            if (p < 1.0) requestAnimationFrame(updateTemp);
+          }
+          requestAnimationFrame(updateTemp);
+        }
+        const tempRatio = document.getElementById("fullTempRatio");
+        if (tempRatio) tempRatio.innerText = stats.tempRatio;
+        const tempBar = document.getElementById("fullTempBar");
+        if (tempBar) tempBar.style.width = `${stats.tempBarPct}%`;
+        const tempText = document.getElementById("fullTempCompareText");
+        if (tempText) tempText.innerText = stats.tempNote;
+
+        // 4. Gravitasi Count-up & Bar
+        animateCountUp("fullGravity", stats.gravityG, 700, "", " G", true);
+        const gravRatio = document.getElementById("fullGravityRatio");
+        if (gravRatio) gravRatio.innerText = stats.gravityRatio;
+        const gravBar = document.getElementById("fullGravityBar");
+        if (gravBar) gravBar.style.width = `${stats.gravityBarPct}%`;
+        const gravText = document.getElementById("fullGravityCompareText");
+        if (gravText) gravText.innerText = stats.gravityNote;
+      } else {
+        // Fallback if not in dataset
+        document.getElementById("fullDiameter").innerText = planet.diameter || "-";
+        document.getElementById("fullDist").innerText = planet.dist || "-";
+        document.getElementById("fullTemp").innerText = planet.temp || "-";
+        document.getElementById("fullGravity").innerText = planet.gravity || "-";
+      }
+
       document.getElementById("fullRotation").innerText = planet.rotation || "-";
-      document.getElementById("fullGravity").innerText = planet.gravity || "-";
       document.getElementById("fullMoons").innerText = planet.moons || "-";
 
       // Missions Card
@@ -3570,8 +4013,15 @@
       // Play subtle cosmic chime if ambient sound active
       playCosmicChime(planet.isSun ? 330 : (220 + (PLANETS.indexOf(planet) * 45)));
 
-      // Show modal
-      document.getElementById("fullPlanetModal").classList.remove("hidden");
+      // Show modal with smooth cinematic fade/scale in
+      const modal = document.getElementById("fullPlanetModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("modal-opening");
+      requestAnimationFrame(() => {
+        modal.classList.remove("modal-opening");
+        modal.classList.add("modal-open");
+      });
+
       updateChips();
       startVisualizerLoop();
     }
@@ -3580,14 +4030,22 @@
       if (isPlanetSoundPlaying) {
         stopPlanetRealSound();
       }
-      fullPlanet = null;
-      selectedPlanet = null;
       stopMilkyWayAnimation();
       if (history.replaceState) {
         history.replaceState(null, null, window.location.pathname);
       }
-      document.getElementById("fullPlanetModal").classList.add("hidden");
-      updateChips();
+
+      const modal = document.getElementById("fullPlanetModal");
+      modal.classList.remove("modal-open");
+      modal.classList.add("modal-closing");
+
+      setTimeout(() => {
+        modal.classList.add("hidden");
+        modal.classList.remove("modal-closing");
+        fullPlanet = null;
+        selectedPlanet = null;
+        updateChips();
+      }, 300);
     }
 
     function navigatePlanet(step) {
