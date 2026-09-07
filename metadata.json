@@ -1,6 +1,6 @@
 {
   "name": "Planetarium Mini",
-  "description": "Simulasi tata surya interaktif 3D dengan data ilmiah NASA/ESA, perbandingan skala realistis, simulasi medan magnetosfer, pendar aurora kutub, lapisan ozon, badai angin matahari, dan fitur edukasi astronomi interaktif.",
+  "description": "Simulasi tata surya interaktif 3D dengan data ilmiah NASA/ESA, perbandingan skala realistis, simulasi medan magnetosfer, pendar aurora kutub, lapisan ozon, badai angin matahari, dan pemandangan langit malam sinematik Aurora Borealis & Australis interaktif.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

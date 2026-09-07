@@ -249,7 +249,19 @@
         <!-- Toggle Earth Aurora & Magnetic Field Shield (Only on Earth) -->
         <button id="earthShieldsToggleBtn" onclick="toggleEarthShields()" title="Simulasi Aurora, Medan Magnet & Angin Matahari" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#00E5FF]/15 border border-[#00E5FF]/60 text-[#80DEEA] hover:text-white hover:bg-[#00E5FF]/30 text-xs font-semibold cursor-pointer transition-all shadow-md backdrop-blur-md">
           <span class="material-symbols-outlined text-[16px] text-[#00E5FF]">shield</span>
-          <span class="hidden sm:inline">Aurora & Magnetosfer</span>
+          <span class="hidden sm:inline">Perisai & Angin Surya</span>
+        </button>
+
+        <!-- Pemandangan Langit Aurora Borealis (Kutub Utara) -->
+        <button id="auroraBorealisBtn" onclick="openAuroraSkyModal('borealis')" title="Buka Pemandangan Langit Spektakuler Aurora Borealis (Kutub Utara)" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#00E676]/20 border border-[#00E676]/70 text-[#B9F6CA] hover:text-white hover:bg-[#00E676]/40 text-xs font-bold cursor-pointer transition-all shadow-lg backdrop-blur-md animate-pulse">
+          <span class="material-symbols-outlined text-[16px] text-[#00E676]">auto_awesome</span>
+          <span>Aurora Borealis</span>
+        </button>
+
+        <!-- Pemandangan Langit Aurora Australis (Kutub Selatan) -->
+        <button id="auroraAustralisBtn" onclick="openAuroraSkyModal('australis')" title="Buka Pemandangan Langit Spektakuler Aurora Australis (Kutub Selatan)" class="hidden items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#E040FB]/20 border border-[#E040FB]/70 text-[#F8BBD0] hover:text-white hover:bg-[#E040FB]/40 text-xs font-bold cursor-pointer transition-all shadow-lg backdrop-blur-md">
+          <span class="material-symbols-outlined text-[16px] text-[#E040FB]">flare</span>
+          <span>Aurora Australis</span>
         </button>
 
         <!-- Share Planet Button -->
@@ -536,20 +548,111 @@
               </div>
 
               <!-- 3. Terjadinya Aurora -->
-              <div class="p-3 rounded-xl bg-[#0D2418] border border-[#00E676]/30">
-                <div class="flex items-center gap-1.5 text-[#A5D6A7] font-bold mb-1">
-                  <span class="material-symbols-outlined text-[15px] text-[#00E676]">auto_awesome</span>
-                  3. Pendar Aurora
+              <div class="p-3 rounded-xl bg-[#0D2418] border border-[#00E676]/30 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center gap-1.5 text-[#A5D6A7] font-bold mb-1">
+                    <span class="material-symbols-outlined text-[15px] text-[#00E676]">auto_awesome</span>
+                    3. Pendar Aurora
+                  </div>
+                  <p class="text-[11px] text-[#C4C6D0] leading-relaxed mb-2.5">
+                    Partikel yang tertembus dibimbing garis magnet ke kutub dan bertabrakan dengan atom Oksigen (warna hijau 557 nm) & Nitrogen (warna ungu/merah 630 nm) di ionosfer.
+                  </p>
                 </div>
-                <p class="text-[11px] text-[#C4C6D0] leading-relaxed">
-                  Partikel yang tertembus dibimbing garis magnet ke kutub dan bertabrakan dengan atom Oksigen (warna hijau 557 nm) & Nitrogen (warna ungu/merah 630 nm) di ionosfer.
-                </p>
+                <div class="flex items-center gap-1.5 pt-2 border-t border-white/10">
+                  <button onclick="openAuroraSkyModal('borealis')" class="flex-1 py-1.5 px-2 rounded-lg bg-[#00E676]/20 hover:bg-[#00E676]/35 border border-[#00E676]/60 text-white font-bold text-[10px] flex items-center justify-center gap-1 cursor-pointer transition-all shadow-sm">
+                    <span class="material-symbols-outlined text-[13px] text-[#69F0AE]">north</span>
+                    <span>Langit Borealis</span>
+                  </button>
+                  <button onclick="openAuroraSkyModal('australis')" class="flex-1 py-1.5 px-2 rounded-lg bg-[#E040FB]/20 hover:bg-[#E040FB]/35 border border-[#E040FB]/60 text-white font-bold text-[10px] flex items-center justify-center gap-1 cursor-pointer transition-all shadow-sm">
+                    <span class="material-symbols-outlined text-[13px] text-[#EA80FC]">south</span>
+                    <span>Langit Australis</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </section>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 1B. MODAL PEMANDANGAN LANGIT AURORA PERKASA (CINEMATIC SKY SIMULATION)   -->
+  <!-- ========================================================================= -->
+  <div id="auroraSkyModal" class="fixed inset-0 z-50 bg-[#04060C]/96 backdrop-blur-2xl hidden flex flex-col items-center justify-center p-2 md:p-6 overflow-hidden select-none transition-all duration-500">
+    <div class="relative w-full max-w-5xl h-[92vh] bg-[#070A12] border border-[#2B3245] rounded-3xl flex flex-col shadow-2xl overflow-hidden">
+      <!-- Sky Canvas Overlay -->
+      <canvas id="auroraSkyCanvas" class="absolute inset-0 w-full h-full z-0 block cursor-crosshair"></canvas>
+
+      <!-- Top Overlay Bar (Controls & Mode) -->
+      <div class="relative z-10 p-3.5 md:p-5 flex items-center justify-between bg-gradient-to-b from-black/85 via-black/40 to-transparent">
+        <div class="flex items-center gap-3">
+          <div id="auroraSkyTypeBadge" class="w-10 h-10 rounded-2xl bg-[#00E676]/20 border border-[#00E676]/50 flex items-center justify-center text-[#69F0AE] shadow-lg">
+            <span class="material-symbols-outlined text-[22px]">auto_awesome</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 id="auroraSkyTitle" class="text-base md:text-xl font-extrabold text-white tracking-wide">Langit Aurora Borealis</h3>
+              <span id="auroraSkyLocationTag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#00E676]/20 text-[#69F0AE] border border-[#00E676]/40 uppercase">Tromsø, Norwegia (69°N)</span>
+            </div>
+            <p id="auroraSkySubtitle" class="text-xs text-[#919194] hidden sm:block">Pemandangan Cakrawala Malam Kutub Bumi & Tarian Gelombang Emisi Atmosfer</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <!-- Switch Type Tabs -->
+          <div class="flex bg-[#121622]/90 border border-white/10 rounded-full p-1 gap-1">
+            <button id="tabBorealisBtn" onclick="setAuroraSkyType('borealis')" class="px-3 py-1 rounded-full text-xs font-bold transition-all bg-[#00E676] text-[#04060C] shadow-sm cursor-pointer">
+              Kutub Utara (Borealis)
+            </button>
+            <button id="tabAustralisBtn" onclick="setAuroraSkyType('australis')" class="px-3 py-1 rounded-full text-xs font-bold transition-all text-[#919194] hover:text-white cursor-pointer">
+              Kutub Selatan (Australis)
+            </button>
+          </div>
+
+          <!-- Close Modal Button -->
+          <button onclick="closeAuroraSkyModal()" title="Tutup Pemandangan Aurora" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center cursor-pointer transition-colors shadow-md">
+            <span class="material-symbols-outlined text-[20px]">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Center Floating Interaction Hint (Fades out automatically) -->
+      <div id="auroraHint" class="relative z-10 mx-auto mt-2 pointer-events-none px-3 py-1 rounded-full bg-black/60 border border-white/10 text-[11px] text-[#C4C6D0] backdrop-blur-md flex items-center gap-1.5 shadow-lg">
+        <span class="material-symbols-outlined text-[14px] text-[#00E676]">touch_app</span>
+        <span>Gerakkan kursor atau seret layar untuk mengarahkan pandangan malam langit kutub</span>
+      </div>
+
+      <!-- Bottom HUD & Scientific Explainer Card -->
+      <div class="relative z-10 mt-auto p-3 md:p-5 bg-gradient-to-t from-black/95 via-black/80 to-transparent border-t border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        <div class="flex-1 space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1">
+              <span class="material-symbols-outlined text-[16px] text-[#00E5FF]">science</span>
+              <span>Fisika Spektrum Cahaya Aurora:</span>
+            </span>
+            <span id="auroraGlowWaveText" class="text-[11px] font-semibold text-[#69F0AE] animate-pulse">Aktivitas Geomagnetik Kp: 6.3 (Badai Kuat G2)</span>
+          </div>
+          <p id="auroraSkyDesc" class="text-xs text-[#C4C6D0] leading-relaxed max-w-3xl">
+            Pendaran hijau zamrud disebabkan tumbukan elektron angin matahari dengan atom <strong class="text-[#69F0AE]">Oksigen</strong> pada ketinggian 100-300 km (garis emisi 557,7 nm). Pendaran lembayung dan merah muda di puncak tirai berasal dari molekul <strong class="text-[#EA80FC]">Nitrogen</strong> (garis emisi 630 nm).
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 self-end md:self-center flex-shrink-0">
+          <div class="px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-center">
+            <span class="text-[10px] text-[#919194] uppercase tracking-wider block font-semibold">Ketinggian Emisi</span>
+            <span class="text-xs font-extrabold text-[#69F0AE]">100 - 400 KM</span>
+          </div>
+          <div class="px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-center">
+            <span class="text-[10px] text-[#919194] uppercase tracking-wider block font-semibold">Indeks Badai</span>
+            <span class="text-xs font-extrabold text-[#00E5FF]">Kp 6+ (G2 Storm)</span>
+          </div>
+          <button onclick="randomizeAuroraIntensity()" title="Acak Intensitas Badai Aurora" class="p-2.5 rounded-xl bg-[#00E676]/20 hover:bg-[#00E676]/30 border border-[#00E676]/50 text-white flex items-center justify-center cursor-pointer transition-all shadow-md">
+            <span class="material-symbols-outlined text-[18px] text-[#69F0AE]">storm</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ========================================================================= -->
@@ -1845,6 +1948,9 @@
       }
     }
 
+    // Rendered feature pins cache for interactive click targeting
+    let activeFeaturePins = [];
+
     // =========================================================================
     // 2. RENDER FULL-SCREEN IMMERSIVE PLANET WITH REAL ANATOMICAL DETAILS
     // =========================================================================
@@ -1856,6 +1962,7 @@
       const centerY = (isInfoCollapsed ? h * 0.5 : h * 0.36) + fullPanY;
 
       fullCtx.clearRect(0, 0, w, h);
+      activeFeaturePins = [];
 
       // Deep space backdrop with Milky Way & other galaxies!
       drawDeepSpaceCosmos(fullCtx, w, h, fullPanX, fullPanY, true);
@@ -2276,13 +2383,24 @@
 
         // --- Fitur Edukasi Khusus Pelajar: Aurora, Ozon & Medan Magnet ---
         if (showEarthShields) {
-          // 1. Aurora Borealis Pin (Kutub Utara)
+          // 1. Aurora Borealis Pin (Kutub Utara) - Klik untuk membuka pemandangan langit
           const northAuroraPin = { x: centerX, y: centerY - planetRadius * 0.94, visible: true };
           featurePinsToDraw.push({
             pos: northAuroraPin,
-            title: "✨ Aurora Borealis (Kutub Utara)",
-            desc: "Pendar cahaya ionosfer saat partikel angin matahari menabrak gas Oksigen & Nitrogen",
-            color: "#00E676"
+            title: "✨ Aurora Borealis (Klik: Buka Langit)",
+            desc: "Pendar spektakuler partikel matahari menabrak gas atmosfer di kutub utara. Klik untuk masuk ke pemandangan langit malam!",
+            color: "#00E676",
+            action: () => openAuroraSkyModal('borealis')
+          });
+
+          // 1b. Aurora Australis Pin (Kutub Selatan) - Klik untuk membuka pemandangan langit
+          const southAuroraPin = { x: centerX, y: centerY + planetRadius * 0.94, visible: true };
+          featurePinsToDraw.push({
+            pos: southAuroraPin,
+            title: "🌟 Aurora Australis (Klik: Buka Langit)",
+            desc: "Pendar cahaya kutub selatan bumi di Antartika. Klik untuk masuk ke pemandangan langit malam!",
+            color: "#E040FB",
+            action: () => openAuroraSkyModal('australis')
           });
 
           // 2. Lapisan Ozon (Stratosfer 15-35 km)
@@ -2926,6 +3044,17 @@
           fullCtx.fillStyle = "#FFFFFF";
           fullCtx.textAlign = "left";
           fullCtx.fillText(pin.title, badgeX + 10, badgeY + 16);
+
+          // Store badge for click and tap interaction
+          activeFeaturePins.push({
+            x: badgeX,
+            y: badgeY,
+            w: badgeW,
+            h: badgeH,
+            anchorX: px,
+            anchorY: py,
+            pin: pin
+          });
         });
       }
     }
@@ -3406,16 +3535,22 @@
         factCard.classList.add("hidden");
       }
 
-      // Earth section & Animated Milky Way Galaxy
+      // Earth section & Animated Milky Way Galaxy & Aurora buttons
       const earthBox = document.getElementById("fullEarthSpecial");
       const shieldsBtn = document.getElementById("earthShieldsToggleBtn");
+      const borealisBtn = document.getElementById("auroraBorealisBtn");
+      const australisBtn = document.getElementById("auroraAustralisBtn");
       if (planet.isEarth) {
         earthBox.classList.remove("hidden");
         if (shieldsBtn) shieldsBtn.classList.remove("hidden");
+        if (borealisBtn) borealisBtn.classList.remove("hidden");
+        if (australisBtn) australisBtn.classList.remove("hidden");
         startMilkyWayAnimation();
       } else {
         earthBox.classList.add("hidden");
         if (shieldsBtn) shieldsBtn.classList.add("hidden");
+        if (borealisBtn) borealisBtn.classList.add("hidden");
+        if (australisBtn) australisBtn.classList.add("hidden");
         stopMilkyWayAnimation();
       }
 
@@ -3555,10 +3690,29 @@
     // Drag / Pan on Full Planet View
     let isFullDragging = false;
     let fullDragStart = { x: 0, y: 0 };
+    let fullMouseDownPos = { x: 0, y: 0 };
+
+    function checkFeaturePinHit(x, y) {
+      if (!showFeaturePins || activeFeaturePins.length === 0) return null;
+      // Check in reverse order (topmost first)
+      for (let i = activeFeaturePins.length - 1; i >= 0; i--) {
+        const item = activeFeaturePins[i];
+        // Check badge bounding box (with generous touch margin)
+        if (x >= item.x - 6 && x <= item.x + item.w + 6 && y >= item.y - 6 && y <= item.y + item.h + 6) {
+          return item.pin;
+        }
+        // Also check pulsating anchor dot (radius 18px hit target)
+        if (Math.hypot(x - item.anchorX, y - item.anchorY) <= 18) {
+          return item.pin;
+        }
+      }
+      return null;
+    }
 
     fullCanvas.addEventListener("mousedown", (e) => {
       isFullDragging = true;
       fullDragStart = { x: e.clientX, y: e.clientY };
+      fullMouseDownPos = { x: e.clientX, y: e.clientY };
     });
 
     window.addEventListener("mousemove", (e) => {
@@ -3569,7 +3723,19 @@
       }
     });
 
-    window.addEventListener("mouseup", () => {
+    window.addEventListener("mouseup", (e) => {
+      if (isFullDragging) {
+        const moveDist = Math.hypot(e.clientX - fullMouseDownPos.x, e.clientY - fullMouseDownPos.y);
+        if (moveDist < 6) {
+          const rect = fullCanvas.getBoundingClientRect();
+          const clickX = e.clientX - rect.left;
+          const clickY = e.clientY - rect.top;
+          const hitPin = checkFeaturePinHit(clickX, clickY);
+          if (hitPin && hitPin.action) {
+            hitPin.action();
+          }
+        }
+      }
       isFullDragging = false;
     });
 
@@ -3627,6 +3793,15 @@
             navigatePlanet(1); // Swipe left -> next planet
           } else {
             navigatePlanet(-1); // Swipe right -> prev planet
+          }
+        } else if (Math.hypot(diffX, diffY) < 10 && duration < 400) {
+          // Tap on feature pin
+          const rect = fullCanvas.getBoundingClientRect();
+          const tapX = endX - rect.left;
+          const tapY = endY - rect.top;
+          const hitPin = checkFeaturePinHit(tapX, tapY);
+          if (hitPin && hitPin.action) {
+            hitPin.action();
           }
         }
       }
@@ -6614,6 +6789,460 @@
 
     function closeBeltInfoModal() {
       document.getElementById("beltInfoModal").classList.add("hidden");
+    }
+
+    // =========================================================================
+    // 9. PEMANDANGAN LANGIT AURORA SPEKTAKULER & PERKASA (CINEMATIC SKY VIEW)
+    // =========================================================================
+    const auroraSkyModal = document.getElementById("auroraSkyModal");
+    const auroraSkyCanvas = document.getElementById("auroraSkyCanvas");
+    const auroraSkyCtx = auroraSkyCanvas ? auroraSkyCanvas.getContext("2d") : null;
+
+    let currentAuroraSkyType = "borealis"; // "borealis" | "australis"
+    let isAuroraSkyOpen = false;
+    let auroraSkyAnimId = null;
+    let auroraSkyTime = 0;
+    let auroraSkyStormIntensity = 1.0; // 0.8 to 2.2
+
+    // Stars background for aurora sky
+    let auroraSkyStars = [];
+    const NUM_AURORA_STARS = 260;
+    for (let i = 0; i < NUM_AURORA_STARS; i++) {
+      auroraSkyStars.push({
+        x: Math.random(),
+        y: Math.random() * 0.78, // upper sky
+        size: 0.8 + Math.random() * 1.8,
+        blinkSpeed: 1.5 + Math.random() * 4.0,
+        color: Math.random() > 0.8 ? "#80DEEA" : (Math.random() > 0.6 ? "#E1BEE7" : "#FFFFFF")
+      });
+    }
+
+    // Interactive mouse / touch parallax look around in sky
+    let auroraLookX = 0;
+    let auroraLookY = 0;
+    let targetAuroraLookX = 0;
+    let targetAuroraLookY = 0;
+
+    if (auroraSkyCanvas) {
+      auroraSkyCanvas.addEventListener("mousemove", (e) => {
+        const rect = auroraSkyCanvas.getBoundingClientRect();
+        targetAuroraLookX = ((e.clientX - rect.left) / rect.width - 0.5) * 70;
+        targetAuroraLookY = ((e.clientY - rect.top) / rect.height - 0.5) * 40;
+      });
+
+      auroraSkyCanvas.addEventListener("touchmove", (e) => {
+        if (e.touches.length > 0) {
+          const rect = auroraSkyCanvas.getBoundingClientRect();
+          targetAuroraLookX = ((e.touches[0].clientX - rect.left) / rect.width - 0.5) * 70;
+          targetAuroraLookY = ((e.touches[0].clientY - rect.top) / rect.height - 0.5) * 40;
+        }
+      }, { passive: true });
+    }
+
+    function openAuroraSkyModal(type = 'borealis') {
+      currentAuroraSkyType = type;
+      isAuroraSkyOpen = true;
+      auroraSkyModal.classList.remove("hidden");
+      updateAuroraSkyUI();
+      resizeAuroraSkyCanvas();
+      window.addEventListener("resize", resizeAuroraSkyCanvas);
+
+      // Play soft ambient shimmer chime
+      playCosmicChime(type === 'borealis' ? 528 : 432);
+
+      // Auto-fade hint after 4.5s
+      const hint = document.getElementById("auroraHint");
+      if (hint) {
+        hint.style.opacity = "1";
+        setTimeout(() => {
+          if (hint) hint.style.opacity = "0";
+        }, 4500);
+      }
+
+      if (!auroraSkyAnimId) {
+        let lastTime = performance.now();
+        function loop(now) {
+          if (!isAuroraSkyOpen) return;
+          const dt = (now - lastTime) / 1000;
+          lastTime = now;
+          auroraSkyTime += dt;
+
+          // Smooth lerp camera parallax
+          auroraLookX += (targetAuroraLookX - auroraLookX) * 0.08;
+          auroraLookY += (targetAuroraLookY - auroraLookY) * 0.08;
+
+          renderAuroraSky(dt);
+          auroraSkyAnimId = requestAnimationFrame(loop);
+        }
+        auroraSkyAnimId = requestAnimationFrame(loop);
+      }
+    }
+
+    function closeAuroraSkyModal() {
+      isAuroraSkyOpen = false;
+      if (auroraSkyAnimId) {
+        cancelAnimationFrame(auroraSkyAnimId);
+        auroraSkyAnimId = null;
+      }
+      window.removeEventListener("resize", resizeAuroraSkyCanvas);
+      auroraSkyModal.classList.add("hidden");
+    }
+
+    function setAuroraSkyType(type) {
+      currentAuroraSkyType = type;
+      updateAuroraSkyUI();
+      playCosmicChime(type === 'borealis' ? 528 : 432);
+    }
+
+    function randomizeAuroraIntensity() {
+      auroraSkyStormIntensity = 0.8 + Math.random() * 1.4;
+      const waveBadge = document.getElementById("auroraGlowWaveText");
+      if (waveBadge) {
+        const kp = (5.0 + auroraSkyStormIntensity * 2.2).toFixed(1);
+        waveBadge.innerText = `Aktivitas Geomagnetik Kp: ${kp} (Badai ${kp > 7 ? 'Ekstrem G4' : (kp > 6 ? 'Kuat G2-G3' : 'Sedang G1')})`;
+      }
+      playCosmicChime(660);
+    }
+
+    function updateAuroraSkyUI() {
+      const isBorealis = currentAuroraSkyType === 'borealis';
+      const title = document.getElementById("auroraSkyTitle");
+      const locTag = document.getElementById("auroraSkyLocationTag");
+      const desc = document.getElementById("auroraSkyDesc");
+      const tabB = document.getElementById("tabBorealisBtn");
+      const tabA = document.getElementById("tabAustralisBtn");
+      const badge = document.getElementById("auroraSkyTypeBadge");
+
+      if (isBorealis) {
+        title.innerText = "Langit Aurora Borealis";
+        locTag.innerText = "Tromsø, Norwegia & Arktik (69°N)";
+        locTag.className = "text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#00E676]/20 text-[#69F0AE] border border-[#00E676]/50 uppercase";
+        desc.innerHTML = `Pemandangan langit kutub utara: Tirai hijau zamrud menyala mempesona akibat tumbukan elektron angin matahari dengan atom <strong class="text-[#69F0AE]">Oksigen</strong> pada ketinggian 100-300 km (spektrum emisi 557,7 nm). Di puncak gelombang menjulang semburat ungu dan merah muda molekul <strong class="text-[#EA80FC]">Nitrogen</strong> (spektrum 630 nm).`;
+        tabB.className = "px-3.5 py-1 rounded-full text-xs font-bold transition-all bg-[#00E676] text-[#04060C] shadow-sm cursor-pointer";
+        tabA.className = "px-3.5 py-1 rounded-full text-xs font-bold transition-all text-[#919194] hover:text-white cursor-pointer";
+        badge.className = "w-10 h-10 rounded-2xl bg-[#00E676]/20 border border-[#00E676]/50 flex items-center justify-center text-[#69F0AE] shadow-lg";
+        badge.innerHTML = `<span class="material-symbols-outlined text-[22px]">auto_awesome</span>`;
+      } else {
+        title.innerText = "Langit Aurora Australis";
+        locTag.innerText = "Stasiun Halley, Antartika (75°S)";
+        locTag.className = "text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#E040FB]/20 text-[#F48FB1] border border-[#E040FB]/50 uppercase";
+        desc.innerHTML = `Pemandangan langit kutub selatan: Dikenal sebagai <em>Southern Lights</em> di atas hamparan gletser Antartika. Dipenuhi semburat magenta, violet, dan pirus (cyan) spektakuler saat partikel badai matahari menembus sabuk radiasi menuju kutub magnetik selatan Bumi.`;
+        tabB.className = "px-3.5 py-1 rounded-full text-xs font-bold transition-all text-[#919194] hover:text-white cursor-pointer";
+        tabA.className = "px-3.5 py-1 rounded-full text-xs font-bold transition-all bg-[#E040FB] text-[#04060C] shadow-sm cursor-pointer";
+        badge.className = "w-10 h-10 rounded-2xl bg-[#E040FB]/20 border border-[#E040FB]/50 flex items-center justify-center text-[#F48FB1] shadow-lg";
+        badge.innerHTML = `<span class="material-symbols-outlined text-[22px]">flare</span>`;
+      }
+    }
+
+    function resizeAuroraSkyCanvas() {
+      if (!auroraSkyCanvas) return;
+      const rect = auroraSkyCanvas.parentElement.getBoundingClientRect();
+      auroraSkyCanvas.width = rect.width;
+      auroraSkyCanvas.height = rect.height;
+    }
+
+    // Render Majestic Night Sky with Flowing Aurora Curtains, Mountains & Reflections
+    function renderAuroraSky(dt) {
+      if (!auroraSkyCtx || !auroraSkyCanvas) return;
+      const ctx = auroraSkyCtx;
+      const w = auroraSkyCanvas.width;
+      const h = auroraSkyCanvas.height;
+
+      ctx.save();
+      ctx.clearRect(0, 0, w, h);
+
+      const isBorealis = currentAuroraSkyType === 'borealis';
+      const time = auroraSkyTime * 0.9;
+      const intensity = auroraSkyStormIntensity;
+
+      // 1. Deep Night Sky Backdrop Gradient
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
+      if (isBorealis) {
+        skyGrad.addColorStop(0, "#020409");
+        skyGrad.addColorStop(0.45, "#06121D");
+        skyGrad.addColorStop(0.75, "#091B1F");
+        skyGrad.addColorStop(1, "#040A10");
+      } else {
+        skyGrad.addColorStop(0, "#03020A");
+        skyGrad.addColorStop(0.45, "#0E0A1F");
+        skyGrad.addColorStop(0.75, "#180B22");
+        skyGrad.addColorStop(1, "#07040E");
+      }
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      // 2. Stars Field with subtle twinkling
+      ctx.save();
+      auroraSkyStars.forEach((star, idx) => {
+        const sx = (star.x * w + auroraLookX * 0.35 + w) % w;
+        const sy = (star.y * (h * 0.72) + auroraLookY * 0.25);
+        const twinkle = 0.4 + 0.6 * Math.abs(Math.sin(time * star.blinkSpeed + idx));
+        ctx.fillStyle = star.color;
+        ctx.globalAlpha = twinkle;
+        ctx.beginPath();
+        ctx.arc(sx, sy, star.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.restore();
+
+      // 3. Faint Milky Way Ribbon across Sky
+      ctx.save();
+      const mwGrad = ctx.createLinearGradient(w * 0.1, 0, w * 0.9, h * 0.7);
+      mwGrad.addColorStop(0, "transparent");
+      mwGrad.addColorStop(0.5, isBorealis ? "rgba(79, 134, 247, 0.07)" : "rgba(224, 64, 251, 0.08)");
+      mwGrad.addColorStop(1, "transparent");
+      ctx.fillStyle = mwGrad;
+      ctx.beginPath();
+      ctx.ellipse(w * 0.5 + auroraLookX * 0.4, h * 0.35 + auroraLookY * 0.3, w * 0.65, h * 0.22, -0.35, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // 4. MULTI-LAYER WAVING DANCING AURORA CURTAINS
+      // We draw 4 layered curtains at different depths (foreground, mid, background)
+      const curtainConfigs = isBorealis ? [
+        // Borealis: Vivid Emerald, Electric Cyan, Neon Mint, Violet Top
+        {
+          baseY: h * 0.54,
+          height: h * 0.44 * intensity,
+          speed: 0.6,
+          freq: 0.003,
+          amp: 36 * intensity,
+          c1: "rgba(0, 230, 118, 0.75)",   // green
+          c2: "rgba(0, 229, 255, 0.55)",   // cyan
+          c3: "rgba(179, 136, 255, 0.35)",  // violet
+          cTop: "rgba(224, 64, 251, 0.15)", // pinkish violet
+          numRibs: 48,
+          alpha: 0.88
+        },
+        {
+          baseY: h * 0.46,
+          height: h * 0.50 * intensity,
+          speed: -0.45,
+          freq: 0.0022,
+          amp: 48 * intensity,
+          c1: "rgba(105, 240, 174, 0.70)",
+          c2: "rgba(0, 230, 118, 0.60)",
+          c3: "rgba(0, 229, 255, 0.40)",
+          cTop: "rgba(128, 222, 234, 0.15)",
+          numRibs: 56,
+          alpha: 0.82
+        },
+        {
+          baseY: h * 0.38,
+          height: h * 0.42 * intensity,
+          speed: 0.85,
+          freq: 0.004,
+          amp: 28 * intensity,
+          c1: "rgba(0, 229, 255, 0.65)",
+          c2: "rgba(179, 136, 255, 0.55)",
+          c3: "rgba(234, 128, 252, 0.35)",
+          cTop: "transparent",
+          numRibs: 42,
+          alpha: 0.75
+        }
+      ] : [
+        // Australis: Vivid Magenta, Neon Rose, Cyan, Emerald Under-glow
+        {
+          baseY: h * 0.53,
+          height: h * 0.46 * intensity,
+          speed: 0.55,
+          freq: 0.0028,
+          amp: 38 * intensity,
+          c1: "rgba(224, 64, 251, 0.80)",  // magenta
+          c2: "rgba(240, 98, 146, 0.60)",  // rose
+          c3: "rgba(0, 229, 255, 0.45)",   // cyan
+          cTop: "rgba(179, 136, 255, 0.15)",
+          numRibs: 52,
+          alpha: 0.90
+        },
+        {
+          baseY: h * 0.44,
+          height: h * 0.48 * intensity,
+          speed: -0.5,
+          freq: 0.002,
+          amp: 44 * intensity,
+          c1: "rgba(0, 229, 255, 0.70)",   // cyan
+          c2: "rgba(0, 230, 118, 0.55)",   // emerald
+          c3: "rgba(224, 64, 251, 0.45)",  // magenta
+          cTop: "rgba(244, 143, 177, 0.15)",
+          numRibs: 50,
+          alpha: 0.80
+        },
+        {
+          baseY: h * 0.36,
+          height: h * 0.40 * intensity,
+          speed: 0.75,
+          freq: 0.0035,
+          amp: 30 * intensity,
+          c1: "rgba(234, 128, 252, 0.65)",
+          c2: "rgba(128, 222, 234, 0.50)",
+          c3: "rgba(105, 240, 174, 0.35)",
+          cTop: "transparent",
+          numRibs: 40,
+          alpha: 0.72
+        }
+      ];
+
+      // Draw each waving curtain layer
+      curtainConfigs.forEach((cfg, layerIdx) => {
+        ctx.save();
+        ctx.globalAlpha = cfg.alpha;
+
+        const ribW = w / (cfg.numRibs - 1);
+        const shiftX = auroraLookX * (0.6 + layerIdx * 0.2);
+        const shiftY = auroraLookY * (0.4 + layerIdx * 0.15);
+
+        // Draw individual ray streamers with vertical ray striations
+        for (let i = 0; i < cfg.numRibs; i++) {
+          const rx = i * ribW + shiftX;
+          const u = rx * cfg.freq;
+          const phase = time * cfg.speed + layerIdx * 1.6;
+
+          // Harmonic wave distortion for organic curtain folds
+          const wave = Math.sin(u * 3 + phase) * cfg.amp +
+                       Math.cos(u * 5 - phase * 0.8) * (cfg.amp * 0.45) +
+                       Math.sin(u * 8 + phase * 1.4) * (cfg.amp * 0.25);
+
+          const baseY = cfg.baseY + wave + shiftY;
+          const rayH = cfg.height + Math.sin(u * 4 + phase) * (cfg.height * 0.22);
+          const topY = baseY - rayH;
+
+          // Vertical ray striations
+          const rayGrad = ctx.createLinearGradient(rx, baseY, rx, topY);
+          rayGrad.addColorStop(0, "transparent");
+          rayGrad.addColorStop(0.12, cfg.c1);
+          rayGrad.addColorStop(0.45, cfg.c2);
+          rayGrad.addColorStop(0.78, cfg.c3);
+          rayGrad.addColorStop(1, cfg.cTop);
+
+          ctx.fillStyle = rayGrad;
+          // Rib strip overlapping smoothly
+          ctx.beginPath();
+          ctx.rect(rx - ribW * 0.8, topY, ribW * 1.6, rayH);
+          ctx.fill();
+        }
+
+        // Luminous Ribbon Base Arc across horizon
+        ctx.beginPath();
+        for (let i = 0; i <= cfg.numRibs; i++) {
+          const rx = i * ribW + shiftX;
+          const u = rx * cfg.freq;
+          const phase = time * cfg.speed + layerIdx * 1.6;
+          const wave = Math.sin(u * 3 + phase) * cfg.amp +
+                       Math.cos(u * 5 - phase * 0.8) * (cfg.amp * 0.45);
+          const ry = cfg.baseY + wave + shiftY;
+          if (i === 0) ctx.moveTo(rx, ry);
+          else ctx.lineTo(rx, ry);
+        }
+        ctx.strokeStyle = cfg.c1;
+        ctx.lineWidth = 3.5;
+        ctx.shadowColor = cfg.c1;
+        ctx.shadowBlur = 16;
+        ctx.stroke();
+
+        ctx.restore();
+      });
+
+      // 5. FOREGROUND SILHOUETTE: Snowy Fjords, Pine Trees & Frozen Lake Reflection
+      const groundY = h * 0.75 + auroraLookY * 0.5;
+
+      // Frozen Lake / Ice Fjord Reflection Layer
+      const lakeGrad = ctx.createLinearGradient(0, groundY, 0, h);
+      lakeGrad.addColorStop(0, isBorealis ? "rgba(0, 230, 118, 0.22)" : "rgba(224, 64, 251, 0.22)");
+      lakeGrad.addColorStop(0.4, isBorealis ? "rgba(0, 100, 150, 0.15)" : "rgba(100, 40, 120, 0.15)");
+      lakeGrad.addColorStop(1, "#03060C");
+
+      ctx.fillStyle = lakeGrad;
+      ctx.fillRect(0, groundY, w, h - groundY);
+
+      // Shimmering horizontal ice ripples
+      ctx.save();
+      for (let r = 0; r < 8; r++) {
+        const ry = groundY + 15 + r * ((h - groundY) / 9);
+        const ripGrad = ctx.createLinearGradient(0, 0, w, 0);
+        ripGrad.addColorStop(0, "transparent");
+        ripGrad.addColorStop(0.3 + Math.sin(time * 0.5 + r) * 0.1, isBorealis ? "rgba(0, 230, 118, 0.25)" : "rgba(224, 64, 251, 0.25)");
+        ripGrad.addColorStop(0.7, isBorealis ? "rgba(0, 229, 255, 0.20)" : "rgba(234, 128, 252, 0.20)");
+        ripGrad.addColorStop(1, "transparent");
+
+        ctx.strokeStyle = ripGrad;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(0, ry);
+        ctx.lineTo(w, ry);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Mountain silhouette ridges (Distant & Near)
+      // Distant Alpine Peaks
+      ctx.save();
+      ctx.fillStyle = "#070B13";
+      ctx.beginPath();
+      ctx.moveTo(0, groundY);
+      const numMountainSteps = 16;
+      for (let i = 0; i <= numMountainSteps; i++) {
+        const mx = (i / numMountainSteps) * w;
+        const peakHeight = Math.sin(i * 1.1) * (h * 0.12) + Math.cos(i * 2.3) * (h * 0.06);
+        const my = groundY - Math.abs(peakHeight) - 20;
+        ctx.lineTo(mx, my);
+      }
+      ctx.lineTo(w, groundY);
+      ctx.closePath();
+      ctx.fill();
+
+      // Near Snow Ridge with Evergreen Pine Silhouettes
+      ctx.fillStyle = "#04060A";
+      ctx.beginPath();
+      ctx.moveTo(0, h);
+      ctx.lineTo(0, groundY);
+      ctx.quadraticCurveTo(w * 0.25, groundY - 25, w * 0.5, groundY + 5);
+      ctx.quadraticCurveTo(w * 0.75, groundY - 35, w, groundY);
+      ctx.lineTo(w, h);
+      ctx.closePath();
+      ctx.fill();
+
+      // Draw Scandinavian Pine Trees Silhouettes along the left and right shore
+      function drawPineTree(tx, ty, tSize) {
+        ctx.fillStyle = "#020407";
+        ctx.beginPath();
+        // Trunk
+        ctx.rect(tx - tSize * 0.08, ty, tSize * 0.16, tSize * 0.25);
+        ctx.fill();
+
+        // 3 tiers of pine fronds
+        for (let tier = 0; tier < 3; tier++) {
+          const tierY = ty - (tier * tSize * 0.32);
+          const tierW = tSize * (0.45 - tier * 0.09);
+          const tierH = tSize * 0.42;
+          ctx.beginPath();
+          ctx.moveTo(tx, tierY - tierH);
+          ctx.lineTo(tx + tierW, tierY);
+          ctx.lineTo(tx - tierW, tierY);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+
+      // Left forest grove
+      const leftPines = [
+        { x: w * 0.04, y: groundY + 8, size: 55 },
+        { x: w * 0.09, y: groundY + 12, size: 70 },
+        { x: w * 0.14, y: groundY + 18, size: 60 },
+        { x: w * 0.18, y: groundY + 15, size: 45 }
+      ];
+      leftPines.forEach(pt => drawPineTree(pt.x, pt.y, pt.size));
+
+      // Right forest grove
+      const rightPines = [
+        { x: w * 0.82, y: groundY + 10, size: 50 },
+        { x: w * 0.88, y: groundY + 16, size: 68 },
+        { x: w * 0.94, y: groundY + 12, size: 55 }
+      ];
+      rightPines.forEach(pt => drawPineTree(pt.x, pt.y, pt.size));
+
+      ctx.restore();
+      ctx.restore();
     }
 
     // URL Hash deep link routing
